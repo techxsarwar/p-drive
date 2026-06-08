@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>P-Drive - Ready</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005321",
+                        "on-primary-fixed": "#000965",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#dce2f7",
+                        "on-background": "#141b2b",
+                        "primary-fixed": "#dfe0ff",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5d5f5d",
+                        "primary": "#3748dd",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "surface-container-high": "#e1e8fd",
+                        "tertiary-container": "#00873b",
+                        "on-primary-fixed-variant": "#192dc8",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f7",
+                        "secondary-fixed": "#e2e3e1",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#636563",
+                        "surface-tint": "#3a4bdf",
+                        "tertiary": "#006b2d",
+                        "on-surface-variant": "#454655",
+                        "outline": "#757687",
+                        "on-tertiary-container": "#f7fff3",
+                        "on-surface": "#141b2b",
+                        "on-primary-container": "#fffbff",
+                        "surface-container": "#e9edff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454746",
+                        "inverse-on-surface": "#edf0ff",
+                        "primary-container": "#5364f7",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "secondary-container": "#e2e3e1",
+                        "surface": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002109",
+                        "inverse-primary": "#bdc2ff",
+                        "outline-variant": "#c5c5d8",
+                        "surface-container-low": "#f1f3ff",
+                        "tertiary-fixed": "#6bff8f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "base": "8px",
+                        "container-padding": "24px",
+                        "stack-gap": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* High-fidelity entry animations */
+        .animate-enter {
+            opacity: 0;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(24px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Fluid background glow to add a "homely", premium feel */
+        .ambient-glow {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: radial-gradient(circle at center, rgba(55, 72, 221, 0.08) 0%, rgba(249, 249, 255, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col relative overflow-hidden">
+<!-- Ambient Background Effect -->
+<div class="ambient-glow"></div>
+<!-- Main Content Canvas 
+         Note: Navigation shell is strictly suppressed as this is a linear "Success/Confirmation" onboarding screen. -->
+<main class="flex-1 flex flex-col items-center justify-center px-container-padding py-section-gap safe-area-bottom w-full max-w-2xl mx-auto z-10">
+<!-- Illustration Container -->
+<div class="w-full max-w-[280px] md:max-w-[360px] aspect-square relative mb-8 animate-enter">
+<!-- Level 2 Ambient Shadow applied directly to the image wrapper for "Soft Diffusion" depth -->
+<div class="absolute inset-0 bg-primary/5 rounded-full blur-3xl transform scale-75 translate-y-4"></div>
+<img alt="Celebration Illustration" class="w-full h-full object-contain relative z-10 drop-shadow-[0_10px_40px_rgba(17,24,39,0.12)] mix-blend-multiply" data-alt="A premium, minimalist 3D illustration celebrating the setup of a personal cloud drive. The central focus is a glowing, abstract, soft geometric structure resembling elegantly stacked folders floating gently. The setting is a clean, bright, white studio space that feels warm and meditative. The color palette relies heavily on pristine whites, soft off-whites, and subtle, vibrant accents of deep blue to match a refined light mode aesthetic. The lighting is soft, diffused studio lighting casting gentle, ambient shadows, conveying a sense of absolute calm and digital clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQhwGaEd9K2Ru_GbL3-8Ny1-NX92CW4pP4B9jipLbTE0aPjY6zvIlNhDADWZrmRumVVkpM6ojPoSlVMtX85FhFBqmJHdRUquvGRRrMVjH6tUL3-PnkzgMq2L3bsNtOvJWEhgLB4Av3eT1Pc6XLX8pTDaD678PXEbD2vXIbpxrsVtxzAkW2AEeu8KqwpvqAmvyFvOK12rDp6q1agbiFTrmN8yovNWRavqkduezfaJF7PA5yh5kngPkODZxp70p02DNM4wQkusT7R3Zf"/>
+</div>
+<!-- Typography Cluster -->
+<div class="flex flex-col items-center text-center gap-base mb-12 w-full animate-enter delay-100">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-display md:text-display text-on-surface">
+                Your personal drive is ready.
+            </h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-md">
+                A quiet, organized space for your most important work. All systems are set up and waiting for you.
+            </p>
+</div>
+<!-- Action Area -->
+<div class="w-full max-w-sm mt-auto md:mt-0 animate-enter delay-200">
+<button class="w-full py-[16px] px-6 bg-primary text-on-primary font-headline-md text-headline-md rounded-xl shadow-[0_4px_20px_rgba(17,24,39,0.1)] hover:bg-primary-container hover:text-on-primary-container hover:shadow-[0_10px_40px_rgba(17,24,39,0.12)] transition-all duration-300 active:scale-95 flex items-center justify-center gap-3 group">
+                Enter P-Drive
+                <span class="material-symbols-outlined font-[FILL:1] text-[28px] group-hover:translate-x-1 transition-transform duration-300">
+                    arrow_forward
+                </span>
+</button>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,61 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate.yaml
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The Directory-Level Settings file
+# (can be checked in to share configurations)
+# .idea/workspace.xml
+
+# Visual Studio Code related
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.flutter-plugins
+**/ios/Flutter/.flutter-plugins-dependencies
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Android related
+**/android/local.properties
+**/android/key.properties
+**/android/app/src/main/assets/
+**/android/app/build.gradle
+**/android/app/google-services.json
+*.apk
+*.ap_
+*.dex
+
+# iOS/macOS related
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/App.framework
+**/ios/Pods/
+**/XcodeActiveDevPath
+
+# Windows related
+/windows/flutter/ephemeral/
+/windows/flutter/CMakeLists.txt
+/windows/flutter/generated_config.cmake
+
+# Web related
+.web/

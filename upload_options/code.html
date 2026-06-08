@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>P-Drive - Upload Options</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005321",
+                        "on-primary-fixed": "#000965",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#dce2f7",
+                        "on-background": "#141b2b",
+                        "primary-fixed": "#dfe0ff",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5d5f5d",
+                        "primary": "#3748dd",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "surface-container-high": "#e1e8fd",
+                        "tertiary-container": "#00873b",
+                        "on-primary-fixed-variant": "#192dc8",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f7",
+                        "secondary-fixed": "#e2e3e1",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#636563",
+                        "surface-tint": "#3a4bdf",
+                        "tertiary": "#006b2d",
+                        "on-surface-variant": "#454655",
+                        "outline": "#757687",
+                        "on-tertiary-container": "#f7fff3",
+                        "on-surface": "#141b2b",
+                        "on-primary-container": "#fffbff",
+                        "surface-container": "#e9edff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454746",
+                        "inverse-on-surface": "#edf0ff",
+                        "primary-container": "#5364f7",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "secondary-container": "#e2e3e1",
+                        "surface": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002109",
+                        "inverse-primary": "#bdc2ff",
+                        "outline-variant": "#c5c5d8",
+                        "surface-container-low": "#f1f3ff",
+                        "tertiary-fixed": "#6bff8f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "base": "8px",
+                        "container-padding": "24px",
+                        "stack-gap": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Smooth scrolling and basic resets */
+        html { scroll-behavior: smooth; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        
+        /* Hide scrollbar for clean aesthetic */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen relative overflow-hidden flex flex-col">
+<!-- Background Dashboard Layer (Underneath the Bottom Sheet) -->
+<div class="flex-1 flex flex-col h-full w-full absolute inset-0 blur-[2px] opacity-80 pointer-events-none transition-all duration-300">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-40 bg-surface/80 backdrop-blur-md shadow-sm flex justify-between items-center px-container-padding h-16">
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200 flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-highest">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">P-Drive</h1>
+<button class="w-8 h-8 rounded-full overflow-hidden hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200 border border-outline-variant">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A close up, well lit portrait of a professional looking individual smiling warmly, set against a bright, minimalist white background. The image has a clean, airy, high-key lighting aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq1aYAc8iMMcDrwy4gr01rvKQW8bGKZluhmmyczDhvSOZsjqEpyQXaHuTplbOf421esy9GNOCvT-nTvKHr61KST9t49jYY6VlUBAjoYm_nGTuDP5Vsywg-83-uG_DWt2VZ9qR25_fWiWlIXLoNAbFYmCz0oxTwTU490Eg9woZI9HbeM2pA6lbUBOz17zit-h9BcbCuHPmPPrsDcqJsmGlo9w3rcp7rA2nxuOTsxiq6bsDjrCqqs6bUxYVzZq4C64liFYoKity-Ghd3"/>
+</button>
+</header>
+<!-- Main Dashboard Content Canvas -->
+<main class="flex-1 mt-16 pb-32 px-container-padding py-stack-gap overflow-y-auto no-scrollbar">
+<!-- Storage Overview Bento Card -->
+<div class="bg-surface-container-low rounded-[24px] p-6 mb-stack-gap shadow-[0_4px_20px_0_rgba(17,24,39,0.03)] border border-outline-variant/20">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Storage Overview</h2>
+<div class="font-display text-display text-on-surface">45.2 GB</div>
+</div>
+<div class="font-label-md text-label-md text-primary bg-primary-container px-3 py-1 rounded-full">
+                        45% Used
+                    </div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[45%]"></div>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-gap">Recent Files</h3>
+<!-- Recent Files Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<!-- File Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0_2px_10px_0_rgba(17,24,39,0.02)] border border-outline-variant/30 flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-weight="fill">description</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface truncate">Q3_Report_Final.pdf</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">2.4 MB • Today</p>
+</div>
+</div>
+<!-- File Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0_2px_10px_0_rgba(17,24,39,0.02)] border border-outline-variant/30 flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-weight="fill">image</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface truncate">Design_Assets.zip</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">14.2 MB • Yesterday</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="fixed bottom-0 w-full z-40 bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_0_rgba(17,24,39,0.1)] flex justify-around items-center px-4 h-21 pb-safe md:hidden">
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5 min-w-[64px]">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary px-4 py-1.5 hover:bg-secondary-container/50 rounded-xl transition-colors min-w-[64px]">
+<span class="material-symbols-outlined mb-1" data-icon="folder">folder</span>
+<span class="font-label-sm text-label-sm">Files</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary px-4 py-1.5 hover:bg-secondary-container/50 rounded-xl transition-colors min-w-[64px]">
+<span class="material-symbols-outlined mb-1" data-icon="group">group</span>
+<span class="font-label-sm text-label-sm">Shared</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary px-4 py-1.5 hover:bg-secondary-container/50 rounded-xl transition-colors min-w-[64px]">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</button>
+</nav>
+</div>
+<!-- Active Overlay Layer: Upload Bottom Sheet -->
+<div class="fixed inset-0 z-50 flex flex-col justify-end">
+<!-- Soft Backdrop Blur -->
+<div class="absolute inset-0 bg-inverse-surface/10 backdrop-blur-[6px] transition-opacity duration-300"></div>
+<!-- Bottom Sheet Container -->
+<!-- Note: rounded-t-3xl provides 24px border radius in standard Tailwind -->
+<div class="relative w-full max-w-3xl mx-auto bg-surface rounded-t-3xl shadow-[0_-10px_40px_rgba(17,24,39,0.08)] transform transition-transform duration-300 ease-out flex flex-col pb-8 pt-3 px-container-padding">
+<!-- Drag Handle Indicator -->
+<div class="w-12 h-1.5 bg-outline-variant/60 rounded-full mx-auto mb-6"></div>
+<!-- Header -->
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Create New</h2>
+<button class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Upload Options Grid (Bento Style) -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<!-- Option 1: Upload File -->
+<button class="group relative flex flex-col items-center justify-center gap-4 p-6 bg-surface-container-lowest border border-outline-variant/20 rounded-[20px] shadow-[0_2px_8px_rgba(17,24,39,0.02)] hover:shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 active:scale-[0.98]">
+<div class="w-14 h-14 rounded-full bg-primary-container/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-[28px]" data-icon="upload_file">upload_file</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center">Upload File</span>
+</button>
+<!-- Option 2: Upload Folder -->
+<button class="group relative flex flex-col items-center justify-center gap-4 p-6 bg-surface-container-lowest border border-outline-variant/20 rounded-[20px] shadow-[0_2px_8px_rgba(17,24,39,0.02)] hover:shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 active:scale-[0.98]">
+<div class="w-14 h-14 rounded-full bg-primary-container/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-[28px]" data-icon="create_new_folder">create_new_folder</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center">Upload Folder</span>
+</button>
+<!-- Option 3: Take Photo -->
+<button class="group relative flex flex-col items-center justify-center gap-4 p-6 bg-surface-container-lowest border border-outline-variant/20 rounded-[20px] shadow-[0_2px_8px_rgba(17,24,39,0.02)] hover:shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 active:scale-[0.98]">
+<div class="w-14 h-14 rounded-full bg-primary-container/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-[28px]" data-icon="photo_camera">photo_camera</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center">Take Photo</span>
+</button>
+<!-- Option 4: Scan Document -->
+<button class="group relative flex flex-col items-center justify-center gap-4 p-6 bg-surface-container-lowest border border-outline-variant/20 rounded-[20px] shadow-[0_2px_8px_rgba(17,24,39,0.02)] hover:shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 active:scale-[0.98]">
+<div class="w-14 h-14 rounded-full bg-primary-container/30 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-[28px]" data-icon="document_scanner">document_scanner</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center">Scan Document</span>
+</button>
+</div>
+<!-- Safe Area padding for modern mobile devices -->
+<div class="h-safe pb-4"></div>
+</div>
+</div>
+</body></html>

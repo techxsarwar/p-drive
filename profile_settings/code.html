@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>P-Drive Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005321",
+                        "on-primary-fixed": "#000965",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#dce2f7",
+                        "on-background": "#141b2b",
+                        "primary-fixed": "#dfe0ff",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5d5f5d",
+                        "primary": "#3748dd",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "surface-container-high": "#e1e8fd",
+                        "tertiary-container": "#00873b",
+                        "on-primary-fixed-variant": "#192dc8",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f7",
+                        "secondary-fixed": "#e2e3e1",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#636563",
+                        "surface-tint": "#3a4bdf",
+                        "tertiary": "#006b2d",
+                        "on-surface-variant": "#454655",
+                        "outline": "#757687",
+                        "on-tertiary-container": "#f7fff3",
+                        "on-surface": "#141b2b",
+                        "on-primary-container": "#fffbff",
+                        "surface-container": "#e9edff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454746",
+                        "inverse-on-surface": "#edf0ff",
+                        "primary-container": "#5364f7",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "secondary-container": "#e2e3e1",
+                        "surface": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002109",
+                        "inverse-primary": "#bdc2ff",
+                        "outline-variant": "#c5c5d8",
+                        "surface-container-low": "#f1f3ff",
+                        "tertiary-fixed": "#6bff8f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "base": "8px",
+                        "container-padding": "24px",
+                        "stack-gap": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm flex justify-between items-center px-container-padding h-16 dark:bg-background/80">
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight">P-Drive</h1>
+</div>
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<img alt="User profile photo" class="w-8 h-8 rounded-full object-cover" data-alt="A close-up, softly lit portrait of a professional young woman looking directly at the camera with a calm expression. She has natural makeup and is set against a bright, warm, minimalist light-gray background. The overall aesthetic is clean, premium, and approachable, matching a modern light-mode UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCheZfr9WeoZ2q5fK3t1te0ee80w_AS3vD6db27D1VzIl2A4m7JKziqQWW6GYmvyKCFPKrAIK0FCqPwjw44urVk2myHbciemzaij8iHtvHmX-YzozN_sz5-AIVb_OWSIaqw29iDPcbj9iaH2iosdCIVPV3LXspEPc7l0EcHBGBaRt__mXdfwj0gPrFHCAF2Q3ThJD4KQlW5WqqCPqZkQV0cv75wbDnNW_DVtEGNqFKVXXjGtYCNBLbnvcmJjlYeq9AX6y6VNEP6YNM8"/>
+</button>
+</nav>
+<!-- Main Content -->
+<main class="pt-24 pb-32 max-w-2xl mx-auto md:px-container-padding">
+<!-- Profile Header Area -->
+<section class="flex flex-col items-center mb-section-gap px-container-padding">
+<div class="relative mb-6">
+<img alt="Alex Morgan Avatar" class="w-28 h-28 rounded-full object-cover shadow-[0_10px_40px_-10px_rgba(17,24,39,0.12)] border-4 border-surface" data-alt="A close-up, softly lit portrait of a professional young woman looking directly at the camera with a calm expression. She has natural makeup and is set against a bright, warm, minimalist light-gray background. The overall aesthetic is clean, premium, and approachable, matching a modern light-mode UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_acyvwUcq5kYykYzSWrdizYD_vqYaJnSXqgjfsQFbE-lrS8YQ1Q0PCuoihUwQJv9MhAYq7gd-LMlxOAoKR5DO38rzOYCg1h4HSU6_YWhDjBEl0gIuh2uCpfTl1WFm5Sm-1IKqUSMQ9rN_r5hBW6te48jS6_eOXpf47OHLFWIRmosevdUI28aNA7VvjR04Y9GkMPF5rxNuhDBQpK3fbOhOjXqqx5qg3CYKAsfUp2rP8w6aZatCT08i7f01GFXsj1VVLhnzbY-Iv_3Z"/>
+<button class="absolute bottom-0 right-0 bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center shadow-sm hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">edit</span>
+</button>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">Alex Morgan</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">alex@pdrive.com</p>
+</section>
+<!-- Storage Bento Card -->
+<section class="px-container-padding mb-section-gap">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_0_rgba(17,24,39,0.1)] p-container-padding flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cloud</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px] leading-tight mb-1">Storage</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">750 GB of 1 TB used</p>
+</div>
+</div>
+<span class="bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm px-3 py-1.5 rounded-full border border-tertiary-container/20">
+                        Premium Plan
+                    </span>
+</div>
+<div class="w-full h-1.5 bg-surface-variant rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[75%] transition-all duration-1000 ease-out"></div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-outline mt-1">
+<span>0 GB</span>
+<span>1 TB</span>
+</div>
+</div>
+</section>
+<!-- Settings List (Card Based) -->
+<section class="px-container-padding mb-section-gap">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-4 pl-2 uppercase tracking-wider">Settings</h3>
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_0_rgba(17,24,39,0.1)] overflow-hidden flex flex-col">
+<button class="flex items-center p-4 border-b border-surface-variant/50 last:border-0 hover:bg-surface-container-low transition-colors active:bg-surface-variant w-full text-left">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant mr-4">
+<span class="material-symbols-outlined text-[18px]">security</span>
+</div>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface block">Security</span>
+<span class="font-label-sm text-label-sm text-outline">Passwords, 2FA</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<button class="flex items-center p-4 border-b border-surface-variant/50 last:border-0 hover:bg-surface-container-low transition-colors active:bg-surface-variant w-full text-left">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant mr-4">
+<span class="material-symbols-outlined text-[18px]">palette</span>
+</div>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface block">Theme</span>
+<span class="font-label-sm text-label-sm text-outline">Light Mode</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<button class="flex items-center p-4 border-b border-surface-variant/50 last:border-0 hover:bg-surface-container-low transition-colors active:bg-surface-variant w-full text-left">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant mr-4">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+</div>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface block">Notifications</span>
+<span class="font-label-sm text-label-sm text-outline">Push &amp; Email</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Logout Action -->
+<section class="px-container-padding mt-8">
+<button class="w-full py-4 rounded-xl bg-transparent border border-error/30 text-error font-label-md text-label-md hover:bg-error-container/20 active:bg-error-container/40 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                Logout
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 h-[84px] pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_0_rgba(17,24,39,0.1)] flex justify-around items-center px-4 md:hidden dark:bg-background/90">
+<!-- Inactive Tab: Home -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1.5 hover:bg-secondary-container/50 rounded-xl transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1 text-[24px]">grid_view</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</button>
+<!-- Inactive Tab: Files -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1.5 hover:bg-secondary-container/50 rounded-xl transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1 text-[24px]">folder</span>
+<span class="font-label-sm text-label-sm">Files</span>
+</button>
+<!-- Inactive Tab: Shared -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim px-4 py-1.5 hover:bg-secondary-container/50 rounded-xl transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1 text-[24px]">group</span>
+<span class="font-label-sm text-label-sm">Shared</span>
+</button>
+<!-- Active Tab: Profile -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1.5 hover:bg-secondary-container/50 transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</button>
+</nav>
+</body></html>

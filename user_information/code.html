@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - User Information</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005321",
+                        "on-primary-fixed": "#000965",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#dce2f7",
+                        "on-background": "#141b2b",
+                        "primary-fixed": "#dfe0ff",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5d5f5d",
+                        "primary": "#3748dd",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "surface-container-high": "#e1e8fd",
+                        "tertiary-container": "#00873b",
+                        "on-primary-fixed-variant": "#192dc8",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f7",
+                        "secondary-fixed": "#e2e3e1",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#636563",
+                        "surface-tint": "#3a4bdf",
+                        "tertiary": "#006b2d",
+                        "on-surface-variant": "#454655",
+                        "outline": "#757687",
+                        "on-tertiary-container": "#f7fff3",
+                        "on-surface": "#141b2b",
+                        "on-primary-container": "#fffbff",
+                        "surface-container": "#e9edff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454746",
+                        "inverse-on-surface": "#edf0ff",
+                        "primary-container": "#5364f7",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "secondary-container": "#e2e3e1",
+                        "surface": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002109",
+                        "inverse-primary": "#bdc2ff",
+                        "outline-variant": "#c5c5d8",
+                        "surface-container-low": "#f1f3ff",
+                        "tertiary-fixed": "#6bff8f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "base": "8px",
+                        "container-padding": "24px",
+                        "stack-gap": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen flex flex-col font-sans antialiased text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- Main Onboarding Canvas -->
+<main class="flex-1 flex flex-col w-full max-w-lg mx-auto px-container-padding relative">
+<!-- Progress Indicator -->
+<header class="w-full pt-12 pb-8 flex items-center gap-2">
+<div aria-label="Step 1 completed" class="h-1 flex-1 bg-primary rounded-full"></div>
+<div aria-label="Step 2 pending" class="h-1 flex-1 bg-secondary-container rounded-full"></div>
+<div aria-label="Step 3 pending" class="h-1 flex-1 bg-secondary-container rounded-full"></div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 flex flex-col items-center justify-center mt-section-gap w-full">
+<!-- Friendly Illustration -->
+<div class="w-full max-w-[280px] aspect-square mb-8 relative bg-surface-container-low flex items-center justify-center overflow-hidden" style="border-radius: 24px;">
+<img class="object-cover w-full h-full opacity-90 mix-blend-multiply" data-alt="A warm, minimalist 3D illustration of a friendly abstract geometric character composed of soft, rounded shapes in muted off-white and calm blue tones. The character appears welcoming and approachable, set against a pristine, well-lit studio background that perfectly matches a bright, modern light-mode UI aesthetic. The lighting is soft and diffused, creating a premium, tactile feel that evokes feelings of calm and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0gE0537VNeCJUeWTUJw6SoEHK0aJxm6FXujeEELui3dYU0hSBlw5Mrfqp1HuOJmY8Shp5AsciN4ZL9Ua8EbHqhWcvtITRrLwLHXyPTu1ktWB00E2_0yhqiwqMXtfhu1yc-zWjHevnQ2rX5hJSSezlR0QObkTKTfr11q1YNbVf7mSBT4igKZd-5ZU4dxrTEKU6FhLcsXLECUsfemJ1XNp1f1vdXuiUYu5lJ2aaepfbxRmFjn_3bFiqwe3tlulSr1dsKL9lek5_6WEm"/>
+</div>
+<!-- Headers -->
+<div class="text-center w-full mb-8">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">
+                    Let's get started
+                </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    What should we call you in your workspace?
+                </p>
+</div>
+<!-- Single Input Form -->
+<form class="w-full flex flex-col items-center" id="onboardingForm">
+<div class="relative w-full group">
+<!-- Custom 24px rounding applied via inline style to meet specific prompt requirement, overriding config limits -->
+<input autocomplete="name" class="w-full bg-surface-container-low border-2 border-transparent focus:border-primary focus:bg-surface outline-none px-6 py-5 font-body-md text-body-md text-on-surface placeholder:text-outline transition-all duration-300 shadow-sm" id="userName" placeholder="Your full name" required="" style="border-radius: 24px;" type="text"/>
+<!-- Subtle focus ring effect -->
+<div class="absolute inset-0 border border-black/5 pointer-events-none transition-opacity duration-300 group-focus-within:opacity-0" style="border-radius: 24px;"></div>
+</div>
+<!-- Bottom Action Docked -->
+<div class="fixed bottom-0 left-0 w-full px-container-padding pb-8 pt-4 bg-gradient-to-t from-background via-background to-transparent md:relative md:bg-none md:pb-0 md:pt-12">
+<button class="w-full max-w-lg mx-auto bg-primary text-on-primary font-label-md text-label-md py-4 px-8 hover:opacity-90 active:scale-[0.98] transition-all duration-200 shadow-md flex items-center justify-center gap-2" style="border-radius: 24px;" type="submit">
+<span>Continue</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</main>
+<script>
+        // Lightweight micro-interaction for the form
+        document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // Loading state
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>';
+            btn.classList.add('opacity-80');
+            
+            // Simulate network request
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('opacity-80');
+                // Proceed to next step logic would go here
+            }, 800);
+        });
+    </script>
+</body></html>

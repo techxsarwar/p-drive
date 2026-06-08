@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>P-Drive - Welcome</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#005321",
+                        "on-primary-fixed": "#000965",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#dce2f7",
+                        "on-background": "#141b2b",
+                        "primary-fixed": "#dfe0ff",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5d5f5d",
+                        "primary": "#3748dd",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "surface-container-high": "#e1e8fd",
+                        "tertiary-container": "#00873b",
+                        "on-primary-fixed-variant": "#192dc8",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f7",
+                        "secondary-fixed": "#e2e3e1",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#636563",
+                        "surface-tint": "#3a4bdf",
+                        "tertiary": "#006b2d",
+                        "on-surface-variant": "#454655",
+                        "outline": "#757687",
+                        "on-tertiary-container": "#f7fff3",
+                        "on-surface": "#141b2b",
+                        "on-primary-container": "#fffbff",
+                        "surface-container": "#e9edff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#454746",
+                        "inverse-on-surface": "#edf0ff",
+                        "primary-container": "#5364f7",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "secondary-container": "#e2e3e1",
+                        "surface": "#f9f9ff",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002109",
+                        "inverse-primary": "#bdc2ff",
+                        "outline-variant": "#c5c5d8",
+                        "surface-container-low": "#f1f3ff",
+                        "tertiary-fixed": "#6bff8f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "40px",
+                        "base": "8px",
+                        "container-padding": "24px",
+                        "stack-gap": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom Animations for Warm Minimalism Aesthetic */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        
+        .animate-blob {
+            animation: blob 15s infinite;
+        }
+        
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Ambient Shadow Layering */
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(17,24,39,0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background relative overflow-hidden min-h-screen w-full flex flex-col items-center justify-center font-body-md text-body-md text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- Abstract Animated Background -->
+<div aria-hidden="true" class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+<!-- Soft Warm Tones using theme variables -->
+<div class="absolute top-[-15%] left-[-10%] w-[60vw] h-[60vw] bg-primary-fixed-dim opacity-30 blur-[100px] rounded-full animate-blob mix-blend-multiply"></div>
+<div class="absolute bottom-[-15%] right-[-10%] w-[70vw] h-[70vw] bg-surface-variant opacity-40 blur-[120px] rounded-full animate-blob animation-delay-2000 mix-blend-multiply"></div>
+<div class="absolute top-[20%] right-[10%] w-[40vw] h-[40vw] bg-secondary-container opacity-50 blur-[80px] rounded-full animate-blob animation-delay-4000 mix-blend-multiply"></div>
+</div>
+<!-- Main Content Canvas (Navigation Shell Suppressed per Transactional/Login rule) -->
+<main class="relative z-10 w-full max-w-[420px] px-container-padding py-12 flex flex-col items-center justify-center animate-fade-in-up">
+<!-- Logo Presentation -->
+<div class="flex flex-col items-center mb-10">
+<div class="w-24 h-24 bg-surface-container-lowest rounded-3xl ambient-shadow flex items-center justify-center mb-6 border border-surface-container-highest transition-transform hover:scale-105 duration-300">
+<span class="material-symbols-outlined text-[48px] text-primary" style="font-variation-settings: 'FILL' 1, 'wght' 300;">cloud_sync</span>
+</div>
+<!-- Typography Anchor -->
+<h1 class="font-display text-display text-on-surface mb-3 tracking-tight">P-Drive</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant text-center max-w-[280px]">Your files, everywhere.</p>
+</div>
+<!-- Action Area -->
+<div class="w-full flex flex-col gap-stack-gap mt-8">
+<!-- Secondary Button: Continue with Google -->
+<button class="group flex items-center justify-center w-full py-4 px-6 border border-outline-variant bg-surface-container-lowest rounded-full font-label-md text-label-md text-on-surface transition-all duration-200 hover:bg-surface-container hover:border-outline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98]">
+<!-- Using generic account circle as a proxy for social login icon to maintain material symbol constraint -->
+<span class="material-symbols-outlined mr-3 text-on-surface-variant group-hover:text-primary transition-colors" style="font-variation-settings: 'FILL' 0, 'wght' 300;">account_circle</span>
+                Continue with Google
+            </button>
+<!-- Primary Button: Continue with Email -->
+<button class="flex items-center justify-center w-full py-4 px-6 bg-primary text-on-primary rounded-full font-label-md text-label-md shadow-[0_4px_14px_0_rgba(55,72,221,0.25)] transition-all duration-200 hover:opacity-90 hover:shadow-[0_6px_20px_rgba(55,72,221,0.23)] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98]">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 0, 'wght' 300;">mail</span>
+                Continue with Email
+            </button>
+</div>
+<!-- Trust & Policies -->
+<div class="mt-10 text-center opacity-80">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+                By continuing, you agree to our <br class="hidden sm:block"/>
+<a class="text-primary hover:underline underline-offset-4 decoration-primary/30 transition-all" href="#">Terms of Service</a> and 
+                <a class="text-primary hover:underline underline-offset-4 decoration-primary/30 transition-all" href="#">Privacy Policy</a>.
+            </p>
+</div>
+</main>
+</body></html>
