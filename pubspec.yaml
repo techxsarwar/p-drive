@@ -13,7 +13,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   go_router: ^14.2.0
   flutter_animate: ^4.5.0
-  lucide_icons: ^0.320.0
+  lucide_icons: ^0.257.0
   google_fonts: ^6.2.1
   shared_preferences: ^2.2.2
   dio: ^5.4.0
