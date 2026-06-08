@@ -28,8 +28,20 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Back up local files
+        run: |
+          mv lib/main.dart lib/main.dart.bak
+          mv pubspec.yaml pubspec.yaml.bak
+
       - name: Create Android Platform wrapper & Set Package Name
         run: flutter create --platforms=android --org com.parallelogramfoundation --project-name pdrive --overwrite .
+
+      - name: Restore backed up files
+        run: |
+          rm lib/main.dart
+          mv lib/main.dart.bak lib/main.dart
+          rm pubspec.yaml
+          mv pubspec.yaml.bak pubspec.yaml
 
       - name: Configure Android Internet Permission
         run: |
