@@ -29,7 +29,7 @@ jobs:
           cache: true
 
       - name: Create Android Platform wrapper & Set Package Name
-        run: flutter create --platforms=android --org com.techxsarwar .
+        run: flutter create --platforms=android --org com.parallelogramfoundation --project-name pdrive --overwrite .
 
       - name: Configure Android Internet Permission
         run: |

@@ -1,4 +1,4 @@
-name: p_drive_cloud
+name: pdrive
 description: "A warm minimalist cloud storage application UI in Flutter."
 publish_to: 'none'
 
