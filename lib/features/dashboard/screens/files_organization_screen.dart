@@ -176,7 +176,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                   IconButton(
                     onPressed: () {},
                     icon: Icon(
-                      LucideIcons.more_vertical,
+                      LucideIcons.ellipsis_vertical,
                       color: theme.colorScheme.onSurface.withOpacity(0.4),
                       size: 20,
                     ),
@@ -291,7 +291,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  LucideIcons.more_vertical,
+                  LucideIcons.ellipsis_vertical,
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                   size: 20,
                 ),
@@ -366,7 +366,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                   prefixIcon: const Icon(LucideIcons.search, size: 20),
                   suffixIcon: IconButton(
                     onPressed: () {},
-                    icon: const Icon(LucideIcons.sliders, size: 18),
+                    icon: const Icon(LucideIcons.sliders_horizontal, size: 18),
                   ),
                   fillColor: const Color(0xFFF1F1EF),
                   filled: true,

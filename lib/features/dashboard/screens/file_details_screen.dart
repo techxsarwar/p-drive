@@ -150,7 +150,7 @@ class FileDetailsScreen extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(LucideIcons.more_vertical),
+            icon: const Icon(LucideIcons.ellipsis_vertical),
           ),
         ],
       ),
@@ -280,7 +280,7 @@ class FileDetailsScreen extends ConsumerWidget {
                     },
                   ),
                   buildBentoAction(
-                    icon: LucideIcons.edit_3,
+                    icon: LucideIcons.pencil,
                     label: 'Rename',
                     onTap: () {},
                   ),

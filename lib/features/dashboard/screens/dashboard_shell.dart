@@ -128,7 +128,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                       Row(
                         children: [
                           Icon(
-                            storageState.isUploading ? LucideIcons.upload_cloud : LucideIcons.download_cloud,
+                            storageState.isUploading ? LucideIcons.cloud_upload : LucideIcons.cloud_download,
                             color: theme.colorScheme.primary,
                             size: 20,
                           ),

@@ -221,7 +221,7 @@ class HomeDashboardScreen extends ConsumerWidget {
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  LucideIcons.more_vertical,
+                  LucideIcons.ellipsis_vertical,
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                   size: 20,
                 ),

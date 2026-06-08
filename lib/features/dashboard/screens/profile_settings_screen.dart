@@ -254,7 +254,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          child: const Icon(LucideIcons.edit_2, color: Colors.white, size: 14),
+                          child: const Icon(LucideIcons.pencil, color: Colors.white, size: 14),
                         ),
                       ),
                     ],
