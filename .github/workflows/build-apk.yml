@@ -57,6 +57,23 @@ jobs:
               f.write(content)
           "
 
+      - name: Configure Android SDK versions to 36
+        run: |
+          python3 -c "
+          import os
+          path = 'android/app/build.gradle'
+          with open(path, 'r') as f:
+              content = f.read()
+          # Override compileSdk and targetSdk to 36
+          content = content.replace('compileSdk = flutter.compileSdkVersion', 'compileSdk = 36')
+          content = content.replace('compileSdkVersion flutter.compileSdkVersion', 'compileSdkVersion 36')
+          content = content.replace('targetSdk = flutter.targetSdkVersion', 'targetSdk = 36')
+          content = content.replace('targetSdkVersion flutter.targetSdkVersion', 'targetSdkVersion 36')
+          with open(path, 'w') as f:
+              f.write(content)
+          print('Successfully forced compileSdk and targetSdk to 36')
+          "
+
       - name: Install Dependencies
         run: flutter pub get
 
