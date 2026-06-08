@@ -28,6 +28,23 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Create Android Platform wrapper & Set Package Name
+        run: flutter create --platforms=android --org com.techxsarwar .
+
+      - name: Configure Android Internet Permission
+        run: |
+          python3 -c "
+          import os
+          path = 'android/app/src/main/AndroidManifest.xml'
+          with open(path, 'r') as f:
+              content = f.read()
+          # Inject internet permission right after the opening manifest tag
+          if 'android.permission.INTERNET' not in content:
+              content = content.replace('<manifest ', '<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <uses-permission android:name=\"android.permission.INTERNET\"/>\n')
+          with open(path, 'w') as f:
+              f.write(content)
+          "
+
       - name: Install Dependencies
         run: flutter pub get
 
