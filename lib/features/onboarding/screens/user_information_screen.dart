@@ -244,7 +244,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                             children: [
                               Text('Continue'),
                               SizedBox(width: 8),
-                              Icon(LucideIcons.arrowRight, size: 18),
+                              Icon(LucideIcons.arrow_right, size: 18),
                             ],
                           ),
                   ),

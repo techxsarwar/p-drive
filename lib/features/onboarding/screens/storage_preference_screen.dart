@@ -147,7 +147,7 @@ class StoragePreferenceScreen extends ConsumerWidget {
                 children: [
                   IconButton(
                     onPressed: () => context.pop(),
-                    icon: const Icon(LucideIcons.arrowLeft),
+                    icon: const Icon(LucideIcons.arrow_left),
                     style: IconButton.styleFrom(
                       padding: const EdgeInsets.all(12),
                     ),
@@ -219,7 +219,7 @@ class StoragePreferenceScreen extends ConsumerWidget {
                             child: buildCategoryCard(
                               id: 'documents',
                               title: 'Documents',
-                              icon: LucideIcons.fileText,
+                              icon: LucideIcons.file_text,
                             ),
                           ),
                           const SizedBox(width: 16),

@@ -130,7 +130,7 @@ class UploadBottomSheet extends ConsumerWidget {
             childAspectRatio: 1.15,
             children: [
               buildOptionButton(
-                icon: LucideIcons.filePlus,
+                icon: LucideIcons.file_plus,
                 label: 'Upload File',
                 onTap: () async {
                   Navigator.of(context).pop();
@@ -147,7 +147,7 @@ class UploadBottomSheet extends ConsumerWidget {
                 },
               ),
               buildOptionButton(
-                icon: LucideIcons.folderPlus,
+                icon: LucideIcons.folder_plus,
                 label: 'New Folder',
                 onTap: () {
                   Navigator.of(context).pop();

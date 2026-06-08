@@ -122,7 +122,7 @@ class ReadyToGoScreen extends ConsumerWidget {
                         children: [
                           Text('Enter P-Drive'),
                           SizedBox(width: 8),
-                          Icon(LucideIcons.arrowRight, size: 20),
+                          Icon(LucideIcons.arrow_right, size: 20),
                         ],
                       ),
                     ),

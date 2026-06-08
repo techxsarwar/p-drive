@@ -153,7 +153,7 @@ class HomeDashboardScreen extends ConsumerWidget {
       Color iconColor = const Color(0xFF6B7280);
 
       if (name.toLowerCase().endsWith('.pdf')) {
-        fileIcon = LucideIcons.fileText;
+        fileIcon = LucideIcons.file_text;
         iconBgColor = const Color(0xFFFFDAD6);
         iconColor = const Color(0xFFBA1A1A);
       } else if (name.toLowerCase().endsWith('.png') || name.toLowerCase().endsWith('.jpg') || name.toLowerCase().endsWith('.jpeg')) {
@@ -161,7 +161,7 @@ class HomeDashboardScreen extends ConsumerWidget {
         iconBgColor = const Color(0xFFE9EDFF);
         iconColor = theme.colorScheme.primary;
       } else if (name.toLowerCase().endsWith('.docx') || name.toLowerCase().endsWith('.doc')) {
-        fileIcon = LucideIcons.fileSpreadsheet;
+        fileIcon = LucideIcons.file_spreadsheet;
         iconBgColor = const Color(0xFFE8F5E9);
         iconColor = const Color(0xFF006B2D);
       }
@@ -221,7 +221,7 @@ class HomeDashboardScreen extends ConsumerWidget {
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  LucideIcons.moreVertical,
+                  LucideIcons.more_vertical,
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                   size: 20,
                 ),
@@ -415,7 +415,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                   },
                 ),
                 buildQuickActionButton(
-                  icon: LucideIcons.folderPlus,
+                  icon: LucideIcons.folder_plus,
                   label: 'New Folder',
                   onTap: () {
                     // Navigate to files tab
@@ -428,7 +428,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                   onTap: () {},
                 ),
                 buildQuickActionButton(
-                  icon: LucideIcons.share2,
+                  icon: LucideIcons.share_2,
                   label: 'Share',
                   onTap: () {},
                 ),

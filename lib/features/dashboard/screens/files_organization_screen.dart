@@ -176,7 +176,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                   IconButton(
                     onPressed: () {},
                     icon: Icon(
-                      LucideIcons.moreVertical,
+                      LucideIcons.more_vertical,
                       color: theme.colorScheme.onSurface.withOpacity(0.4),
                       size: 20,
                     ),
@@ -223,7 +223,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
       Color iconColor = const Color(0xFF6B7280);
 
       if (name.toLowerCase().endsWith('.pdf')) {
-        fileIcon = LucideIcons.fileText;
+        fileIcon = LucideIcons.file_text;
         iconBgColor = const Color(0xFFFFDAD6);
         iconColor = const Color(0xFFBA1A1A);
       } else if (name.toLowerCase().endsWith('.png') || name.toLowerCase().endsWith('.jpg') || name.toLowerCase().endsWith('.jpeg')) {
@@ -231,7 +231,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
         iconBgColor = const Color(0xFFE9EDFF);
         iconColor = theme.colorScheme.primary;
       } else if (name.toLowerCase().endsWith('.docx') || name.toLowerCase().endsWith('.doc')) {
-        fileIcon = LucideIcons.fileSpreadsheet;
+        fileIcon = LucideIcons.file_spreadsheet;
         iconBgColor = const Color(0xFFE8F5E9);
         iconColor = const Color(0xFF006B2D);
       }
@@ -291,7 +291,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
               IconButton(
                 onPressed: () {},
                 icon: Icon(
-                  LucideIcons.moreVertical,
+                  LucideIcons.more_vertical,
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                   size: 20,
                 ),
@@ -401,7 +401,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 if (!isRoot)
                   IconButton(
                     onPressed: () => storageNotifier.navigateUp(),
-                    icon: const Icon(LucideIcons.chevronLeft, size: 20),
+                    icon: const Icon(LucideIcons.chevron_left, size: 20),
                     style: IconButton.styleFrom(
                       backgroundColor: const Color(0xFFF1F1EF),
                       padding: const EdgeInsets.all(8),
@@ -422,7 +422,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 if (_activeTab == 'Folders')
                   TextButton.icon(
                     onPressed: () {},
-                    icon: const Icon(LucideIcons.arrowUpDown, size: 14),
+                    icon: const Icon(LucideIcons.arrow_up_down, size: 14),
                     label: const Text('Name'),
                   ),
               ],

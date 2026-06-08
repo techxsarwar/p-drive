@@ -183,7 +183,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
             color: const Color(0xFF6B7280).withOpacity(0.8),
           ),
         ),
-        trailing: const Icon(LucideIcons.chevronRight, color: Color(0xFFC5C5D8), size: 20),
+        trailing: const Icon(LucideIcons.chevron_right, color: Color(0xFFC5C5D8), size: 20),
       );
     }
 
@@ -254,7 +254,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          child: const Icon(LucideIcons.edit2, color: Colors.white, size: 14),
+                          child: const Icon(LucideIcons.edit_2, color: Colors.white, size: 14),
                         ),
                       ),
                     ],
@@ -452,7 +452,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
                   storageNotifier.updateCredentials('', ''); // clear storage settings too
                   context.go('/');
                 },
-                icon: const Icon(LucideIcons.logOut, color: Color(0xFFBA1A1A), size: 18),
+                icon: const Icon(LucideIcons.log_out, color: Color(0xFFBA1A1A), size: 18),
                 label: const Text('Logout'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFFBA1A1A),

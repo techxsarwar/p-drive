@@ -136,7 +136,7 @@ class FileDetailsScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(LucideIcons.arrowLeft),
+          icon: const Icon(LucideIcons.arrow_left),
         ),
         title: Text(
           'Details',
@@ -150,7 +150,7 @@ class FileDetailsScreen extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(LucideIcons.moreVertical),
+            icon: const Icon(LucideIcons.more_vertical),
           ),
         ],
       ),
@@ -182,7 +182,7 @@ class FileDetailsScreen extends ConsumerWidget {
                     child: Center(
                       child: Icon(
                         name.endsWith('.pdf')
-                            ? LucideIcons.fileText
+                            ? LucideIcons.file_text
                             : name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
                                 ? LucideIcons.image
                                 : LucideIcons.archive,
@@ -244,7 +244,7 @@ class FileDetailsScreen extends ConsumerWidget {
                 mainAxisSpacing: 12,
                 children: [
                   buildBentoAction(
-                    icon: LucideIcons.share2,
+                    icon: LucideIcons.share_2,
                     label: 'Share',
                     isPrimary: true,
                     onTap: () {},
@@ -280,12 +280,12 @@ class FileDetailsScreen extends ConsumerWidget {
                     },
                   ),
                   buildBentoAction(
-                    icon: LucideIcons.edit3,
+                    icon: LucideIcons.edit_3,
                     label: 'Rename',
                     onTap: () {},
                   ),
                   buildBentoAction(
-                    icon: LucideIcons.folderInput,
+                    icon: LucideIcons.folder_input,
                     label: 'Move',
                     onTap: () {},
                   ),
@@ -306,7 +306,7 @@ class FileDetailsScreen extends ConsumerWidget {
                     context.pop();
                   }
                 },
-                icon: const Icon(LucideIcons.trash2, color: Color(0xFFBA1A1A), size: 18),
+                icon: const Icon(LucideIcons.trash_2, color: Color(0xFFBA1A1A), size: 18),
                 label: const Text('Delete File'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFFBA1A1A),
@@ -373,7 +373,7 @@ class FileDetailsScreen extends ConsumerWidget {
                     ),
                     const Divider(height: 1, color: Color(0xFFF1F1EF)),
                     buildDetailRow(
-                      icon: LucideIcons.folderOpen,
+                      icon: LucideIcons.folder_open,
                       label: 'Location',
                       value: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

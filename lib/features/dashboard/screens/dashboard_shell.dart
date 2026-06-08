@@ -128,7 +128,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                       Row(
                         children: [
                           Icon(
-                            storageState.isUploading ? LucideIcons.uploadCloud : LucideIcons.downloadCloud,
+                            storageState.isUploading ? LucideIcons.upload_cloud : LucideIcons.download_cloud,
                             color: theme.colorScheme.primary,
                             size: 20,
                           ),
@@ -214,7 +214,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      buildNavItem(0, LucideIcons.layoutGrid, LucideIcons.layoutGrid, 'Home'),
+                      buildNavItem(0, LucideIcons.layout_grid, LucideIcons.layout_grid, 'Home'),
                       buildNavItem(1, LucideIcons.folder, LucideIcons.folder, 'Files'),
                       buildNavItem(2, LucideIcons.users, LucideIcons.users, 'Shared'),
                       buildNavItem(3, LucideIcons.user, LucideIcons.user, 'Profile'),
