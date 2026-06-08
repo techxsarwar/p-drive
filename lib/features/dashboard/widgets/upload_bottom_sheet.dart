@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/telegram_storage_provider.dart';
 
 class UploadBottomSheet extends ConsumerWidget {
@@ -101,7 +102,7 @@ class UploadBottomSheet extends ConsumerWidget {
 
           // Header Row
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Create New',

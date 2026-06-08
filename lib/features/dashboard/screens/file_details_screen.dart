@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/telegram_storage_provider.dart';
 
@@ -110,7 +110,7 @@ class FileDetailsScreen extends ConsumerWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.between,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
@@ -161,31 +161,35 @@ class FileDetailsScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             // Large File Preview
             Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width - 48,
-                maxHeight: 240,
-                aspectRatio: 4 / 3,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F1EF),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 240),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 48,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F1EF),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Icon(
-                    name.endsWith('.pdf')
-                        ? LucideIcons.fileText
-                        : name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
-                            ? LucideIcons.image
-                            : LucideIcons.archive,
-                    size: 80,
-                    color: const Color(0xFFC5C5D8),
+                    child: Center(
+                      child: Icon(
+                        name.endsWith('.pdf')
+                            ? LucideIcons.fileText
+                            : name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
+                                ? LucideIcons.image
+                                : LucideIcons.archive,
+                        size: 80,
+                        color: const Color(0xFFC5C5D8),
+                      ),
+                    ),
                   ),
                 ),
               ),
