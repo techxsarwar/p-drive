@@ -6,9 +6,19 @@ import 'core/theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/services/transfer_foreground_service.dart';
 import 'core/widgets/telegram_theme_switcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load .env variables (fail gracefully if missing)
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint("No .env file found or empty. Using fallback/empty credentials.");
+  }
+
   // Set up the foreground service so it's ready before any transfer starts.
   TransferForegroundService.initialize();
 
@@ -19,11 +29,34 @@ void main() {
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _requestPermissions();
+    });
+  }
+
+  Future<void> _requestPermissions() async {
+    await [
+      Permission.notification,
+      Permission.storage,
+      Permission.photos,
+      Permission.videos,
+    ].request();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
 
     // WithForegroundTask is required by flutter_foreground_task to properly

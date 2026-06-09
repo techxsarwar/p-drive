@@ -114,11 +114,11 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     final onboardingState = ref.watch(onboardingProvider);
 
     final displayName = authState.isAuthenticated 
-        ? (authState.displayName ?? 'Google User') 
-        : (onboardingState.username.isNotEmpty ? onboardingState.username : 'Guest Explorer');
+        ? (authState.displayName ?? 'P-Drive Profile') 
+        : (onboardingState.username.isNotEmpty ? onboardingState.username : 'Local Explorer');
     final userEmail = authState.isAuthenticated 
         ? (authState.email ?? 'Connected') 
-        : 'Connected Mode (Local)';
+        : 'Encrypted Mode';
 
     final int usedBytes = storageState.allFiles.fold(0, (sum, f) => sum + ((f['size_bytes'] as num?)?.toInt() ?? 0));
     const int totalBytes = 100 * 1024 * 1024 * 1024; // 100 GB

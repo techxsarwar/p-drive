@@ -56,6 +56,7 @@ class TransferForegroundService {
         eventAction: ForegroundTaskEventAction.nothing(),
         autoRunOnBoot: false,
         allowWifiLock: true,
+        allowWakeLock: true,
       ),
     );
   }

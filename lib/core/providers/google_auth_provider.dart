@@ -106,12 +106,12 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
       if (account != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool(_isAuthenticatedKey, true);
-        await prefs.setString(_displayNameKey, account.displayName ?? 'Google User');
+        await prefs.setString(_displayNameKey, account.displayName ?? 'P-Drive Profile');
         await prefs.setString(_emailKey, account.email);
 
         state = state.copyWith(
           isAuthenticated: true,
-          displayName: account.displayName ?? 'Google User',
+          displayName: account.displayName ?? 'P-Drive Profile',
           email: account.email,
           avatarUrl: account.photoUrl,
           isLoading: false,

@@ -124,6 +124,11 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Generate App Name and Icons
+        run: |
+          flutter pub run flutter_launcher_name:main
+          flutter pub run flutter_launcher_icons:main
+
       - name: Build APK (Debug and Release)
         run: |
           flutter build apk --debug

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../core/services/telegram_service.dart';
 import '../../../core/services/transfer_foreground_service.dart';
 
@@ -24,8 +25,8 @@ class TelegramStorageState {
   final String? transferStatus;
 
   TelegramStorageState({
-    this.botToken = '8888156987:AAFQNwjgnTR6GQ2JKdEaYbWbxlT7r1pS8kw',
-    this.chatId = '-1003875203962',
+    this.botToken = '',
+    this.chatId = '',
     this.currentPath = '/',
     this.allFolders = const [],
     this.allFiles = const [],
@@ -85,9 +86,9 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
     state = state.copyWith(isLoading: true);
     _prefs = await SharedPreferences.getInstance();
     
-    final savedToken = _prefs?.getString('tg_bot_token') ?? '8888156987:AAFQNwjgnTR6GQ2JKdEaYbWbxlT7r1pS8kw';
-    final savedChatId = _prefs?.getString('tg_chat_id') ?? '-1003875203962';
-    final savedChunking = _prefs?.getBool('tg_is_chunking_enabled') ?? true;
+    final savedToken = _prefs?.getString('tg_bot_token') ?? dotenv.env['TELEGRAM_BOT_TOKEN'] ?? '';
+    final savedChatId = _prefs?.getString('tg_chat_id') ?? dotenv.env['TELEGRAM_CHAT_ID'] ?? '';
+    final savedChunking = _prefs?.getBool('tg_is_chunking_enabled') ?? false;
     
     state = state.copyWith(
       botToken: savedToken,
