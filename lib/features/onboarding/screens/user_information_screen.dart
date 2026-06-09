@@ -45,10 +45,11 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
       Future.delayed(const Duration(milliseconds: 800), () {
         if (mounted) {
           ref.read(onboardingProvider.notifier).setUsername(_nameController.text.trim());
+          ref.read(onboardingProvider.notifier).completeOnboarding();
           setState(() {
             _isLoading = false;
           });
-          context.push('/onboarding/store');
+          context.go('/dashboard/home');
         }
       });
     }
@@ -65,41 +66,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
           child: Column(
             children: [
               const SizedBox(height: 16),
-              // Segmented Onboarding Progress Bar
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 16),
 
               Expanded(
                 child: SingleChildScrollView(
@@ -154,8 +121,8 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
 
                         // Title & Prompt
                         Text(
-                          "Let's get started",
-                          style: theme.textTheme.headlineLarge,
+                          "Welcome to P-Drive",
+                          style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ).animate().fade(delay: 100.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                         const SizedBox(height: 8),
@@ -258,7 +225,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                         : const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Continue'),
+                              Text('Enter Dashboard'),
                               SizedBox(width: 8),
                               Icon(LucideIcons.arrow_right, size: 18),
                             ],

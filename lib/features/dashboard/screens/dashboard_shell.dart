@@ -298,12 +298,52 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                     ),
                     _buildDrawerItem(
                       theme: theme,
+                      icon: LucideIcons.star,
+                      label: 'Favorites',
+                      isSelected: false,
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Favorites coming soon')));
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.clock,
+                      label: 'Recent Files',
+                      isSelected: false,
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Recent Files coming soon')));
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.trash_2,
+                      label: 'Trash Bin',
+                      isSelected: false,
+                      onTap: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Trash Bin coming soon')));
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
                       icon: LucideIcons.user,
                       label: 'Profile Settings',
                       isSelected: currentIndex == 3,
                       onTap: () {
                         Navigator.pop(context);
                         _onItemTapped(3, context);
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.file_text,
+                      label: 'Legal & Policies',
+                      isSelected: false,
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/legal');
                       },
                     ),
                     const SizedBox(height: 8),

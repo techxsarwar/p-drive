@@ -4,8 +4,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
+import '../../../core/widgets/top_toast.dart';
+import '../../../core/providers/google_auth_provider.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/springy_tap.dart';
+import '../widgets/video_preview_widget.dart';
 
 class FileDetailsScreen extends ConsumerWidget {
   final String filename;
@@ -94,9 +99,8 @@ class FileDetailsScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Link copied to clipboard!')),
-                      );
+                      Clipboard.setData(ClipboardData(text: mockShareLink));
+                      TopToast.show(context, 'Link copied to clipboard!');
                     },
                     child: const Text('Copy'),
                   ),
@@ -126,9 +130,10 @@ class FileDetailsScreen extends ConsumerWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Shared via $label successfully!')),
-        );
+        // Since we are simulating, we just trigger the native share dialog with the generated link.
+        final String mockShareLink = "https://pdrive.cloud/s/${Uri.encodeComponent('file')}";
+        Share.share('Check out my file on P-Drive: $mockShareLink', subject: 'P-Drive File Share');
+        TopToast.show(context, 'Opening native share sheet...');
       },
       borderRadius: BorderRadius.circular(12),
       child: Padding(
@@ -223,10 +228,7 @@ class FileDetailsScreen extends ConsumerWidget {
                     }
                     
                     Navigator.of(context).pop(); // pop bottom sheet
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Renaming file to "$newName"...')),
-                    );
+                    TopToast.show(context, 'Renaming file to "$newName"...');
                     
                     await ref.read(telegramStorageProvider.notifier).renameFile(oldName, newName, fileId);
                     
@@ -346,10 +348,7 @@ class FileDetailsScreen extends ConsumerWidget {
                       }
                       
                       Navigator.of(context).pop(); // pop bottom sheet
-                      
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Moving file to "$selectedFolder"...')),
-                      );
+                      TopToast.show(context, 'Moving file to "$selectedFolder"...');
                       
                       await ref.read(telegramStorageProvider.notifier).moveFile(filename, fileId, selectedFolder);
                       
@@ -381,6 +380,9 @@ class FileDetailsScreen extends ConsumerWidget {
     // Observers
     final storageState = ref.watch(telegramStorageProvider);
     final storageNotifier = ref.read(telegramStorageProvider.notifier);
+    final authState = ref.watch(googleAuthProvider);
+    final ownerName = authState.displayName ?? 'Unknown User';
+    final ownerInitials = ownerName.isNotEmpty ? ownerName.substring(0, 1).toUpperCase() : '?';
 
     // Find current file matching details
     final file = storageState.allFiles.firstWhere(
@@ -502,12 +504,6 @@ class FileDetailsScreen extends ConsumerWidget {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(LucideIcons.ellipsis_vertical),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -537,17 +533,19 @@ class FileDetailsScreen extends ConsumerWidget {
                           : null,
                     ),
                     child: Center(
-                      child: Icon(
-                        name.endsWith('.pdf')
-                            ? LucideIcons.file_text
-                            : name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
-                                ? LucideIcons.image
-                                : LucideIcons.archive,
-                        size: 80,
-                        color: theme.brightness == Brightness.dark
-                            ? const Color(0xFF334155)
-                            : const Color(0xFFC5C5D8),
-                      ),
+                      child: name.toLowerCase().endsWith('.mp4') || name.toLowerCase().endsWith('.mov') || name.toLowerCase().endsWith('.mkv')
+                          ? const VideoPreviewWidget(videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')
+                          : Icon(
+                              name.endsWith('.pdf')
+                                  ? LucideIcons.file_text
+                                  : name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
+                                      ? LucideIcons.image
+                                      : LucideIcons.archive,
+                              size: 80,
+                              color: theme.brightness == Brightness.dark
+                                  ? const Color(0xFF334155)
+                                  : const Color(0xFFC5C5D8),
+                            ),
                     ),
                   ),
                 ),
@@ -613,27 +611,19 @@ class FileDetailsScreen extends ConsumerWidget {
                     label: 'Save',
                     onTap: () async {
                       if (fileId.isEmpty || fileId == 'fallback_id') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Mock File: Downloading simulator complete.')),
-                        );
+                        TopToast.show(context, 'Mock File: Downloading simulator complete.');
                         return;
                       }
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Starting download from secure cloud...')),
-                      );
+                      TopToast.show(context, 'Starting download from secure cloud...');
                       
                       final path = await storageNotifier.downloadFile(name, fileId);
                       
                       if (context.mounted) {
                         if (path != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('File saved to: $path')),
-                          );
+                          TopToast.show(context, 'File saved to: $path');
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Failed to download file from secure cloud.')),
-                          );
+                          TopToast.show(context, 'Failed to download file from secure cloud.', isError: true);
                         }
                       }
                     },
@@ -657,9 +647,7 @@ class FileDetailsScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
               child: SpringyTap(
                 onTap: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Deleting "$name" from cloud...')),
-                  );
+                  TopToast.show(context, 'Deleting "$name" from cloud...');
                   await storageNotifier.deleteFile(name, fileId);
                   if (context.mounted) {
                     context.pop();
@@ -769,9 +757,9 @@ class FileDetailsScreen extends ConsumerWidget {
                             ),
                             child: Center(
                               child: Text(
-                                'SJ',
+                                ownerInitials,
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.primary,
                                 ),
@@ -780,7 +768,7 @@ class FileDetailsScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Sarah Jenkins',
+                            ownerName,
                             style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         ],

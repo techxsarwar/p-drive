@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
@@ -22,9 +23,14 @@ Future<void> main() async {
   // Set up the foreground service so it's ready before any transfer starts.
   TransferForegroundService.initialize();
 
+  final prefs = await SharedPreferences.getInstance();
+
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const MyApp(),
     ),
   );
 }
@@ -58,6 +64,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
+    final router = ref.watch(routerProvider);
 
     // WithForegroundTask is required by flutter_foreground_task to properly
     // handle the foreground service lifecycle (e.g. back-press behaviour).
@@ -68,7 +75,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
-        routerConfig: appRouter,
+        routerConfig: router,
         builder: (context, child) {
           // Wraps the entire app content to enable the circular theme reveal animation.
           return TelegramThemeSwitcher(

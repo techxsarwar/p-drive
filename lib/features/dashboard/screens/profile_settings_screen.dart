@@ -7,8 +7,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
 import '../../../core/widgets/telegram_theme_switcher.dart';
 import '../../../core/providers/theme_provider.dart';
-import '../../../core/providers/google_auth_provider.dart';
-import '../../onboarding/providers/onboarding_provider.dart';
+import '../../../core/widgets/top_toast.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/springy_tap.dart';
 
@@ -80,7 +79,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
               TextField(
                 controller: tokenController,
                 decoration: InputDecoration(
-                  hintText: 'Enter Bot Token from @BotFather',
+                  hintText: 'Only For Tele. Devs.',
                   fillColor: theme.inputDecorationTheme.fillColor,
                   filled: true,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
@@ -113,16 +112,10 @@ class ProfileSettingsScreen extends ConsumerWidget {
                     
                     Navigator.of(context).pop();
                     
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Syncing with secure cloud...')),
-                    );
-                    
                     await storageNotifier.updateCredentials(token, chatId);
                     
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Cloud settings saved successfully!')),
-                      );
+                      TopToast.show(context, 'Profile settings saved.');
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -216,106 +209,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
               );
             }).toList(),
           ],
-        ),
-      ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms),
-    );
-  }
-
-  void _showGoogleConfigDialog(BuildContext context, WidgetRef ref) {
-    final authState = ref.read(googleAuthProvider);
-    final authNotifier = ref.read(googleAuthProvider.notifier);
-    
-    final clientIdController = TextEditingController(text: authState.clientId);
-    final theme = Theme.of(context);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.25),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Container(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Google Developer API',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(LucideIcons.x),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Configure your Google OAuth 2.0 Credentials. Leave empty to fallback to mock simulation mode.',
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Client ID Field
-              const Text('GOOGLE CLIENT ID', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.2)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: clientIdController,
-                decoration: InputDecoration(
-                  hintText: 'Enter Client ID (e.g. xxxxx.apps.googleusercontent.com)',
-                  fillColor: theme.inputDecorationTheme.fillColor,
-                  filled: true,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                ),
-              ),
-              const SizedBox(height: 28),
-
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final clientId = clientIdController.text.trim();
-                    
-                    Navigator.of(context).pop();
-                    
-                    await authNotifier.saveCredentials(clientId);
-                    
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Google OAuth credentials saved successfully!')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
-                  ),
-                  child: const Text('Save Credentials', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
         ),
       ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms),
     );
@@ -417,9 +310,7 @@ void _showSecurityDialog(BuildContext context, WidgetRef ref) {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Security settings updated successfully!')),
-                      );
+                      TopToast.show(context, 'Security settings have been updated.');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
@@ -535,9 +426,7 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Notification settings updated successfully!')),
-                      );
+                      TopToast.show(context, 'Notification settings updated.');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
@@ -863,25 +752,6 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
               ),
               child: Column(
                 children: [
-                  // Cloud Backend configuration trigger
-                  buildSettingItem(
-                    icon: LucideIcons.send,
-                    iconColor: theme.colorScheme.primary,
-                    title: 'Cloud Storage Pipeline',
-                    subtitle: hasBackend ? 'Active (Tap to edit config)' : 'Tap to configure storage pipeline',
-                    onTap: () => _showCloudConfigDialog(context, ref),
-                  ),
-                  Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
-                  buildSettingItem(
-                    icon: LucideIcons.globe,
-                    iconColor: theme.colorScheme.primary,
-                    title: 'Google Account Connection',
-                    subtitle: ref.watch(googleAuthProvider).isAuthenticated
-                        ? 'Connected & Active (${ref.watch(googleAuthProvider).email})'
-                        : 'Tap to connect Google account',
-                    onTap: () => _showGoogleConfigDialog(context, ref),
-                  ),
-                  Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                   buildSettingItem(
                     icon: LucideIcons.shield,
                     title: 'Security',

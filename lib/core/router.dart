@@ -5,6 +5,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 
 // Screens
 import '../features/auth/screens/welcome_login_screen.dart';
+import '../features/auth/screens/app_lock_screen.dart';
 import '../features/onboarding/screens/user_information_screen.dart';
 import '../features/onboarding/screens/storage_preference_screen.dart';
 import '../features/onboarding/screens/discovery_screen.dart';
@@ -109,16 +110,54 @@ class SharedTabPlaceholder extends StatelessWidget {
   }
 }
 
-// ─── App Router ─────────────────────────────────────────────────────────────
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'providers/google_auth_provider.dart';
 
-final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
-  routes: [
+// ─── Shared Preferences Provider ────────────────────────────────────────────
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError('Initialize this in main.dart');
+});
+
+// ─── App Router Provider ────────────────────────────────────────────────────
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  final isInitiallyAuthenticated = prefs.getBool('google_auth_is_authenticated') ?? false;
+
+  return GoRouter(
+    initialLocation: isInitiallyAuthenticated ? '/lock' : '/',
+    redirect: (context, state) {
+      final authState = ref.watch(googleAuthProvider);
+      final isAuth = authState.isAuthenticated;
+      
+      final isSplash = state.matchedLocation == '/';
+      final isOnboarding = state.matchedLocation.startsWith('/onboarding');
+      final isLock = state.matchedLocation == '/lock';
+      
+      if (isAuth && (isSplash || isOnboarding)) {
+        // Only redirect to lock if they are just logging in or opening app
+        return '/lock';
+      }
+      
+      if (!isAuth && !isSplash && !isOnboarding && !isLock) {
+        return '/';
+      }
+      return null;
+    },
+    routes: [
     // Welcome / Login screen
     GoRoute(
       path: '/',
       pageBuilder: (context, state) => _telegramPage(
         context: context, state: state, child: const WelcomeLoginScreen()),
+    ),
+    
+    // App Lock screen
+    GoRoute(
+      path: '/lock',
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const AppLockScreen()),
     ),
 
     // Onboarding screens — all with Telegram transitions
@@ -126,21 +165,6 @@ final GoRouter appRouter = GoRouter(
       path: '/onboarding/name',
       pageBuilder: (context, state) => _telegramPage(
         context: context, state: state, child: const UserInformationScreen()),
-    ),
-    GoRoute(
-      path: '/onboarding/store',
-      pageBuilder: (context, state) => _telegramPage(
-        context: context, state: state, child: const StoragePreferenceScreen()),
-    ),
-    GoRoute(
-      path: '/onboarding/discovery',
-      pageBuilder: (context, state) => _telegramPage(
-        context: context, state: state, child: const DiscoveryScreen()),
-    ),
-    GoRoute(
-      path: '/onboarding/ready',
-      pageBuilder: (context, state) => _telegramPage(
-        context: context, state: state, child: const ReadyToGoScreen()),
     ),
 
     // Shell route — no transition between tabs (feels instant like Telegram)
@@ -197,3 +221,4 @@ final GoRouter appRouter = GoRouter(
     ),
   ],
 );
+});

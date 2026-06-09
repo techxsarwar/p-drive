@@ -155,18 +155,26 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
       final filesInFolder = storageState.allFiles.where((f) => f['path'].toString().startsWith(fullPath)).toList();
       final totalSizeBytes = filesInFolder.fold<int>(0, (sum, f) => sum + (f['size_bytes'] as num).toInt());
 
+      final colors = [
+        Colors.blue, Colors.purple, Colors.orange, Colors.green, Colors.red, Colors.teal, Colors.indigo, Colors.pink
+      ];
+      final folderColor = colors[relativeFolderName.hashCode.abs() % colors.length];
+
       return SpringyTap(
-        onTap: () => storageNotifier.changeDirectory(fullPath),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          storageNotifier.changeDirectory(fullPath);
+        },
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
+            color: folderColor.withOpacity(0.05),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+            border: Border.all(color: folderColor.withOpacity(0.3)),
             boxShadow: theme.brightness == Brightness.light
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
+                      color: folderColor.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -184,13 +192,41 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.12),
+                      color: folderColor.withOpacity(0.12),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(LucideIcons.folder, color: theme.colorScheme.primary, size: 22),
+                    child: Icon(LucideIcons.folder, color: folderColor, size: 22),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        builder: (ctx) => Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(relativeFolderName, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              const SizedBox(height: 16),
+                              ListTile(
+                                leading: const Icon(LucideIcons.folder_open),
+                                title: const Text('Open Folder'),
+                                onTap: () {
+                                  Navigator.pop(ctx);
+                                  storageNotifier.changeDirectory(fullPath);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                     icon: Icon(
                       LucideIcons.ellipsis_vertical,
                       color: theme.colorScheme.onSurface.withOpacity(0.4),

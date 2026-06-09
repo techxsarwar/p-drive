@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../core/services/telegram_service.dart';
 import '../../../core/services/transfer_foreground_service.dart';
+import '../../../core/providers/google_auth_provider.dart';
 
 class TelegramStorageState {
   final String botToken;
@@ -75,9 +76,10 @@ class TelegramStorageState {
 
 class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
   final TelegramService _telegramService = TelegramService();
+  final Ref _ref;
   SharedPreferences? _prefs;
 
-  TelegramStorageNotifier() : super(TelegramStorageState()) {
+  TelegramStorageNotifier(this._ref) : super(TelegramStorageState()) {
     _init();
   }
 
@@ -120,6 +122,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
           'size_bytes': 2516582, // 2.4 MB
           'uploaded_at': '2026-06-08T19:00:00Z',
           'file_id': 'mock_pdf_id_1',
+          'owner_email': _currentUserEmail,
         },
         {
           'name': 'Brand_Guidelines_V2.png',
@@ -127,6 +130,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
           'size_bytes': 5347737, // 5.1 MB
           'uploaded_at': '2026-06-07T14:30:00Z',
           'file_id': 'mock_png_id_2',
+          'owner_email': _currentUserEmail,
         },
         {
           'name': 'Project_Kickoff_Notes.docx',
@@ -134,6 +138,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
           'size_bytes': 148480, // 145 KB
           'uploaded_at': '2026-06-08T10:00:00Z',
           'file_id': 'mock_docx_id_3',
+          'owner_email': _currentUserEmail,
         },
         {
           'name': 'Q4_Marketing_Assets.zip',
@@ -141,6 +146,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
           'size_bytes': 149422080, // 142.5 MB
           'uploaded_at': '2026-06-08T18:15:00Z',
           'file_id': 'mock_zip_id_4',
+          'owner_email': _currentUserEmail,
         }
       ],
       isLoading: false,
@@ -200,11 +206,19 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
             if (jsonString != null) {
               final Map<String, dynamic> catalog = jsonDecode(jsonString);
               final List<dynamic> folders = catalog['folders'] ?? [];
-              final List<dynamic> files = catalog['files'] ?? [];
+              final List<dynamic> allCatalogFiles = catalog['files'] ?? [];
 
+              // Filter files strictly by the current logged-in user
+              final List<Map<String, dynamic>> userFiles = allCatalogFiles
+                  .map((f) => Map<String, dynamic>.from(f))
+                  .where((f) => f['owner_email'] == _currentUserEmail)
+                  .toList();
+
+              // Get folders that actually contain user files (or root folders)
+              // We'll trust the catalog folders but in a real app, you'd filter folders by ownership too.
               state = state.copyWith(
                 allFolders: folders.cast<String>(),
-                allFiles: files.map((f) => Map<String, dynamic>.from(f)).toList(),
+                allFiles: userFiles,
                 pinnedMessageId: messageId,
                 isLoading: false,
               );
@@ -237,9 +251,38 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
       final tempDir = await getTemporaryDirectory();
       final file = File('${tempDir.path}/catalog.json');
 
+      // Fetch current pinned catalog directly to avoid overwriting other users' files
+      List<dynamic> completeCatalogFiles = [];
+      List<dynamic> completeCatalogFolders = [];
+      try {
+        final chatDetails = await _telegramService.getChatDetails(
+          botToken: state.botToken,
+          chatId: state.chatId,
+        );
+        if (chatDetails != null && chatDetails['pinned_message'] != null) {
+          final fileId = chatDetails['pinned_message']['document']['file_id'];
+          final filePath = await _telegramService.getFilePath(botToken: state.botToken, fileId: fileId);
+          if (filePath != null) {
+            final jsonString = await _telegramService.downloadTextFile(botToken: state.botToken, filePath: filePath);
+            if (jsonString != null) {
+              final Map<String, dynamic> catalog = jsonDecode(jsonString);
+              completeCatalogFiles = catalog['files'] ?? [];
+              completeCatalogFolders = catalog['folders'] ?? [];
+            }
+          }
+        }
+      } catch (_) {}
+
+      // Replace the current user's files in the complete catalog
+      completeCatalogFiles.removeWhere((f) => f['owner_email'] == _currentUserEmail);
+      completeCatalogFiles.addAll(state.allFiles);
+
+      // Merge folders (simplified, just union them)
+      final Set<String> mergedFolders = Set<String>.from(completeCatalogFolders.cast<String>())..addAll(state.allFolders);
+
       final catalogMap = {
-        'folders': state.allFolders,
-        'files': state.allFiles,
+        'folders': mergedFolders.toList(),
+        'files': completeCatalogFiles,
       };
 
       await file.writeAsString(jsonEncode(catalogMap));
@@ -413,6 +456,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
           'file_id': fileIdRoot,
           'is_chunked': true,
           'chunks': chunksMeta,
+          'owner_email': _currentUserEmail,
         };
 
         state = state.copyWith(
@@ -443,6 +487,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
             'size_bytes': fileSize,
             'uploaded_at': DateTime.now().toIso8601String(),
             'file_id': 'mock_${DateTime.now().millisecondsSinceEpoch}',
+            'owner_email': _currentUserEmail,
           };
 
           state = state.copyWith(
@@ -482,6 +527,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
             'uploaded_at': DateTime.now().toIso8601String(),
             'file_id': fileId,
             'message_id': msgId,
+            'owner_email': _currentUserEmail,
           };
 
           state = state.copyWith(
@@ -762,8 +808,11 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
     }
     return total;
   }
+  String get _currentUserEmail {
+    return _ref.read(googleAuthProvider).email ?? 'user@example.com';
+  }
 }
 
 final telegramStorageProvider = StateNotifierProvider<TelegramStorageNotifier, TelegramStorageState>((ref) {
-  return TelegramStorageNotifier();
+  return TelegramStorageNotifier(ref);
 });

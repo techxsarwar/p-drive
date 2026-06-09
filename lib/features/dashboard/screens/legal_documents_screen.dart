@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/constants/legal_docs.dart';
 
 class LegalDocumentsScreen extends StatelessWidget {
   const LegalDocumentsScreen({super.key});
-
-  final Map<String, String> _documents = const {
-    'Terms of Service': 'assets/legal/terms_of_service.txt',
-    'Privacy Policy': 'assets/legal/privacy_policy.txt',
-    'Acceptable Use Policy': 'assets/legal/acceptable_use_policy.txt',
-    'Data Retention Policy': 'assets/legal/data_retention_policy.txt',
-    'Security Policy': 'assets/legal/security_policy.txt',
-    'Refund & Subscription Policy': 'assets/legal/refund_&_subscription_policy.txt',
-    'Disclaimer': 'assets/legal/disclaimer.txt',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +28,14 @@ class LegalDocumentsScreen extends StatelessWidget {
       ),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        itemCount: _documents.length,
+        itemCount: legalDocuments.length,
         separatorBuilder: (context, index) => Divider(
           color: theme.dividerColor.withOpacity(0.3),
           height: 1,
         ),
         itemBuilder: (context, index) {
-          final title = _documents.keys.elementAt(index);
-          final path = _documents.values.elementAt(index);
+          final title = legalDocuments.keys.elementAt(index);
+          final content = legalDocuments.values.elementAt(index);
           
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -65,7 +56,7 @@ class LegalDocumentsScreen extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => _DocumentViewerScreen(title: title, filePath: path),
+                  builder: (_) => _DocumentViewerScreen(title: title, content: content),
                 ),
               );
             },
@@ -76,69 +67,65 @@ class LegalDocumentsScreen extends StatelessWidget {
   }
 }
 
-class _DocumentViewerScreen extends StatefulWidget {
+class _DocumentViewerScreen extends StatelessWidget {
   final String title;
-  final String filePath;
+  final String content;
 
-  const _DocumentViewerScreen({required this.title, required this.filePath});
+  const _DocumentViewerScreen({required this.title, required this.content});
 
-  @override
-  State<_DocumentViewerScreen> createState() => _DocumentViewerScreenState();
-}
-
-class _DocumentViewerScreenState extends State<_DocumentViewerScreen> {
-  String _content = '';
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDocument();
-  }
-
-  Future<void> _loadDocument() async {
-    try {
-      final text = await rootBundle.loadString(widget.filePath);
-      setState(() {
-        _content = text;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _content = 'Error loading document: $e';
-        _isLoading = false;
-      });
+  String _formatToMarkdown(String text) {
+    // Basic heuristics to make legal texts look like markdown
+    var lines = text.split('\n');
+    var result = <String>[];
+    for (var line in lines) {
+      final t = line.trim();
+      if (t.isEmpty) {
+        result.add('');
+        continue;
+      }
+      if (t.length < 50 && RegExp(r'^\d+\. ').hasMatch(t)) {
+        result.add('### $t');
+      } else if (t.length < 40 && !t.endsWith('.') && !t.contains(' ')) {
+        result.add('**$t**');
+      } else if (t.startsWith('Effective Date:') || t.startsWith('Last Updated:')) {
+        result.add('*$t*');
+      } else {
+        result.add(t);
+      }
     }
+    return result.join('\n');
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final markdownContent = _formatToMarkdown(content);
     
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: theme.colorScheme.surface,
+        elevation: 1,
         centerTitle: true,
         leading: IconButton(
           icon: Icon(LucideIcons.arrow_left, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          widget.title,
+          title,
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Text(
-                _content,
-                style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
-              ),
-            ),
+      body: Markdown(
+        data: markdownContent,
+        padding: const EdgeInsets.all(24.0),
+        styleSheet: MarkdownStyleSheet(
+          h3: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
+          p: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+          strong: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+          em: theme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        ),
+      ),
     );
   }
 }

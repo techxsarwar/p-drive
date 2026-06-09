@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import '../../../core/widgets/top_toast.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/upload_bottom_sheet.dart';
@@ -189,7 +190,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
                         if (context.mounted) {
                           HapticFeedback.lightImpact();
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Document "$filename" scanned & synced!')));
+                          TopToast.show(context, 'Document "$filename" scanned & synced!');
                         }
                       },
                       icon: const Icon(LucideIcons.camera),
@@ -259,7 +260,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
                       onPressed: () {
                         HapticFeedback.lightImpact();
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link copied!')));
+                        TopToast.show(context, 'Link copied!');
                       },
                       child: const Text('Copy'),
                     ),
@@ -489,7 +490,44 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
                   ),
                 ),
                 IconButton(
-                  onPressed: () => HapticFeedback.lightImpact(),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      builder: (ctx) => Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(name, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 16),
+                            ListTile(
+                              leading: const Icon(LucideIcons.info),
+                              title: const Text('View Details'),
+                              onTap: () {
+                                Navigator.pop(ctx);
+                                context.push('/file-details', extra: name);
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(LucideIcons.trash_2, color: theme.colorScheme.error),
+                              title: Text('Delete File', style: TextStyle(color: theme.colorScheme.error)),
+                              onTap: () async {
+                                Navigator.pop(ctx);
+                                TopToast.show(context, 'Deleting file...');
+                                await storageNotifier.deleteFile(name, file['file_id'] ?? '');
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                   icon: Icon(LucideIcons.ellipsis_vertical,
                       color: theme.colorScheme.onSurface.withOpacity(0.4), size: 20),
                 ),
@@ -891,7 +929,7 @@ class _ShareOption extends StatelessWidget {
       onTap: () {
         HapticFeedback.lightImpact();
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Shared via $label!')));
+        TopToast.show(context, 'Shared via $label!');
       },
       borderRadius: BorderRadius.circular(12),
       child: Padding(
@@ -1006,9 +1044,7 @@ class UploadBottomSheetContent extends ConsumerWidget {
                   final success = await storageNotifier.uploadLocalFile();
                   if (context.mounted) {
                     HapticFeedback.lightImpact();
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(success ? 'File uploaded successfully!' : 'Failed to upload file.'),
-                    ));
+                    TopToast.show(context, success ? 'File uploaded successfully!' : 'Failed to upload file.', isError: !success);
                   }
                 },
               ),
