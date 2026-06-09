@@ -4,6 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter/services.dart';
+import '../../../core/widgets/telegram_theme_switcher.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/providers/google_auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
@@ -181,11 +183,26 @@ class ProfileSettingsScreen extends ConsumerWidget {
                 icon = LucideIcons.laptop;
               }
               
-              return ListTile(
-                onTap: () {
-                  ref.read(themeProvider.notifier).setThemeMode(mode);
-                  Navigator.of(context).pop();
-                },
+              Offset? lastTapDown;
+              
+              return Listener(
+                onPointerDown: (event) => lastTapDown = event.position,
+                child: ListTile(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.of(context).pop(); // Pop bottom sheet
+                    
+                    TelegramThemeSwitcher.changeTheme(
+                      context: context,
+                      tapPosition: lastTapDown ?? Offset(
+                        MediaQuery.sizeOf(context).width / 2, 
+                        MediaQuery.sizeOf(context).height / 2
+                      ),
+                      changeThemeAction: () {
+                        ref.read(themeProvider.notifier).setThemeMode(mode);
+                      },
+                    );
+                  },
                 leading: Icon(icon, color: isSelected ? theme.colorScheme.primary : theme.textTheme.labelSmall?.color),
                 title: Text(
                   label,

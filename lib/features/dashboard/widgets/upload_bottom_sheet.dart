@@ -1,11 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/telegram_storage_provider.dart';
 
-class UploadBottomSheet extends ConsumerWidget {
+/// The old UploadBottomSheet is kept for backward compatibility.
+/// The Home screen now uses UploadBottomSheetContent directly inside _BlurSheet.
+/// This class wraps UploadBottomSheetContent in a simple container for screens
+/// that still call showModalBottomSheet with UploadBottomSheet.
+class UploadBottomSheet extends StatelessWidget {
   const UploadBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // Blurred sheet with spring entrance
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(28),
+        topRight: Radius.circular(28),
+      ),
+      child: BackdropFilter(
+        filter: const ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+            border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 4),
+              const UploadBottomSheetContent(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The actual content — imported and used directly by other screens too.
+class UploadBottomSheetContent extends ConsumerWidget {
+  const UploadBottomSheetContent({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,47 +66,37 @@ class UploadBottomSheet extends ConsumerWidget {
       required IconData icon,
       required String label,
       required VoidCallback onTap,
+      int delayMs = 0,
     }) {
       return GestureDetector(
-        onTap: onTap,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.01),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 56, height: 56,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  color: theme.colorScheme.primary,
-                  size: 26,
-                ),
+                child: Icon(icon, color: theme.colorScheme.primary, size: 26),
               ),
               const SizedBox(height: 12),
-              Text(
-                label,
+              Text(label,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w600, fontSize: 14,
                 ),
               ),
             ],
@@ -65,62 +105,36 @@ class UploadBottomSheet extends ConsumerWidget {
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 30,
-            offset: const Offset(0, -10),
-          ),
-        ],
-      ),
+    return Padding(
       padding: EdgeInsets.only(
-        top: 8,
-        left: 24,
-        right: 24,
+        left: 24, right: 24, top: 8,
         bottom: MediaQuery.of(context).padding.bottom + 24,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag Handle
-          Container(
-            width: 48,
-            height: 5,
-            decoration: BoxDecoration(
-              color: const Color(0xFFC5C5D8).withOpacity(0.6),
-              borderRadius: BorderRadius.circular(2.5),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Header Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Create New',
-                style: theme.textTheme.headlineMedium,
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(LucideIcons.x, size: 20),
-                style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFFF1F1EF),
-                  padding: const EdgeInsets.all(8),
+              Text('Create New', style: theme.textTheme.headlineMedium),
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  width: 32, height: 32,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurface.withOpacity(0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(LucideIcons.x, size: 16,
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 24),
-
-          // Bento Grid of Options
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
@@ -134,15 +148,15 @@ class UploadBottomSheet extends ConsumerWidget {
                 label: 'Upload File',
                 onTap: () async {
                   Navigator.of(context).pop();
+                  HapticFeedback.mediumImpact();
                   final success = await storageNotifier.uploadLocalFile();
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          success ? 'File uploaded successfully!' : 'Failed to upload file.',
-                        ),
-                      ),
-                    );
+                    HapticFeedback.lightImpact();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(success
+                          ? 'File uploaded successfully!'
+                          : 'Failed to upload file.'),
+                    ));
                   }
                 },
               ),
@@ -151,7 +165,6 @@ class UploadBottomSheet extends ConsumerWidget {
                 label: 'New Folder',
                 onTap: () {
                   Navigator.of(context).pop();
-                  // For folder creation, we route the user to Files screen where folder triggers are active.
                   context.go('/dashboard/files');
                 },
               ),

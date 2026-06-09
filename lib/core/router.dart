@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
@@ -14,7 +15,46 @@ import '../features/dashboard/screens/files_organization_screen.dart';
 import '../features/dashboard/screens/file_details_screen.dart';
 import '../features/dashboard/screens/profile_settings_screen.dart';
 
-// Shared tab placeholder screen
+// ─── Telegram-style page transition (slide left, current fades-slides left 8%) ─
+
+CustomTransitionPage<T> _telegramPage<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 260),
+    reverseTransitionDuration: const Duration(milliseconds: 220),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // New page slides in from right
+      final enterSlide = Tween<Offset>(
+        begin: const Offset(1.0, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+
+      // Current page moves left 8% and fades slightly (Telegram feel)
+      final exitSlide = Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(-0.08, 0),
+      ).animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeInCubic));
+      final exitFade = Tween<double>(begin: 1.0, end: 0.88)
+          .animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeInCubic));
+
+      return SlideTransition(
+        position: exitSlide,
+        child: FadeTransition(
+          opacity: exitFade,
+          child: SlideTransition(position: enterSlide, child: child),
+        ),
+      );
+    },
+  );
+}
+
+// ─── Shared tab placeholder ─────────────────────────────────────────────────
+
 class SharedTabPlaceholder extends StatelessWidget {
   const SharedTabPlaceholder({super.key});
 
@@ -48,17 +88,10 @@ class SharedTabPlaceholder extends StatelessWidget {
                   color: theme.colorScheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  LucideIcons.users,
-                  color: theme.colorScheme.primary,
-                  size: 32,
-                ),
+                child: Icon(LucideIcons.users, color: theme.colorScheme.primary, size: 32),
               ),
               const SizedBox(height: 24),
-              Text(
-                'Collaborative Folders',
-                style: theme.textTheme.headlineMedium,
-              ),
+              Text('Collaborative Folders', style: theme.textTheme.headlineMedium),
               const SizedBox(height: 8),
               Text(
                 'Files shared with you or by you will appear here. Invite team members to collaborate.',
@@ -75,34 +108,41 @@ class SharedTabPlaceholder extends StatelessWidget {
   }
 }
 
+// ─── App Router ─────────────────────────────────────────────────────────────
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     // Welcome / Login screen
     GoRoute(
       path: '/',
-      builder: (context, state) => const WelcomeLoginScreen(),
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const WelcomeLoginScreen()),
     ),
-    
-    // Onboarding screens
+
+    // Onboarding screens — all with Telegram transitions
     GoRoute(
       path: '/onboarding/name',
-      builder: (context, state) => const UserInformationScreen(),
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const UserInformationScreen()),
     ),
     GoRoute(
       path: '/onboarding/store',
-      builder: (context, state) => const StoragePreferenceScreen(),
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const StoragePreferenceScreen()),
     ),
     GoRoute(
       path: '/onboarding/discovery',
-      builder: (context, state) => const DiscoveryScreen(),
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const DiscoveryScreen()),
     ),
     GoRoute(
       path: '/onboarding/ready',
-      builder: (context, state) => const ReadyToGoScreen(),
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const ReadyToGoScreen()),
     ),
 
-    // Shell route for bottom navigation tabs
+    // Shell route — no transition between tabs (feels instant like Telegram)
     ShellRoute(
       builder: (context, state, child) => DashboardShell(child: child),
       routes: [
@@ -133,12 +173,17 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
 
-    // File Details Screen (Nested or stand-alone path)
+    // File Details — Telegram slide transition
     GoRoute(
       path: '/file-details',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
+        HapticFeedback.lightImpact();
         final extraString = state.extra as String? ?? 'Q4_Marketing_Assets.zip';
-        return FileDetailsScreen(filename: extraString);
+        return _telegramPage(
+          context: context,
+          state: state,
+          child: FileDetailsScreen(filename: extraString),
+        );
       },
     ),
   ],

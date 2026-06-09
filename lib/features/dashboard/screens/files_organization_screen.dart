@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -19,6 +21,8 @@ class FilesOrganizationScreen extends ConsumerStatefulWidget {
 
 class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScreen> {
   String _activeTab = 'Folders';
+  // Track items being deleted for graceful exit animation
+  final Set<String> _deletingItems = {};
 
   String _formatBytes(int bytes, int decimals) {
     if (bytes <= 0) return "0 B";
@@ -274,56 +278,61 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 ? [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.01),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: iconBgColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(fileIcon, color: iconColor, size: 20),
+      // Telegram-style delete: shrink → opacity 0 → height collapses
+      return _DeletingItem(
+        id: name,
+        isDeleting: _deletingItems.contains(name),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: SpringyTap(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              context.push('/file-details', extra: name);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44, height: 44,
+                    decoration: BoxDecoration(
+                      color: iconBgColor, borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Uploaded $dateStr • $sizeStr',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontSize: 11,
-                        color: theme.textTheme.labelSmall?.color?.withOpacity(0.5),
-                      ),
+                    child: Icon(fileIcon, color: iconColor, size: 20),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 4),
+                        Text('Uploaded $dateStr • $sizeStr',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                                fontSize: 11, color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      HapticFeedback.heavyImpact();
+                      setState(() => _deletingItems.add(name));
+                      await Future.delayed(const Duration(milliseconds: 350));
+                      await storageNotifier.deleteFile(name, file['file_id'] ?? '');
+                      setState(() => _deletingItems.remove(name));
+                    },
+                    icon: Icon(LucideIcons.trash_2,
+                        color: theme.colorScheme.error.withOpacity(0.7), size: 18),
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  LucideIcons.ellipsis_vertical,
-                  color: theme.colorScheme.onSurface.withOpacity(0.4),
-                  size: 20,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       );
@@ -336,6 +345,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
         elevation: 0,
         leading: IconButton(
           onPressed: () {
+            HapticFeedback.lightImpact();
             dashboardScaffoldKey.currentState?.openDrawer();
           },
           icon: const Icon(LucideIcons.menu),
@@ -350,7 +360,10 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
         centerTitle: true,
         actions: [
           GestureDetector(
-            onTap: () => context.go('/dashboard/profile'),
+            onTap: () {
+              HapticFeedback.selectionClick();
+              context.go('/dashboard/profile');
+            },
             child: Container(
               margin: const EdgeInsets.only(right: 16),
               width: 32,
@@ -431,7 +444,10 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
               children: [
                 if (!isRoot)
                   IconButton(
-                    onPressed: () => storageNotifier.navigateUp(),
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                      storageNotifier.navigateUp();
+                    },
                     icon: const Icon(LucideIcons.chevron_left, size: 20),
                     style: IconButton.styleFrom(
                       backgroundColor: theme.inputDecorationTheme.fillColor,
@@ -452,7 +468,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 ),
                 if (_activeTab == 'Folders')
                   TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () => HapticFeedback.selectionClick(),
                     icon: const Icon(LucideIcons.arrow_up_down, size: 14),
                     label: const Text('Name'),
                   ),
@@ -474,11 +490,18 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 itemCount: folders.length + 1,
                 itemBuilder: (context, index) {
                   if (index < folders.length) {
-                    return buildFolderGridCard(folders[index]);
+                    return buildFolderGridCard(folders[index])
+                        // Telegram stagger: each folder appears 20ms after previous
+                        .animate(delay: (index * 20).ms)
+                        .fade(duration: 300.ms)
+                        .slideY(begin: 0.06, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
                   } else {
                     // Dashed card for New Folder
                     return SpringyTap(
-                      onTap: _showNewFolderDialog,
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        _showNewFolderDialog();
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
@@ -536,8 +559,15 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                       ),
                     )
                   : Column(
-                      children: files.map((f) => buildFileRowItem(f)).toList(),
-                    ).animate().fade(duration: 350.ms).slideY(begin: 0.08, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1))
+                      children: [
+                        for (int i = 0; i < files.length; i++)
+                          buildFileRowItem(files[i])
+                              // Telegram stagger: 30ms per row
+                              .animate(delay: (i * 30).ms)
+                              .fade(duration: 300.ms)
+                              .slideY(begin: 0.05, end: 0, duration: 300.ms, curve: Curves.easeOutCubic),
+                      ],
+                    )
             else
               // Shared/Starred placeholder
               Container(
@@ -556,6 +586,41 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
               ).animate().fade(duration: 350.ms).slideY(begin: 0.08, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
             const SizedBox(height: 24),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Telegram-style delete: scale ↓ + opacity ↓ + height collapses to 0
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _DeletingItem extends StatelessWidget {
+  final String id;
+  final bool isDeleting;
+  final Widget child;
+
+  const _DeletingItem({
+    required this.id,
+    required this.isDeleting,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeInOut,
+      child: AnimatedOpacity(
+        opacity: isDeleting ? 0.0 : 1.0,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOut,
+        child: AnimatedScale(
+          scale: isDeleting ? 0.92 : 1.0,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          child: isDeleting ? const SizedBox.shrink() : child,
         ),
       ),
     );

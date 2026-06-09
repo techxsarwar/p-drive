@@ -358,79 +358,19 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
             ),
           ),
           
-          // Background/Foreground Progress Banner Overlay
-          if (isTransferring)
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 8,
-              left: 16,
-              right: 16,
-              child: Material(
-                elevation: 4,
-                color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
-                shadowColor: theme.brightness == Brightness.light ? Colors.black.withOpacity(0.1) : Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: theme.colorScheme.primary.withOpacity(0.15)),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            storageState.isUploading ? LucideIcons.cloud_upload : LucideIcons.cloud_download,
-                            color: theme.colorScheme.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              '$message...',
-                              style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Text(
-                            '${(progress * 100).toStringAsFixed(0)}%',
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(2),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 4,
-                          backgroundColor: theme.dividerColor,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-          // Floating Action Button (FAB)
+          // Telegram-Style Floating Action Button (FAB) / Progress Indicator
           if (location.startsWith('/dashboard'))
             Positioned(
               bottom: 100 + MediaQuery.of(context).padding.bottom,
               right: 16,
-              child: FloatingActionButton(
-                onPressed: () => _showUploadBottomSheet(context),
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(LucideIcons.plus, size: 28),
+              child: AnimatedUploadFab(
+                isTransferring: isTransferring,
+                progress: progress,
+                isUploading: storageState.isUploading,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showUploadBottomSheet(context);
+                },
               ),
             ),
 
@@ -517,3 +457,115 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     );
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Telegram-style Upload FAB: Morphs into a circular progress indicator
+// ═══════════════════════════════════════════════════════════════════════════
+
+class AnimatedUploadFab extends StatefulWidget {
+  final bool isTransferring;
+  final double progress;
+  final bool isUploading;
+  final VoidCallback onTap;
+
+  const AnimatedUploadFab({
+    super.key,
+    required this.isTransferring,
+    required this.progress,
+    required this.isUploading,
+    required this.onTap,
+  });
+
+  @override
+  State<AnimatedUploadFab> createState() => _AnimatedUploadFabState();
+}
+
+class _AnimatedUploadFabState extends State<AnimatedUploadFab> {
+  bool _showSuccess = false;
+
+  @override
+  void didUpdateWidget(AnimatedUploadFab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isTransferring && !widget.isTransferring) {
+      // Transfer just finished! Show checkmark briefly.
+      setState(() => _showSuccess = true);
+      HapticFeedback.mediumImpact();
+      Future.delayed(const Duration(milliseconds: 2500), () {
+        if (mounted) setState(() => _showSuccess = false);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isProgress = widget.isTransferring;
+    final isCheck = _showSuccess;
+
+    // Telegram philosophy: One object. Never replaced. Always transformed.
+    // Default FAB shape: width 56, rounded 16
+    // Progress shape: width 52, circle (rounded 26)
+    final double size = isProgress || isCheck ? 52.0 : 56.0;
+    final double radius = isProgress || isCheck ? 26.0 : 16.0;
+
+    return GestureDetector(
+      onTap: isProgress ? null : widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        curve: const Cubic(0.34, 1.56, 0.64, 1), // Bouncy spring curve
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: isCheck ? Colors.green.shade600 : theme.colorScheme.primary,
+          borderRadius: BorderRadius.circular(radius),
+          boxShadow: [
+            BoxShadow(
+              color: (isCheck ? Colors.green.shade600 : theme.colorScheme.primary).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.easeOutBack,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) => ScaleTransition(
+            scale: animation,
+            child: FadeTransition(opacity: animation, child: child),
+          ),
+          child: isCheck
+              ? const Icon(LucideIcons.check, color: Colors.white, size: 26, key: ValueKey('check'))
+              : isProgress
+                  ? Stack(
+                      key: const ValueKey('progress'),
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0.0, end: widget.progress),
+                            duration: const Duration(milliseconds: 250),
+                            builder: (context, value, _) => CircularProgressIndicator(
+                              value: value,
+                              strokeWidth: 3,
+                              backgroundColor: Colors.white.withOpacity(0.2),
+                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          widget.isUploading ? LucideIcons.arrow_up : LucideIcons.arrow_down,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ],
+                    )
+                  : const Icon(LucideIcons.plus, color: Colors.white, size: 28, key: ValueKey('plus')),
+        ),
+      ),
+    );
+  }
+}
+

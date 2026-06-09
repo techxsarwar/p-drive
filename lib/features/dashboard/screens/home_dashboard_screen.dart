@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +19,36 @@ class HomeDashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeDashboardScreen> createState() => _HomeDashboardScreenState();
 }
 
-class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
+class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen>
+    with SingleTickerProviderStateMixin {
+
+  // Controls the storage bar animated fill (0→actual)
+  late AnimationController _storageController;
+  late Animation<double> _storageAnim;
+  double _lastPercent = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _storageController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _storageAnim = CurvedAnimation(
+      parent: _storageController,
+      curve: Curves.easeOutCubic,
+    );
+    // Kick off after first frame so we have data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _storageController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _storageController.dispose();
+    super.dispose();
+  }
 
   String _formatBytes(int bytes, int decimals) {
     if (bytes <= 0) return "0 B";
@@ -26,98 +57,78 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
     return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
+  // ─── Bottom Sheets ──────────────────────────────────────────────────────────
+
   void _showDocumentScanner(BuildContext context) {
     final theme = Theme.of(context);
+    HapticFeedback.mediumImpact();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.4),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          bool isScanning = false;
-          bool isProcessing = false;
-          String processStep = "Ready to Scan";
-          
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.75,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(28),
-                topRight: Radius.circular(28),
-              ),
-              border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Document Scanner',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => _BlurSheet(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            bool isScanning = false;
+            bool isProcessing = false;
+            String processStep = "Ready to Scan";
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Document Scanner', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      _SheetCloseButton(),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3), width: 2),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(LucideIcons.x),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3), width: 2),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned.fill(
-                          child: Opacity(
-                            opacity: 0.3,
-                            child: GridPaper(
-                              color: theme.colorScheme.primary,
-                              divisions: 2,
-                              subdivisions: 4,
-                              interval: 100,
-                            ),
-                          ),
-                        ),
-                        if (!isProcessing) ...[
-                          Center(
-                            child: Container(
-                              width: 250,
-                              height: 350,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
-                                borderRadius: BorderRadius.circular(12),
+                      clipBehavior: Clip.antiAlias,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned.fill(
+                            child: Opacity(
+                              opacity: 0.3,
+                              child: GridPaper(
+                                color: theme.colorScheme.primary,
+                                divisions: 2,
+                                subdivisions: 4,
+                                interval: 100,
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: 40,
-                            child: Text(
-                              'Align document within frame',
-                              style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13, fontWeight: FontWeight.w500),
+                          if (!isProcessing) ...[
+                            Center(
+                              child: Container(
+                                width: 250,
+                                height: 350,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                        if (isScanning)
-                          Positioned.fill(
-                            child: Container()
-                                .animate(onPlay: (controller) => controller.repeat())
-                                .custom(
-                                  duration: 1.5.seconds,
-                                  builder: (context, value, child) {
-                                    return Align(
+                          ],
+                          if (isScanning)
+                            Positioned.fill(
+                              child: Container()
+                                  .animate(onPlay: (c) => c.repeat())
+                                  .custom(
+                                    duration: 1.5.seconds,
+                                    builder: (context, value, child) => Align(
                                       alignment: Alignment(0, -1.0 + (value * 2.0)),
                                       child: Container(
                                         height: 3,
@@ -127,75 +138,58 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                                           boxShadow: [
                                             BoxShadow(
                                               color: theme.colorScheme.primary.withOpacity(0.8),
-                                              blurRadius: 10,
-                                              spreadRadius: 2,
+                                              blurRadius: 10, spreadRadius: 2,
                                             ),
                                           ],
                                         ),
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
+                            ),
+                          if (isProcessing)
+                            Positioned.fill(
+                              child: Container(
+                                color: Colors.black.withOpacity(0.8),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(color: theme.colorScheme.primary),
+                                    const SizedBox(height: 20),
+                                    Text(processStep,
+                                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600))
+                                        .animate()
+                                        .fade(duration: 200.ms)
+                                        .scale(duration: 200.ms),
+                                  ],
                                 ),
-                          ),
-                        if (isProcessing)
-                          Positioned.fill(
-                            child: Container(
-                              color: Colors.black.withOpacity(0.8),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(color: theme.colorScheme.primary),
-                                  const SizedBox(height: 20),
-                                  Text(
-                                    processStep,
-                                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                                  ).animate().fade(duration: 200.ms).scale(duration: 200.ms),
-                                ],
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                if (!isScanning && !isProcessing)
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton.icon(
-                      onPressed: () async {
-                        setState(() {
-                          isScanning = true;
-                        });
+                      onPressed: isScanning || isProcessing ? null : () async {
+                        HapticFeedback.mediumImpact();
+                        setState(() { isScanning = true; });
                         await Future.delayed(1.5.seconds);
-                        setState(() {
-                          isScanning = false;
-                          isProcessing = true;
-                          processStep = "Detecting document borders...";
-                        });
+                        setState(() { isScanning = false; isProcessing = true; processStep = "Detecting document borders..."; });
                         await Future.delayed(1.seconds);
-                        setState(() {
-                          processStep = "Enhancing image contrast...";
-                        });
+                        setState(() { processStep = "Enhancing image contrast..."; });
                         await Future.delayed(1.seconds);
-                        setState(() {
-                          processStep = "Creating encrypted PDF...";
-                        });
+                        setState(() { processStep = "Creating encrypted PDF..."; });
                         await Future.delayed(800.ms);
-                        
                         final docId = DateTime.now().millisecondsSinceEpoch.toString().substring(8);
                         final filename = 'Scanned_Doc_$docId.pdf';
                         await ref.read(telegramStorageProvider.notifier).addScannedFile(filename, 1254300);
-                        
                         if (context.mounted) {
+                          HapticFeedback.lightImpact();
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Document "$filename" scanned & synced!'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Document "$filename" scanned & synced!')));
                         }
                       },
                       icon: const Icon(LucideIcons.camera),
@@ -207,188 +201,141 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                         elevation: 0,
                       ),
                     ),
-                  )
-                else
-                  const SizedBox(
-                    height: 56,
-                    child: Center(
-                      child: Text('Scanning in progress...', style: TextStyle(fontWeight: FontWeight.w500)),
-                    ),
                   ),
-              ],
-            ),
-          ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms);
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   void _showShareDialog(BuildContext context, String workspaceName) {
+    HapticFeedback.lightImpact();
     final theme = Theme.of(context);
     final String mockShareLink = "https://pdrive.cloud/s/${Uri.encodeComponent(workspaceName.toLowerCase().replaceAll(' ', '_'))}";
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.25),
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-          border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Share $workspaceName',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(LucideIcons.x),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Generate a secure share link for your "$workspaceName" workspace.',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.inputDecorationTheme.fillColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
-              ),
-              child: Row(
+      barrierColor: Colors.black.withOpacity(0.4),
+      builder: (context) => _BlurSheet(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(LucideIcons.link, size: 18),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      mockShareLink,
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 13,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Link copied to clipboard!')),
-                      );
-                    },
-                    child: const Text('Copy'),
-                  ),
+                  Text('Share $workspaceName', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  _SheetCloseButton(),
                 ],
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text('OR SHARE VIA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.2)),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildShareOption(context, LucideIcons.mail, 'Email'),
-                _buildShareOption(context, LucideIcons.message_square, 'Messages'),
-                _buildShareOption(context, LucideIcons.qr_code, 'QR Code'),
-              ],
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms),
-    );
-  }
-
-  Widget _buildShareOption(BuildContext context, IconData icon, String label) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Shared via $label successfully!')),
-        );
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.08),
-                shape: BoxShape.circle,
+              const SizedBox(height: 12),
+              Text('Generate a secure share link for your "$workspaceName" workspace.',
+                  style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.inputDecorationTheme.fillColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(LucideIcons.link, size: 18),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(mockShareLink,
+                          style: TextStyle(fontFamily: 'monospace', fontSize: 13, color: theme.colorScheme.onSurface),
+                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link copied!')));
+                      },
+                      child: const Text('Copy'),
+                    ),
+                  ],
+                ),
               ),
-              child: Icon(icon, color: theme.colorScheme.primary, size: 22),
-            ),
-            const SizedBox(height: 8),
-            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-          ],
+              const SizedBox(height: 20),
+              const Text('OR SHARE VIA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.2)),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _ShareOption(icon: LucideIcons.mail, label: 'Email'),
+                  _ShareOption(icon: LucideIcons.message_square, label: 'Messages'),
+                  _ShareOption(icon: LucideIcons.qr_code, label: 'QR Code'),
+                ],
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // ─── Build ──────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    // Observers
+
     final onboardingState = ref.watch(onboardingProvider);
     final storageState = ref.watch(telegramStorageProvider);
     final storageNotifier = ref.read(telegramStorageProvider.notifier);
 
     final userName = onboardingState.username.isNotEmpty ? onboardingState.username : 'Alex';
-    
-    // Storage math
+
     final int usedBytes = storageNotifier.totalUsedSizeBytes;
-    const int totalBytes = 100 * 1024 * 1024 * 1024; // 100 GB
+    const int totalBytes = 100 * 1024 * 1024 * 1024;
     final double percentUsed = min(1.0, usedBytes / totalBytes);
+
+    // Animate storage fill if value changed
+    if ((percentUsed - _lastPercent).abs() > 0.001) {
+      _lastPercent = percentUsed;
+      _storageAnim = Tween<double>(begin: 0, end: percentUsed).animate(
+        CurvedAnimation(parent: _storageController, curve: Curves.easeOutCubic),
+      );
+      _storageController
+        ..reset()
+        ..forward();
+    }
+
     final String percentString = '${(percentUsed * 100).toStringAsFixed(0)}%';
 
-    // Suggested dynamic folders (top level folders matching currentPath="/")
     final foldersList = storageState.allFolders
-        .where((f) => f.split('/').length == 2) // e.g. /Folder, depth=1
-        .map((f) => f.substring(1)) // Remove leading slash
+        .where((f) => f.split('/').length == 2)
+        .map((f) => f.substring(1))
         .toList();
 
-    // Recent files sorted (most recent first)
     final recentFiles = List<Map<String, dynamic>>.from(storageState.allFiles)
       ..sort((a, b) => b['uploaded_at'].toString().compareTo(a['uploaded_at'].toString()));
     final topRecentFiles = recentFiles.take(3).toList();
 
-    // Widget helpers
+    // ── Widget helpers ───────────────────────────────────────────────────────
+
     Widget buildQuickActionButton({
       required IconData icon,
       required String label,
       required VoidCallback onTap,
+      int delayMs = 0,
     }) {
       return SpringyTap(
-        onTap: onTap,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           decoration: BoxDecoration(
@@ -409,24 +356,25 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                 child: Icon(icon, color: theme.colorScheme.primary, size: 22),
               ),
               const SizedBox(height: 12),
-              Text(
-                label,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(label, style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
         ),
-      );
+      )
+          .animate(delay: delayMs.ms)
+          .fade(duration: 350.ms)
+          .slideY(begin: 0.08, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1));
     }
 
-    Widget buildFolderCard(String name, int fileCount, VoidCallback onTap) {
+    Widget buildFolderCard(String name, int fileCount, VoidCallback onTap, int index) {
       return Container(
         width: 150,
         margin: const EdgeInsets.only(right: 16),
         child: SpringyTap(
-          onTap: onTap,
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onTap();
+          },
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -443,32 +391,25 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    Text(
-                      '$fileCount files',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontSize: 11,
-                        color: theme.textTheme.labelSmall?.color?.withOpacity(0.5),
-                      ),
-                    ),
+                    Text('$fileCount files',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 11, color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
                   ],
                 ),
               ],
             ),
           ),
         ),
-      );
+      )
+          .animate(delay: (index * 20).ms)
+          .fade(duration: 300.ms)
+          .slideX(begin: 0.08, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
     }
 
-    Widget buildFileRowItem(Map<String, dynamic> file) {
+    Widget buildFileRowItem(Map<String, dynamic> file, int index) {
       final String name = file['name'] ?? 'Untitled';
       final int size = (file['size_bytes'] as num?)?.toInt() ?? 0;
       final String sizeStr = _formatBytes(size, 1);
@@ -490,7 +431,9 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
         iconColor = theme.brightness == Brightness.dark
             ? const Color(0xFFF87171)
             : const Color(0xFFBA1A1A);
-      } else if (name.toLowerCase().endsWith('.png') || name.toLowerCase().endsWith('.jpg') || name.toLowerCase().endsWith('.jpeg')) {
+      } else if (name.toLowerCase().endsWith('.png') ||
+          name.toLowerCase().endsWith('.jpg') ||
+          name.toLowerCase().endsWith('.jpeg')) {
         fileIcon = LucideIcons.image;
         iconBgColor = theme.brightness == Brightness.dark
             ? theme.colorScheme.primary.withOpacity(0.2)
@@ -509,7 +452,10 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
       return Container(
         margin: const EdgeInsets.only(bottom: 8),
         child: SpringyTap(
-          onTap: () => context.push('/file-details', extra: name),
+          onTap: () {
+            HapticFeedback.selectionClick();
+            context.push('/file-details', extra: name);
+          },
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -533,39 +479,31 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text(name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
-                      Text(
-                        'Modified $dateStr • $sizeStr',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          fontSize: 11,
-                          color: theme.textTheme.labelSmall?.color?.withOpacity(0.5),
-                        ),
-                      ),
+                      Text('Modified $dateStr • $sizeStr',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                              fontSize: 11, color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
                     ],
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    LucideIcons.ellipsis_vertical,
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
-                    size: 20,
-                  ),
+                  onPressed: () => HapticFeedback.lightImpact(),
+                  icon: Icon(LucideIcons.ellipsis_vertical,
+                      color: theme.colorScheme.onSurface.withOpacity(0.4), size: 20),
                 ),
               ],
             ),
           ),
         ),
-      );
+      )
+          .animate(delay: (index * 30).ms)   // ← Telegram stagger
+          .fade(duration: 350.ms)
+          .slideY(begin: 0.06, end: 0, duration: 350.ms, curve: Curves.easeOutCubic);
     }
+
+    // ── Scaffold ─────────────────────────────────────────────────────────────
 
     return Scaffold(
       appBar: AppBar(
@@ -574,6 +512,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
+            HapticFeedback.lightImpact();
             dashboardScaffoldKey.currentState?.openDrawer();
           },
           icon: const Icon(LucideIcons.menu),
@@ -588,7 +527,10 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
         centerTitle: true,
         actions: [
           GestureDetector(
-            onTap: () => context.go('/dashboard/profile'),
+            onTap: () {
+              HapticFeedback.selectionClick();
+              context.go('/dashboard/profile');
+            },
             child: Container(
               margin: const EdgeInsets.only(right: 16),
               width: 32,
@@ -607,7 +549,11 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                 ),
               ),
             ),
-          ),
+          )
+              // subtle avatar pulse — Telegram profile style
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(begin: const Offset(1, 1), end: const Offset(1.06, 1.06),
+                  duration: 2400.ms, curve: Curves.easeInOut),
         ],
       ),
       body: SingleChildScrollView(
@@ -616,7 +562,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hello Bento Card
+            // ── Storage card — animates in first ──────────────────────────
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
@@ -628,37 +574,21 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Hello, $userName',
-                    style: theme.textTheme.headlineMedium,
-                  ),
+                  Text('Hello, $userName', style: theme.textTheme.headlineMedium),
                   const SizedBox(height: 4),
                   Text(
                     'Your digital workspace is looking clean.',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
-                    ),
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6)),
                   ),
                   const SizedBox(height: 24),
-                  
-                  // Quota inside container
+                  // Storage bar — fills from 0→actual (animated)
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: theme.brightness == Brightness.light
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : null,
-                      border: Border.all(
-                        color: theme.dividerColor.withOpacity(0.4),
-                      ),
+                      border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
                     ),
                     child: Column(
                       children: [
@@ -669,51 +599,48 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                               children: [
                                 Icon(LucideIcons.cloud, color: theme.colorScheme.primary, size: 20),
                                 const SizedBox(width: 8),
-                                Text(
-                                  'Cloud Storage',
-                                  style: theme.textTheme.labelLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                Text('Cloud Storage',
+                                    style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600)),
                               ],
                             ),
-                            Text(
-                              percentString,
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
+                            AnimatedBuilder(
+                              animation: _storageAnim,
+                              builder: (_, __) => Text(
+                                '${(_storageAnim.value * 100).toStringAsFixed(0)}%',
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: percentUsed,
-                            minHeight: 6,
-                            backgroundColor: theme.dividerColor,
-                            color: theme.colorScheme.primary,
+                        // Animated progress bar 0→target
+                        AnimatedBuilder(
+                          animation: _storageAnim,
+                          builder: (_, __) => ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: _storageAnim.value,
+                              minHeight: 6,
+                              backgroundColor: theme.dividerColor,
+                              color: _storageAnim.value > 0.8
+                                  ? Colors.orange
+                                  : theme.colorScheme.primary,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '${_formatBytes(usedBytes, 1)} Used',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontSize: 11,
-                                color: theme.textTheme.labelSmall?.color?.withOpacity(0.5),
-                              ),
-                            ),
-                            Text(
-                              '100 GB Total',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontSize: 11,
-                                color: theme.textTheme.labelSmall?.color?.withOpacity(0.5),
-                              ),
-                            ),
+                            Text('${_formatBytes(usedBytes, 1)} Used',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                    fontSize: 11,
+                                    color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
+                            Text('100 GB Total',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                    fontSize: 11,
+                                    color: theme.textTheme.labelSmall?.color?.withOpacity(0.5))),
                           ],
                         ),
                       ],
@@ -721,20 +648,21 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                   ),
                 ],
               ),
-            ).animate().fade(duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
-            
+            )
+                // Card fades + expands in (delay 0ms — first to appear)
+                .animate()
+                .fade(duration: 400.ms)
+                .scaleXY(begin: 0.96, end: 1, duration: 450.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
+
             const SizedBox(height: 32),
-            
-            // Quick Actions header
-            Text(
-              'QUICK ACTIONS',
-              style: theme.textTheme.labelSmall?.copyWith(
-                letterSpacing: 1.5,
-              ),
-            ),
+
+            // ── Quick Actions — staggered grid ───────────────────────────
+            Text('QUICK ACTIONS',
+                style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 1.5))
+                .animate(delay: 80.ms)
+                .fade(duration: 300.ms),
             const SizedBox(height: 12),
-            
-            // Bento Quick Actions Grid
+
             GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,
@@ -746,49 +674,45 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                 buildQuickActionButton(
                   icon: LucideIcons.upload,
                   label: 'Upload',
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      barrierColor: Colors.black.withOpacity(0.25),
-                      builder: (context) => const UploadBottomSheet(),
-                    );
-                  },
+                  delayMs: 100,
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    barrierColor: Colors.black.withOpacity(0.4),
+                    builder: (context) => _BlurSheet(child: const UploadBottomSheetContent()),
+                  ),
                 ),
                 buildQuickActionButton(
                   icon: LucideIcons.folder_plus,
                   label: 'New Folder',
-                  onTap: () {
-                    // Navigate to files tab
-                    context.go('/dashboard/files');
-                  },
+                  delayMs: 120,
+                  onTap: () => context.go('/dashboard/files'),
                 ),
                 buildQuickActionButton(
                   icon: LucideIcons.scan,
                   label: 'Scan',
+                  delayMs: 140,
                   onTap: () => _showDocumentScanner(context),
                 ),
                 buildQuickActionButton(
                   icon: LucideIcons.share_2,
                   label: 'Share',
+                  delayMs: 160,
                   onTap: () => _showShareDialog(context, 'Global Workspace'),
                 ),
               ],
-            ).animate().fade(delay: 100.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
-            
+            ),
+
             const SizedBox(height: 32),
-            
-            // Suggested Folders row
+
+            // ── Suggested Folders ────────────────────────────────────────
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'SUGGESTED FOLDERS',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    letterSpacing: 1.5,
-                  ),
-                ),
+                Text('SUGGESTED FOLDERS',
+                    style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 1.5))
+                    .animate(delay: 180.ms).fade(duration: 300.ms),
                 TextButton(
                   onPressed: () => context.go('/dashboard/files'),
                   child: const Text('View All'),
@@ -796,8 +720,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            
-            // Horizontal scroll container of suggested folders
+
             foldersList.isEmpty
                 ? Container(
                     height: 120,
@@ -808,10 +731,8 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
                     ),
-                    child: Text(
-                      'No folders yet.',
-                      style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.4)),
-                    ),
+                    child: Text('No folders yet.',
+                        style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.4))),
                   )
                 : SizedBox(
                     height: 132,
@@ -821,7 +742,9 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                       itemCount: foldersList.length,
                       itemBuilder: (context, index) {
                         final folderPath = '/${foldersList[index]}';
-                        final filesCount = storageState.allFiles.where((f) => f['path'] == folderPath).length;
+                        final filesCount = storageState.allFiles
+                            .where((f) => f['path'] == folderPath)
+                            .length;
                         return buildFolderCard(
                           foldersList[index],
                           filesCount,
@@ -829,22 +752,20 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                             storageNotifier.changeDirectory(folderPath);
                             context.go('/dashboard/files');
                           },
+                          index,
                         );
                       },
                     ),
-                  ).animate().fade(delay: 200.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
-            
+                  ),
+
             const SizedBox(height: 32),
-            
-            // Recent Files
-            Text(
-              'RECENT FILES',
-              style: theme.textTheme.labelSmall?.copyWith(
-                letterSpacing: 1.5,
-              ),
-            ),
+
+            // ── Recent Files — staggered list ────────────────────────────
+            Text('RECENT FILES',
+                style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 1.5))
+                .animate(delay: 260.ms).fade(duration: 300.ms),
             const SizedBox(height: 12),
-            
+
             topRecentFiles.isEmpty
                 ? Container(
                     height: 120,
@@ -855,18 +776,258 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
                     ),
-                    child: Text(
-                      'No files yet. Pick Upload to add files.',
-                      style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.4)),
-                    ),
+                    child: Text('No files yet. Tap Upload to add files.',
+                        style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.4))),
                   )
                 : Column(
-                    children: topRecentFiles.map((f) => buildFileRowItem(f)).toList(),
-                  ).animate().fade(delay: 300.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
-            
+                    children: [
+                      for (int i = 0; i < topRecentFiles.length; i++)
+                        buildFileRowItem(topRecentFiles[i], i),
+                    ],
+                  ),
+
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Reusable: Blurred bottom sheet wrapper (Telegram-style arrive + bounce)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class _BlurSheet extends StatelessWidget {
+  final Widget child;
+  final double? height;
+  const _BlurSheet({required this.child, this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(28),
+        topRight: Radius.circular(28),
+      ),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        child: Container(
+          height: height,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withOpacity(0.92),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+            border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
+          ),
+          child: Column(
+            mainAxisSize: height == null ? MainAxisSize.min : MainAxisSize.max,
+            children: [
+              const SizedBox(height: 12),
+              // Drag pill
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Flexible(child: child),
+            ],
+          ),
+        ),
+      ),
+    )
+        .animate()
+        .slideY(begin: 0.15, end: 0, duration: 380.ms, curve: const Cubic(0.34, 1.56, 0.64, 1))
+        .fade(duration: 250.ms);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Reusable: Sheet close button
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class _SheetCloseButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).pop();
+      },
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.onSurface.withOpacity(0.08),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(LucideIcons.x, size: 16, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Reusable: Share option chip
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class _ShareOption extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _ShareOption({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Shared via $label!')));
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: theme.colorScheme.primary, size: 22),
+            ),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Upload bottom sheet content — now wrapped in _BlurSheet externally
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class UploadBottomSheetContent extends ConsumerWidget {
+  const UploadBottomSheetContent({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final storageNotifier = ref.read(telegramStorageProvider.notifier);
+
+    Widget buildOptionButton({
+      required IconData icon,
+      required String label,
+      required VoidCallback onTap,
+      int delayMs = 0,
+    }) {
+      return GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+          decoration: BoxDecoration(
+            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: theme.colorScheme.primary, size: 26),
+              ),
+              const SizedBox(height: 12),
+              Text(label,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600, fontSize: 14)),
+            ],
+          ),
+        ),
+      )
+          .animate(delay: delayMs.ms)
+          .fade(duration: 300.ms)
+          .slideY(begin: 0.08, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 24, right: 24, top: 8,
+        bottom: MediaQuery.of(context).padding.bottom + 24,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Create New', style: theme.textTheme.headlineMedium),
+              _SheetCloseButton(),
+            ],
+          ),
+          const SizedBox(height: 24),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1.15,
+            children: [
+              buildOptionButton(
+                icon: LucideIcons.file_plus,
+                label: 'Upload File',
+                delayMs: 0,
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  HapticFeedback.mediumImpact();
+                  final success = await storageNotifier.uploadLocalFile();
+                  if (context.mounted) {
+                    HapticFeedback.lightImpact();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(success ? 'File uploaded successfully!' : 'Failed to upload file.'),
+                    ));
+                  }
+                },
+              ),
+              buildOptionButton(
+                icon: LucideIcons.folder_plus,
+                label: 'New Folder',
+                delayMs: 30,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  context.go('/dashboard/files');
+                },
+              ),
+              buildOptionButton(icon: LucideIcons.camera, label: 'Take Photo', delayMs: 60,
+                  onTap: () => Navigator.of(context).pop()),
+              buildOptionButton(icon: LucideIcons.scan, label: 'Scan Document', delayMs: 90,
+                  onTap: () => Navigator.of(context).pop()),
+            ],
+          ),
+        ],
       ),
     );
   }

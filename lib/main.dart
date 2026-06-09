@@ -5,6 +5,7 @@ import 'core/router.dart';
 import 'core/theme.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/services/transfer_foreground_service.dart';
+import 'core/widgets/telegram_theme_switcher.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,12 @@ class MyApp extends ConsumerWidget {
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
         routerConfig: appRouter,
+        builder: (context, child) {
+          // Wraps the entire app content to enable the circular theme reveal animation.
+          return TelegramThemeSwitcher(
+            child: child!,
+          );
+        },
       ),
     );
   }
