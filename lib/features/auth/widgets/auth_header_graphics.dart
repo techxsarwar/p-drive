@@ -69,7 +69,7 @@ class AuthHeaderGraphics extends StatelessWidget {
               ),
               child: Center(
                 child: Icon(
-                  LucideIcons.upload_cloud,
+                  LucideIcons.cloud_upload,
                   size: 48,
                   color: Theme.of(context).colorScheme.primary,
                 ),
