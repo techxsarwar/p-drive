@@ -10,6 +10,7 @@ import '../../onboarding/providers/onboarding_provider.dart';
 import '../../../core/widgets/telegram_theme_switcher.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/widgets/top_toast.dart';
+import '../../../core/router.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/springy_tap.dart';
 
