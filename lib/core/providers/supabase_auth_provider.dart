@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pdrive/core/config/auth_config.dart';
 
 class AuthState {
   final bool isAuthenticated;
@@ -103,11 +105,44 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
   Future<void> signInWithGoogle() async {
     try {
       state = state.copyWith(isLoading: true, errorMessage: null);
-      // Supabase OAuth via web browser (no SHA-1 required)
-      await _supabase.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: kIsWeb ? null : 'io.supabase.pdrive://login-callback',
+
+      if (kIsWeb) {
+        await _supabase.auth.signInWithOAuth(
+          OAuthProvider.google,
+        );
+        state = state.copyWith(isLoading: false);
+        return;
+      }
+
+      // 1. Initialize GoogleSignIn with Web Client ID
+      final googleSignIn = GoogleSignIn(
+        serverClientId: AuthConfig.webClientId,
       );
+
+      // 2. Trigger native Google Sign-In popup
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // User cancelled login
+        state = state.copyWith(isLoading: false);
+        return;
+      }
+
+      // 3. Extract tokens
+      final googleAuth = await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
+
+      if (idToken == null || accessToken == null) {
+        throw 'Missing Google Auth Tokens. Make sure you set the correct Web Client ID and SHA-1.';
+      }
+
+      // 4. Authenticate with Supabase using the ID token
+      await _supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());

@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Light Palette (Warm Sand & Electric Violet)
-  static const Color lightPrimary = Color(0xFF6366F1);
-  static const Color lightBackground = Color(0xFFFAF9F6);
-  static const Color lightSurface = Color(0xFFFAF9F6);
+  // Light Palette (Soft Purple & Soft Teal)
+  static const Color lightPrimary = Color(0xFFA78BFA); // Soft Purple
+  static const Color lightAccent = Color(0xFF2DD4BF); // Soft Teal
+  static const Color lightBackground = Color(0xFFF8F9FA); // Soft Off-White
+  static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightOnSurface = Color(0xFF1C1917);
   static const Color lightSecondaryText = Color(0xFF78716C);
   static const Color lightCardBg = Color(0xFFFFFFFF);
-  static const Color lightInputBg = Color(0xFFF5F5F4);
-  static const Color lightBorder = Color(0xFFE7E5E4);
+  static const Color lightInputBg = Color(0xFFF3F4F6);
+  static const Color lightBorder = Color(0xFFE5E7EB);
 
-  // Dark Palette (Midnight Obsidian & Indigo Glow)
-  static const Color darkPrimary = Color(0xFF4F7CFF);
+  // Dark Palette
+  static const Color darkPrimary = Color(0xFFC4B5FD); // Soft Purple (lighter)
+  static const Color darkAccent = Color(0xFF14B8A6); // Soft Teal
   static const Color darkBackground = Color(0xFF0F1115);
   static const Color darkSurface = Color(0xFF1E222D);
   static const Color darkOnSurface = Color(0xFFFFFFFF);
@@ -29,6 +31,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     return _buildTheme(
       primary: lightPrimary,
+      accent: lightAccent,
       background: lightBackground,
       surface: lightSurface,
       onSurface: lightOnSurface,
@@ -43,6 +46,7 @@ class AppTheme {
   static ThemeData get darkTheme {
     return _buildTheme(
       primary: darkPrimary,
+      accent: darkAccent,
       background: darkBackground,
       surface: darkSurface,
       onSurface: darkOnSurface,
@@ -56,6 +60,7 @@ class AppTheme {
 
   static ThemeData _buildTheme({
     required Color primary,
+    required Color accent,
     required Color background,
     required Color surface,
     required Color onSurface,
@@ -73,7 +78,7 @@ class AppTheme {
         brightness: brightness,
         primary: primary,
         onPrimary: brightness == Brightness.dark ? Colors.black : Colors.white,
-        secondary: brightness == Brightness.dark ? const Color(0xFF8B5CF6) : primary.withOpacity(0.8),
+        secondary: accent,
         onSecondary: Colors.white,
         error: error,
         onError: Colors.white,
@@ -174,6 +179,21 @@ class AppTheme {
           fontSize: 16,
           fontWeight: FontWeight.w400,
           color: secondaryText.withOpacity(0.5),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: accent,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
