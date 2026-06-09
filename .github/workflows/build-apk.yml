@@ -46,11 +46,16 @@ jobs:
       - name: Configure Android Internet Permission
         run: |
           python3 -c "
-          import os
+          import os, re
           path = 'android/app/src/main/AndroidManifest.xml'
           with open(path, 'r') as f:
               content = f.read()
-          # Inject permissions right before the application tag
+
+          # ── Add tools namespace if not present ──────────────────────────────
+          if 'xmlns:tools' not in content:
+              content = content.replace('xmlns:android=', 'xmlns:tools=\"http://schemas.android.com/tools\"\n    xmlns:android=', 1)
+
+          # ── Permissions to inject before <application> ──────────────────────
           perms_to_add = [
               'android.permission.INTERNET',
               'android.permission.WRITE_EXTERNAL_STORAGE',
@@ -58,22 +63,32 @@ jobs:
               'android.permission.READ_MEDIA_IMAGES',
               'android.permission.READ_MEDIA_VIDEO',
               'android.permission.READ_MEDIA_AUDIO',
+              'android.permission.FOREGROUND_SERVICE',
+              'android.permission.FOREGROUND_SERVICE_DATA_SYNC',
           ]
-          perm_lines = ''
+          perm_block = ''
           for perm in perms_to_add:
               if perm not in content:
-                  perm_lines += f'    <uses-permission android:name=\"{perm}\"/>\\n'
-          if perm_lines:
-              content = content.replace('<application', perm_lines + '    <application', 1)
-          # Also add MANAGE_EXTERNAL_STORAGE for Android 11+
+                  perm_block += f'    <uses-permission android:name=\"{perm}\"/>\n'
+          # MANAGE_EXTERNAL_STORAGE (scoped-storage suppressed)
           if 'MANAGE_EXTERNAL_STORAGE' not in content:
-              content = content.replace('<application', '    <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" tools:ignore=\"ScopedStorage\"/>\\n    <application', 1)
-          # Add tools namespace if not present
-          if 'xmlns:tools' not in content:
-              content = content.replace('xmlns:android=', 'xmlns:tools=\"http://schemas.android.com/tools\"\\n    xmlns:android=', 1)
+              perm_block += '    <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" tools:ignore=\"ScopedStorage\"/>\n'
+          if perm_block:
+              content = content.replace('<application', perm_block + '    <application', 1)
+
+          # ── FlutterForegroundTaskService inside <application> ───────────────
+          service_block = '''
+          <service
+              android:name=\"com.pravera.flutter_foreground_task.service.ForegroundTaskService\"
+              android:foregroundServiceType=\"dataSync\"
+              android:exported=\"false\"
+              android:stopWithTask=\"false\" />'''
+          if 'ForegroundTaskService' not in content:
+              content = content.replace('</application>', service_block + '\n    </application>', 1)
+
           with open(path, 'w') as f:
               f.write(content)
-          print('Permissions injected successfully')
+          print('AndroidManifest patched successfully')
           "
 
       - name: Configure Android SDK versions to 36

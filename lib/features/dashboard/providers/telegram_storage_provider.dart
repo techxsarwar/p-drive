@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../core/services/telegram_service.dart';
+import '../../../core/services/transfer_foreground_service.dart';
 
 class TelegramStorageState {
   final String botToken;
@@ -322,6 +323,9 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
         transferStatus: 'Preparing file upload...',
       );
 
+      // Start foreground service so upload survives app-switching
+      await TransferForegroundService.startUpload(fileName);
+
       final isMockMode = state.botToken.isEmpty || state.chatId.isEmpty;
       final int maxChunkSize = 5 * 1024 * 1024; // 5 MB chunks
       final bool shouldChunk = state.isChunkingEnabled && fileSize > maxChunkSize;
@@ -419,6 +423,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
         }
 
         state = state.copyWith(isUploading: false, uploadProgress: 0.0, transferStatus: '');
+        await TransferForegroundService.stop();
         return true;
       } else {
         // Standard upload
@@ -445,6 +450,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
             uploadProgress: 0.0,
             transferStatus: '',
           );
+          await TransferForegroundService.stop();
           return true;
         }
 
@@ -483,6 +489,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
 
           await _syncCatalogToTelegram();
           state = state.copyWith(isUploading: false, uploadProgress: 0.0, transferStatus: '');
+          await TransferForegroundService.stop();
           return true;
         }
       }
@@ -490,6 +497,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
       print('File upload error: $e');
     }
     state = state.copyWith(isUploading: false, uploadProgress: 0.0, transferStatus: '');
+    await TransferForegroundService.stop();
     return false;
   }
 
@@ -500,6 +508,9 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
       downloadProgress: 0.0,
       transferStatus: 'Preparing download...',
     );
+
+    // Start foreground service so download survives app-switching
+    await TransferForegroundService.startDownload(filename);
 
     try {
       Directory? appDir;
@@ -592,6 +603,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
         }
 
         state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+        await TransferForegroundService.stop();
         return savePath;
       } else {
         // Standard download
@@ -604,6 +616,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
             );
           }
           state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+          await TransferForegroundService.stop();
           return savePath;
         }
 
@@ -629,6 +642,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
 
           if (success) {
             state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+            await TransferForegroundService.stop();
             return savePath;
           }
         }
@@ -637,6 +651,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
       print('Download file error: $e');
     }
     state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+    await TransferForegroundService.stop();
     return null;
   }
 
