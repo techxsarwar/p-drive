@@ -219,8 +219,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
 
 void _showSecurityDialog(BuildContext context, WidgetRef ref) {
   final theme = Theme.of(context);
-  final prefs = ref.read(sharedPreferencesProvider);
-  bool appLockEnabled = prefs.getBool('app_lock_enabled') ?? false;
   bool twoFactorEnabled = false;
   bool encryptionEnabled = true;
 
@@ -271,22 +269,6 @@ void _showSecurityDialog(BuildContext context, WidgetRef ref) {
                 ),
                 const SizedBox(height: 24),
                 
-                SwitchListTile.adaptive(
-                  value: appLockEnabled,
-                  onChanged: (val) {
-                    setState(() {
-                      appLockEnabled = val;
-                      prefs.setBool('app_lock_enabled', val);
-                      if (context.mounted) {
-                        TopToast.show(context, val ? 'App Lock Enabled' : 'App Lock Disabled');
-                      }
-                    });
-                  },
-                  title: const Text('App Lock Passcode', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Require PIN or Biometrics on launch'),
-                  activeColor: theme.colorScheme.primary,
-                ),
-                const Divider(),
                 SwitchListTile.adaptive(
                   value: twoFactorEnabled,
                   onChanged: (val) {

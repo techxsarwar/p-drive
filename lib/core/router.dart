@@ -8,7 +8,6 @@ import 'providers/google_auth_provider.dart';
 
 // Screens
 import '../features/auth/screens/welcome_login_screen.dart';
-import '../features/auth/screens/app_lock_screen.dart';
 import '../features/onboarding/screens/user_information_screen.dart';
 import '../features/onboarding/screens/storage_preference_screen.dart';
 import '../features/onboarding/screens/discovery_screen.dart';
@@ -123,24 +122,21 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 final routerProvider = Provider<GoRouter>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   final isInitiallyAuthenticated = prefs.getBool('google_auth_is_authenticated') ?? false;
-  final isAppLockEnabled = prefs.getBool('app_lock_enabled') ?? false;
 
   return GoRouter(
-    initialLocation: isInitiallyAuthenticated ? (isAppLockEnabled ? '/lock' : '/dashboard/home') : '/',
+    initialLocation: isInitiallyAuthenticated ? '/dashboard/home' : '/',
     redirect: (context, state) {
       final authState = ref.watch(googleAuthProvider);
       final isAuth = authState.isAuthenticated;
       
       final isSplash = state.matchedLocation == '/';
       final isOnboarding = state.matchedLocation.startsWith('/onboarding');
-      final isLock = state.matchedLocation == '/lock';
       
       if (isAuth && (isSplash || isOnboarding)) {
-        // Only redirect to lock if they are just logging in or opening app, AND app lock is enabled
-        return isAppLockEnabled ? '/lock' : '/dashboard/home';
+        return '/dashboard/home';
       }
       
-      if (!isAuth && !isSplash && !isOnboarding && !isLock) {
+      if (!isAuth && !isSplash && !isOnboarding) {
         return '/';
       }
       return null;
@@ -151,13 +147,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       path: '/',
       pageBuilder: (context, state) => _telegramPage(
         context: context, state: state, child: const WelcomeLoginScreen()),
-    ),
-    
-    // App Lock screen
-    GoRoute(
-      path: '/lock',
-      pageBuilder: (context, state) => _telegramPage(
-        context: context, state: state, child: const AppLockScreen()),
     ),
 
     // Onboarding screens — all with Telegram transitions

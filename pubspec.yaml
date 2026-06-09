@@ -27,7 +27,6 @@ dependencies:
   share_plus: ^10.0.0
   video_player: ^2.9.1
   chewie: ^1.8.5
-  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:
