@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 import '../providers/onboarding_provider.dart';
 
 class UserInformationScreen extends ConsumerStatefulWidget {
@@ -22,7 +22,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final googleAuth = ref.read(googleAuthProvider);
+      final googleAuth = ref.read(authProvider);
       if (googleAuth.isAuthenticated && googleAuth.displayName != null) {
         _nameController.text = googleAuth.displayName!;
       }

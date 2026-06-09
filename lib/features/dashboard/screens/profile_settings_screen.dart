@@ -1,11 +1,11 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../../../core/widgets/telegram_theme_switcher.dart';
 import '../../../core/providers/theme_provider.dart';
@@ -779,7 +779,7 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
               onTap: () async {
                 ref.read(onboardingProvider.notifier).reset();
                 storageNotifier.updateCredentials('', ''); // clear storage settings too
-                await ref.read(googleAuthProvider.notifier).signOut();
+                await ref.read(authProvider.notifier).signOut();
                 if (context.mounted) {
                   context.go('/');
                 }

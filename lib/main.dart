@@ -9,6 +9,7 @@ import 'core/services/transfer_foreground_service.dart';
 import 'core/widgets/telegram_theme_switcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,11 @@ Future<void> main() async {
 
   // Set up the foreground service so it's ready before any transfer starts.
   TransferForegroundService.initialize();
+
+  await Supabase.initialize(
+    url: 'https://miqhumbmpdqimeporsdp.supabase.co',
+    anonKey: 'sb_publishable_1xktNUXD3pmOQc5XBersiQ_c5nICTmo',
+  );
 
   final prefs = await SharedPreferences.getInstance();
 

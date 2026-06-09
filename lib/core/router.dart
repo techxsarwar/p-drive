@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'providers/google_auth_provider.dart';
+import 'providers/supabase_auth_provider.dart';
 
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/signup_screen.dart';
@@ -126,7 +126,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: isInitiallyAuthenticated ? '/dashboard/home' : '/',
     redirect: (context, state) {
-      final authState = ref.read(googleAuthProvider);
+      final authState = ref.read(authProvider);
       final isAuth = authState.isAuthenticated;
       
       final isSplash = state.matchedLocation == '/';

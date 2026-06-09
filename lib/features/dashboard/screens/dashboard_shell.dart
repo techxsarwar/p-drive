@@ -1,4 +1,4 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/upload_bottom_sheet.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 
 /// Global key that exposes the DashboardShell's ScaffoldState so that
@@ -110,7 +110,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       );
     }
 
-    final authState = ref.watch(googleAuthProvider);
+    final authState = ref.watch(authProvider);
     final onboardingState = ref.watch(onboardingProvider);
 
     final displayName = authState.isAuthenticated 
@@ -363,7 +363,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                 ),
               ),
               
-              // Footer — version only, no internal tech settings
+              // Footer â€” version only, no internal tech settings
               const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -499,9 +499,9 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Telegram-style Upload FAB: Morphs into a circular progress indicator
-// ═══════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class AnimatedUploadFab extends StatefulWidget {
   final bool isTransferring;

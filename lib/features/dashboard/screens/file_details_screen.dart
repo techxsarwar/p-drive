@@ -1,4 +1,4 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 import '../../../core/widgets/top_toast.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/springy_tap.dart';
 import '../widgets/video_preview_widget.dart';
@@ -380,7 +380,7 @@ class FileDetailsScreen extends ConsumerWidget {
     // Observers
     final storageState = ref.watch(telegramStorageProvider);
     final storageNotifier = ref.read(telegramStorageProvider.notifier);
-    final authState = ref.watch(googleAuthProvider);
+    final authState = ref.watch(authProvider);
     final ownerName = authState.displayName ?? 'Unknown User';
     final ownerInitials = ownerName.isNotEmpty ? ownerName.substring(0, 1).toUpperCase() : '?';
 
@@ -576,12 +576,12 @@ class FileDetailsScreen extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   name.endsWith('.pdf')
-                      ? 'PDF Document • $sizeStr'
+                      ? 'PDF Document â€¢ $sizeStr'
                       : name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')
-                          ? 'Image File • $sizeStr'
+                          ? 'Image File â€¢ $sizeStr'
                           : name.endsWith('.docx') || name.endsWith('.doc')
-                              ? 'Word Document • $sizeStr'
-                              : 'Archive • $sizeStr',
+                              ? 'Word Document â€¢ $sizeStr'
+                              : 'Archive â€¢ $sizeStr',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.textTheme.labelSmall?.color,
                   ),

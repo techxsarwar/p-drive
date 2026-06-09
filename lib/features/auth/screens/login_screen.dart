@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../../core/widgets/auth_wave_header.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -24,16 +24,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  void _handleSignIn() {
-    // For now, mock a successful login by calling the manual auth fallback
-    // In a real app, you would pass email/pass to Firebase
-    ref.read(googleAuthProvider.notifier).signInWithGoogle(context, ref);
+  Future<void> _handleSignIn() async {
+    final email = _emailCtrl.text.trim();
+    final password = _passCtrl.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter email and password')));
+      return;
+    }
+    
+    await ref.read(authProvider.notifier).signInWithEmailPassword(email, password);
+    
+    if (mounted) {
+      final authState = ref.read(authProvider);
+      if (authState.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authState.errorMessage!), backgroundColor: Colors.red));
+      } else if (authState.isAuthenticated) {
+        context.push('/onboarding/name');
+      }
+    }
+  }
+
+  void _handleGoogleSignIn() {
+    ref.read(authProvider.notifier).signInWithGoogle();
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final authState = ref.watch(googleAuthProvider);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -140,7 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   
                   // Google Sign In
                   ElevatedButton.icon(
-                    onPressed: authState.isLoading ? null : _handleSignIn,
+                    onPressed: authState.isLoading ? null : _handleGoogleSignIn,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFF5F5F5),
                       foregroundColor: Colors.black87,

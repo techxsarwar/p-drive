@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../core/services/telegram_service.dart';
 import '../../../core/services/transfer_foreground_service.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 
 class TelegramStorageState {
   final String botToken;
@@ -809,7 +809,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
     return total;
   }
   String get _currentUserEmail {
-    return _ref.read(googleAuthProvider).email ?? 'user@example.com';
+    return _ref.read(authProvider).email ?? 'user@example.com';
   }
 }
 

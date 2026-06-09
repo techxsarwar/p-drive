@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import '../../../core/providers/google_auth_provider.dart';
+import '../../../core/providers/supabase_auth_provider.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -25,14 +25,35 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     super.dispose();
   }
 
-  void _handleSignUp() {
-    // For now, mock a successful login by calling the manual auth fallback
-    ref.read(googleAuthProvider.notifier).signInWithGoogle(context, ref);
+  Future<void> _handleSignUp() async {
+    final name = _nameCtrl.text.trim();
+    final email = _emailCtrl.text.trim();
+    final password = _passCtrl.text.trim();
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      return;
+    }
+    
+    await ref.read(authProvider.notifier).signUpWithEmailPassword(name, email, password);
+    
+    if (mounted) {
+      final authState = ref.read(authProvider);
+      if (authState.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authState.errorMessage!), backgroundColor: Colors.red));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account created! Please sign in.'), backgroundColor: Colors.green));
+        context.pop(); // Go back to login screen
+      }
+    }
+  }
+
+  void _handleGoogleSignUp() {
+    ref.read(authProvider.notifier).signInWithGoogle();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(googleAuthProvider);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -151,7 +172,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   
                   // Google Sign Up
                   ElevatedButton.icon(
-                    onPressed: authState.isLoading ? null : _handleSignUp,
+                    onPressed: authState.isLoading ? null : _handleGoogleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFF5F5F5),
                       foregroundColor: Colors.black87,
