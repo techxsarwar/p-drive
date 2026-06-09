@@ -334,7 +334,9 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
         scrolledUnderElevation: 0,
         elevation: 0,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
           icon: const Icon(LucideIcons.menu),
         ),
         title: Text(

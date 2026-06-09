@@ -5,6 +5,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/upload_bottom_sheet.dart';
+import '../../../core/providers/google_auth_provider.dart';
 
 class DashboardShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -95,7 +96,166 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
       );
     }
 
+    final authState = ref.watch(googleAuthProvider);
+
     return Scaffold(
+      drawer: Drawer(
+        backgroundColor: theme.colorScheme.surface,
+        elevation: 0,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // User Profile Section
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
+                          child: Text(
+                            (authState.displayName ?? 'Guest').substring(0, 1).toUpperCase(),
+                            style: TextStyle(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                authState.displayName ?? 'Guest Explorer',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                authState.email ?? 'Connected Mode (Local)',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Quick stats
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.inputDecorationTheme.fillColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(LucideIcons.hard_drive, size: 16, color: theme.colorScheme.primary),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Used: 32.4 GB / 100 GB',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              
+              // Navigation Items
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  children: [
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.layout_grid,
+                      label: 'Home Dashboard',
+                      isSelected: currentIndex == 0,
+                      onTap: () {
+                        Navigator.pop(context);
+                        _onItemTapped(0, context);
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.folder,
+                      label: 'My Files',
+                      isSelected: currentIndex == 1,
+                      onTap: () {
+                        Navigator.pop(context);
+                        _onItemTapped(1, context);
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.users,
+                      label: 'Shared Spaces',
+                      isSelected: currentIndex == 2,
+                      onTap: () {
+                        Navigator.pop(context);
+                        _onItemTapped(2, context);
+                      },
+                    ),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.user,
+                      label: 'Profile Settings',
+                      isSelected: currentIndex == 3,
+                      onTap: () {
+                        Navigator.pop(context);
+                        _onItemTapped(3, context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Footer settings quick switches
+              const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Chunking Pipeline',
+                      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    Switch.adaptive(
+                      value: storageState.isChunkingEnabled,
+                      activeColor: theme.colorScheme.primary,
+                      onChanged: (val) {
+                        ref.read(telegramStorageProvider.notifier).toggleChunking(val);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           Positioned.fill(
@@ -135,7 +295,9 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              '$message...',
+                              (storageState.transferStatus != null && storageState.transferStatus!.isNotEmpty)
+                                  ? storageState.transferStatus!
+                                  : '$message...',
                               style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -227,6 +389,39 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required ThemeData theme,
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? theme.colorScheme.primary.withOpacity(0.12) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        leading: Icon(
+          icon,
+          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
+          size: 20,
+        ),
+        title: Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+          ),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        dense: true,
       ),
     );
   }

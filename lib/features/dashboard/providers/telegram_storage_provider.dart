@@ -19,6 +19,8 @@ class TelegramStorageState {
   final double uploadProgress;
   final double downloadProgress;
   final int? pinnedMessageId;
+  final bool isChunkingEnabled;
+  final String? transferStatus;
 
   TelegramStorageState({
     this.botToken = '8888156987:AAFQNwjgnTR6GQ2JKdEaYbWbxlT7r1pS8kw',
@@ -32,6 +34,8 @@ class TelegramStorageState {
     this.uploadProgress = 0.0,
     this.downloadProgress = 0.0,
     this.pinnedMessageId,
+    this.isChunkingEnabled = true,
+    this.transferStatus,
   });
 
   TelegramStorageState copyWith({
@@ -46,6 +50,8 @@ class TelegramStorageState {
     double? uploadProgress,
     double? downloadProgress,
     int? pinnedMessageId,
+    bool? isChunkingEnabled,
+    String? transferStatus,
   }) {
     return TelegramStorageState(
       botToken: botToken ?? this.botToken,
@@ -59,6 +65,8 @@ class TelegramStorageState {
       uploadProgress: uploadProgress ?? this.uploadProgress,
       downloadProgress: downloadProgress ?? this.downloadProgress,
       pinnedMessageId: pinnedMessageId ?? this.pinnedMessageId,
+      isChunkingEnabled: isChunkingEnabled ?? this.isChunkingEnabled,
+      transferStatus: transferStatus == null ? (transferStatus ?? this.transferStatus) : (transferStatus == '' ? null : transferStatus),
     );
   }
 }
@@ -78,10 +86,12 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
     
     final savedToken = _prefs?.getString('tg_bot_token') ?? '8888156987:AAFQNwjgnTR6GQ2JKdEaYbWbxlT7r1pS8kw';
     final savedChatId = _prefs?.getString('tg_chat_id') ?? '-1003875203962';
+    final savedChunking = _prefs?.getBool('tg_is_chunking_enabled') ?? true;
     
     state = state.copyWith(
       botToken: savedToken,
       chatId: savedChatId,
+      isChunkingEnabled: savedChunking,
     );
 
     if (savedToken.isNotEmpty && savedChatId.isNotEmpty) {
@@ -148,9 +158,13 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
 
     if (token.isNotEmpty && chatId.isNotEmpty) {
       await loadCatalog();
-    } else {
-      _loadMockData();
     }
+  }
+
+  // Toggle file chunking pipeline
+  Future<void> toggleChunking(bool enabled) async {
+    state = state.copyWith(isChunkingEnabled: enabled);
+    await _prefs?.setBool('tg_is_chunking_enabled', enabled);
   }
 
   // Reload catalog from channel Pinned message
@@ -305,76 +319,187 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
       state = state.copyWith(
         isUploading: true,
         uploadProgress: 0.0,
+        transferStatus: 'Preparing file upload...',
       );
 
-      // If mock mode, simulate progress and add local entry
-      if (state.botToken.isEmpty || state.chatId.isEmpty) {
-        for (int i = 0; i <= 10; i++) {
-          await Future.delayed(const Duration(milliseconds: 100));
-          state = state.copyWith(uploadProgress: i / 10.0);
+      final isMockMode = state.botToken.isEmpty || state.chatId.isEmpty;
+      final int maxChunkSize = 5 * 1024 * 1024; // 5 MB chunks
+      final bool shouldChunk = state.isChunkingEnabled && fileSize > maxChunkSize;
+
+      if (shouldChunk) {
+        final sourceFile = File(filePath);
+        final fileBytes = await sourceFile.readAsBytes();
+        final totalChunks = (fileBytes.length / maxChunkSize).ceil();
+        final List<Map<String, dynamic>> chunksMeta = [];
+
+        for (int chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+          final start = chunkIndex * maxChunkSize;
+          final end = (start + maxChunkSize > fileBytes.length) ? fileBytes.length : start + maxChunkSize;
+          final chunkBytes = fileBytes.sublist(start, end);
+          final chunkFileName = '$fileName.part_${chunkIndex + 1}_of_$totalChunks';
+
+          state = state.copyWith(
+            uploadProgress: chunkIndex / totalChunks,
+            transferStatus: 'Uploading Part ${chunkIndex + 1} of $totalChunks...',
+          );
+
+          if (isMockMode) {
+            for (int i = 0; i <= 5; i++) {
+              await Future.delayed(const Duration(milliseconds: 120));
+              final chunkProgress = (chunkIndex + (i / 5.0)) / totalChunks;
+              state = state.copyWith(
+                uploadProgress: chunkProgress,
+                transferStatus: 'Uploading Part ${chunkIndex + 1} of $totalChunks (${(i * 20).toStringAsFixed(0)}%)...',
+              );
+            }
+            chunksMeta.add({
+              'chunk_index': chunkIndex,
+              'file_id': 'mock_chunk_${chunkIndex}_${DateTime.now().millisecondsSinceEpoch}',
+              'size_bytes': chunkBytes.length,
+            });
+          } else {
+            final tempDir = await getTemporaryDirectory();
+            final tempFile = File('${tempDir.path}/$chunkFileName');
+            await tempFile.writeAsBytes(chunkBytes);
+
+            final uploadResult = await _telegramService.uploadFile(
+              botToken: state.botToken,
+              chatId: state.chatId,
+              filePath: tempFile.path,
+              fileName: chunkFileName,
+              onProgress: (sent, total) {
+                if (total > 0) {
+                  final chunkProgress = (chunkIndex + (sent / total)) / totalChunks;
+                  state = state.copyWith(
+                    uploadProgress: chunkProgress,
+                    transferStatus: 'Uploading Part ${chunkIndex + 1} of $totalChunks (${(sent / total * 100).toStringAsFixed(0)}%)...',
+                  );
+                }
+              },
+            );
+
+            if (await tempFile.exists()) {
+              await tempFile.delete();
+            }
+
+            if (uploadResult != null) {
+              final doc = uploadResult['document'];
+              final fileId = doc['file_id'];
+              final msgId = uploadResult['message_id'];
+              chunksMeta.add({
+                'chunk_index': chunkIndex,
+                'file_id': fileId,
+                'message_id': msgId,
+                'size_bytes': chunkBytes.length,
+              });
+            } else {
+              throw Exception('Failed to upload chunk ${chunkIndex + 1}');
+            }
+          }
         }
 
-        final mockFile = {
-          'name': fileName,
-          'path': state.currentPath,
-          'size_bytes': fileSize,
-          'uploaded_at': DateTime.now().toIso8601String(),
-          'file_id': 'mock_${DateTime.now().millisecondsSinceEpoch}',
-        };
-
-        state = state.copyWith(
-          allFiles: List<Map<String, dynamic>>.from(state.allFiles)..add(mockFile),
-          isUploading: false,
-          uploadProgress: 0.0,
-        );
-        return true;
-      }
-
-      // Real upload to Telegram
-      final uploadResult = await _telegramService.uploadFile(
-        botToken: state.botToken,
-        chatId: state.chatId,
-        filePath: filePath,
-        fileName: fileName,
-        onProgress: (sentBytes, totalBytes) {
-          if (totalBytes > 0) {
-            state = state.copyWith(uploadProgress: sentBytes / totalBytes);
-          }
-        },
-      );
-
-      if (uploadResult != null) {
-        final doc = uploadResult['document'];
-        final fileId = doc['file_id'];
-        final msgId = uploadResult['message_id'];
-
+        // Complete chunked file entry
+        final fileIdRoot = isMockMode ? 'mock_chunked_${DateTime.now().millisecondsSinceEpoch}' : chunksMeta.first['file_id'];
         final newFile = {
           'name': fileName,
           'path': state.currentPath,
           'size_bytes': fileSize,
           'uploaded_at': DateTime.now().toIso8601String(),
-          'file_id': fileId,
-          'message_id': msgId,
+          'file_id': fileIdRoot,
+          'is_chunked': true,
+          'chunks': chunksMeta,
         };
 
         state = state.copyWith(
           allFiles: List<Map<String, dynamic>>.from(state.allFiles)..add(newFile),
         );
 
-        await _syncCatalogToTelegram();
-        state = state.copyWith(isUploading: false, uploadProgress: 0.0);
+        if (!isMockMode) {
+          await _syncCatalogToTelegram();
+        }
+
+        state = state.copyWith(isUploading: false, uploadProgress: 0.0, transferStatus: '');
         return true;
+      } else {
+        // Standard upload
+        if (isMockMode) {
+          for (int i = 0; i <= 10; i++) {
+            await Future.delayed(const Duration(milliseconds: 100));
+            state = state.copyWith(
+              uploadProgress: i / 10.0,
+              transferStatus: 'Uploading file (${(i * 10).toStringAsFixed(0)}%)...',
+            );
+          }
+
+          final mockFile = {
+            'name': fileName,
+            'path': state.currentPath,
+            'size_bytes': fileSize,
+            'uploaded_at': DateTime.now().toIso8601String(),
+            'file_id': 'mock_${DateTime.now().millisecondsSinceEpoch}',
+          };
+
+          state = state.copyWith(
+            allFiles: List<Map<String, dynamic>>.from(state.allFiles)..add(mockFile),
+            isUploading: false,
+            uploadProgress: 0.0,
+            transferStatus: '',
+          );
+          return true;
+        }
+
+        final uploadResult = await _telegramService.uploadFile(
+          botToken: state.botToken,
+          chatId: state.chatId,
+          filePath: filePath,
+          fileName: fileName,
+          onProgress: (sentBytes, totalBytes) {
+            if (totalBytes > 0) {
+              state = state.copyWith(
+                uploadProgress: sentBytes / totalBytes,
+                transferStatus: 'Uploading file (${(sentBytes / totalBytes * 100).toStringAsFixed(0)}%)...',
+              );
+            }
+          },
+        );
+
+        if (uploadResult != null) {
+          final doc = uploadResult['document'];
+          final fileId = doc['file_id'];
+          final msgId = uploadResult['message_id'];
+
+          final newFile = {
+            'name': fileName,
+            'path': state.currentPath,
+            'size_bytes': fileSize,
+            'uploaded_at': DateTime.now().toIso8601String(),
+            'file_id': fileId,
+            'message_id': msgId,
+          };
+
+          state = state.copyWith(
+            allFiles: List<Map<String, dynamic>>.from(state.allFiles)..add(newFile),
+          );
+
+          await _syncCatalogToTelegram();
+          state = state.copyWith(isUploading: false, uploadProgress: 0.0, transferStatus: '');
+          return true;
+        }
       }
     } catch (e) {
       print('File upload error: $e');
     }
-    state = state.copyWith(isUploading: false, uploadProgress: 0.0);
+    state = state.copyWith(isUploading: false, uploadProgress: 0.0, transferStatus: '');
     return false;
   }
 
   // Download file from Telegram channel to local Downloads folder
   Future<String?> downloadFile(String filename, String fileId) async {
-    state = state.copyWith(isDownloading: true, downloadProgress: 0.0);
+    state = state.copyWith(
+      isDownloading: true,
+      downloadProgress: 0.0,
+      transferStatus: 'Preparing download...',
+    );
 
     try {
       Directory? appDir;
@@ -388,44 +513,130 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
       }
 
       final savePath = '${appDir!.path}/$filename';
+      final isMockMode = state.botToken.isEmpty || state.chatId.isEmpty;
 
-      // Mock mode simulator
-      if (state.botToken.isEmpty || state.chatId.isEmpty) {
-        for (int i = 0; i <= 10; i++) {
-          await Future.delayed(const Duration(milliseconds: 100));
-          state = state.copyWith(downloadProgress: i / 10.0);
-        }
-        state = state.copyWith(isDownloading: false, downloadProgress: 0.0);
-        return savePath;
-      }
-
-      // Real download
-      final filePath = await _telegramService.getFilePath(
-        botToken: state.botToken,
-        fileId: fileId,
+      // Find file record in catalog to check if it's chunked
+      final fileRecord = state.allFiles.firstWhere(
+        (f) => f['file_id'] == fileId || f['name'] == filename,
+        orElse: () => <String, dynamic>{},
       );
 
-      if (filePath != null) {
-        final success = await _telegramService.downloadFile(
-          botToken: state.botToken,
-          filePath: filePath,
-          savePath: savePath,
-          onProgress: (received, total) {
-            if (total > 0) {
-              state = state.copyWith(downloadProgress: received / total);
+      final bool isChunked = fileRecord['is_chunked'] == true;
+
+      if (isChunked && fileRecord['chunks'] != null) {
+        final List<dynamic> chunksMeta = fileRecord['chunks'];
+        final totalChunks = chunksMeta.length;
+        final targetFile = File(savePath);
+
+        // Delete if target exists so we start fresh
+        if (await targetFile.exists()) {
+          await targetFile.delete();
+        }
+
+        for (int chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+          final chunk = chunksMeta[chunkIndex];
+          final chunkFileId = chunk['file_id'];
+          final chunkIndexNum = chunk['chunk_index'] ?? chunkIndex;
+
+          state = state.copyWith(
+            downloadProgress: chunkIndex / totalChunks,
+            transferStatus: 'Downloading Part ${chunkIndex + 1} of $totalChunks...',
+          );
+
+          if (isMockMode) {
+            for (int i = 0; i <= 5; i++) {
+              await Future.delayed(const Duration(milliseconds: 120));
+              final chunkProgress = (chunkIndex + (i / 5.0)) / totalChunks;
+              state = state.copyWith(
+                downloadProgress: chunkProgress,
+                transferStatus: 'Downloading Part ${chunkIndex + 1} of $totalChunks (${(i * 20).toStringAsFixed(0)}%)...',
+              );
             }
-          },
+          } else {
+            final tempDir = await getTemporaryDirectory();
+            final tempSavePath = '${tempDir.path}/${filename}_chunk_$chunkIndexNum';
+
+            final filePath = await _telegramService.getFilePath(
+              botToken: state.botToken,
+              fileId: chunkFileId,
+            );
+
+            if (filePath == null) throw Exception('Failed to get path for chunk $chunkIndexNum');
+
+            final success = await _telegramService.downloadFile(
+              botToken: state.botToken,
+              filePath: filePath,
+              savePath: tempSavePath,
+              onProgress: (received, total) {
+                if (total > 0) {
+                  final chunkProgress = (chunkIndex + (received / total)) / totalChunks;
+                  state = state.copyWith(
+                    downloadProgress: chunkProgress,
+                    transferStatus: 'Downloading Part ${chunkIndex + 1} of $totalChunks (${(received / total * 100).toStringAsFixed(0)}%)...',
+                  );
+                }
+              },
+            );
+
+            if (!success) throw Exception('Failed to download chunk $chunkIndexNum');
+
+            // Append chunk bytes to the final file
+            final tempFile = File(tempSavePath);
+            final chunkBytes = await tempFile.readAsBytes();
+            await targetFile.writeAsBytes(chunkBytes, mode: FileMode.append);
+
+            if (await tempFile.exists()) {
+              await tempFile.delete();
+            }
+          }
+        }
+
+        state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+        return savePath;
+      } else {
+        // Standard download
+        if (isMockMode) {
+          for (int i = 0; i <= 10; i++) {
+            await Future.delayed(const Duration(milliseconds: 100));
+            state = state.copyWith(
+              downloadProgress: i / 10.0,
+              transferStatus: 'Downloading file (${(i * 10).toStringAsFixed(0)}%)...',
+            );
+          }
+          state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+          return savePath;
+        }
+
+        final filePath = await _telegramService.getFilePath(
+          botToken: state.botToken,
+          fileId: fileId,
         );
 
-        if (success) {
-          state = state.copyWith(isDownloading: false, downloadProgress: 0.0);
-          return savePath;
+        if (filePath != null) {
+          final success = await _telegramService.downloadFile(
+            botToken: state.botToken,
+            filePath: filePath,
+            savePath: savePath,
+            onProgress: (received, total) {
+              if (total > 0) {
+                state = state.copyWith(
+                  downloadProgress: received / total,
+                  transferStatus: 'Downloading file (${(received / total * 100).toStringAsFixed(0)}%)...',
+                );
+              }
+            },
+          );
+
+          if (success) {
+            state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
+            return savePath;
+          }
         }
       }
     } catch (e) {
       print('Download file error: $e');
     }
-    state = state.copyWith(isDownloading: false, downloadProgress: 0.0);
+    state = state.copyWith(isDownloading: false, downloadProgress: 0.0, transferStatus: '');
     return null;
   }
 

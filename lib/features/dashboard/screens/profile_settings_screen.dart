@@ -873,10 +873,10 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
                   buildSettingItem(
                     icon: LucideIcons.globe,
                     iconColor: theme.colorScheme.primary,
-                    title: 'Google Developer Auth',
-                    subtitle: ref.watch(googleAuthProvider).clientId.trim().isNotEmpty
-                        ? 'Configured (Custom Credentials)'
-                        : 'Simulated Demo Mode (Tap to configure)',
+                    title: 'Google Account Connection',
+                    subtitle: ref.watch(googleAuthProvider).isAuthenticated
+                        ? 'Connected & Active (${ref.watch(googleAuthProvider).email})'
+                        : 'Tap to connect Google account',
                     onTap: () => _showGoogleConfigDialog(context, ref),
                   ),
                   Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
