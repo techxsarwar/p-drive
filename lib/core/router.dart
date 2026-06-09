@@ -123,9 +123,10 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 final routerProvider = Provider<GoRouter>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   final isInitiallyAuthenticated = prefs.getBool('google_auth_is_authenticated') ?? false;
+  final isAppLockEnabled = prefs.getBool('app_lock_enabled') ?? false;
 
   return GoRouter(
-    initialLocation: isInitiallyAuthenticated ? '/lock' : '/',
+    initialLocation: isInitiallyAuthenticated ? (isAppLockEnabled ? '/lock' : '/dashboard/home') : '/',
     redirect: (context, state) {
       final authState = ref.watch(googleAuthProvider);
       final isAuth = authState.isAuthenticated;
@@ -135,8 +136,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLock = state.matchedLocation == '/lock';
       
       if (isAuth && (isSplash || isOnboarding)) {
-        // Only redirect to lock if they are just logging in or opening app
-        return '/lock';
+        // Only redirect to lock if they are just logging in or opening app, AND app lock is enabled
+        return isAppLockEnabled ? '/lock' : '/dashboard/home';
       }
       
       if (!isAuth && !isSplash && !isOnboarding && !isLock) {
