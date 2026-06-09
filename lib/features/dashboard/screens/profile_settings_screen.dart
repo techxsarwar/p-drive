@@ -316,9 +316,8 @@ class ProfileSettingsScreen extends ConsumerWidget {
           ),
         ),
       ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms),
-    ),
-  );
-}
+    );
+  }
 
 void _showSecurityDialog(BuildContext context, WidgetRef ref) {
   final theme = Theme.of(context);
@@ -872,7 +871,7 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
                   ),
                   Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                   buildSettingItem(
-                    icon: LucideIcons.chrome,
+                    icon: LucideIcons.globe,
                     iconColor: theme.colorScheme.primary,
                     title: 'Google Developer Auth',
                     subtitle: ref.watch(googleAuthProvider).clientId.trim().isNotEmpty

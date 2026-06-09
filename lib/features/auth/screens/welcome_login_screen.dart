@@ -12,6 +12,7 @@ class WelcomeLoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final authState = ref.watch(googleAuthProvider);
     
     return Scaffold(
       body: Stack(
@@ -105,48 +106,42 @@ class WelcomeLoginScreen extends ConsumerWidget {
                     const SizedBox(height: 56),
 
                     // Action buttons
-                    final authState = ref.watch(googleAuthProvider);
-                    return Column(
-                      children: [
-                        // Google Login
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton.icon(
-                            onPressed: authState.isLoading
-                                ? null
-                                : () => ref.read(googleAuthProvider.notifier).signInWithGoogle(context, ref),
-                            icon: authState.isLoading
-                                ? const SizedBox.shrink()
-                                : Icon(
-                                    LucideIcons.chrome,
-                                    color: theme.colorScheme.onPrimary,
-                                  ),
-                            label: authState.isLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2.5,
-                                    ),
-                                  )
-                                : const Text('Continue with Google'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              foregroundColor: theme.colorScheme.onPrimary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(28),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed: authState.isLoading
+                            ? null
+                            : () => ref.read(googleAuthProvider.notifier).signInWithGoogle(context, ref),
+                        icon: authState.isLoading
+                            ? const SizedBox.shrink()
+                            : Icon(
+                                LucideIcons.globe,
+                                color: theme.colorScheme.onPrimary,
                               ),
-                              textStyle: theme.textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                              elevation: 0,
-                            ),
+                        label: authState.isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : const Text('Continue with Google'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
                           ),
-                        ).animate().fade(delay: 450.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
-                      ],
-                    );
+                          textStyle: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ).animate().fade(delay: 450.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                     
                     const SizedBox(height: 56),
                     

@@ -143,7 +143,7 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
             actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
             title: Row(
               children: [
-                Icon(LucideIcons.chrome, color: theme.colorScheme.primary, size: 24),
+                Icon(LucideIcons.globe, color: theme.colorScheme.primary, size: 24),
                 const SizedBox(width: 12),
                 const Text('Sign in with Google', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ],
