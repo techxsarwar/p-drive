@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../config/auth_config.dart';
+import '../router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthState {
@@ -43,8 +44,21 @@ class GoogleAuthState {
 }
 
 class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
-  GoogleAuthNotifier() : super(GoogleAuthState()) {
-    _init();
+  final SharedPreferences prefs;
+
+  GoogleAuthNotifier(this.prefs) : super(GoogleAuthState(
+    clientId: prefs.getString(_clientIdKey) ?? AuthConfig.googleClientId,
+    isAuthenticated: prefs.getBool(_isAuthenticatedKey) ?? false,
+    displayName: prefs.getString(_displayNameKey),
+    email: prefs.getString(_emailKey),
+  )) {
+    if (state.isAuthenticated) {
+      _googleSignIn = GoogleSignIn(
+        clientId: state.clientId.isNotEmpty ? state.clientId : null,
+        scopes: ['email', 'profile'],
+      );
+      _googleSignIn?.signInSilently();
+    }
   }
 
   static const _clientIdKey = 'google_auth_client_id';
@@ -53,32 +67,6 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
   static const _emailKey = 'google_auth_email';
 
   GoogleSignIn? _googleSignIn;
-
-  Future<void> _init() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final clientId = prefs.getString(_clientIdKey) ?? AuthConfig.googleClientId;
-      final isAuthenticated = prefs.getBool(_isAuthenticatedKey) ?? false;
-      final displayName = prefs.getString(_displayNameKey);
-      final email = prefs.getString(_emailKey);
-
-      state = GoogleAuthState(
-        clientId: clientId,
-        isAuthenticated: isAuthenticated,
-        displayName: displayName,
-        email: email,
-      );
-
-      // Try to restore previous Google Sign-In session silently
-      if (isAuthenticated) {
-        _googleSignIn = GoogleSignIn(
-          clientId: clientId.isNotEmpty ? clientId : null,
-          scopes: ['email', 'profile'],
-        );
-        await _googleSignIn?.signInSilently();
-      }
-    } catch (_) {}
-  }
 
   Future<void> saveCredentials(String clientId) async {
     state = state.copyWith(clientId: clientId);
@@ -287,5 +275,6 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
 }
 
 final googleAuthProvider = StateNotifierProvider<GoogleAuthNotifier, GoogleAuthState>((ref) {
-  return GoogleAuthNotifier();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return GoogleAuthNotifier(prefs);
 });
