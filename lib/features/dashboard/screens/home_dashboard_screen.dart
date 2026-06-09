@@ -8,6 +8,7 @@ import '../../onboarding/providers/onboarding_provider.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/upload_bottom_sheet.dart';
 import '../widgets/springy_tap.dart';
+import 'dashboard_shell.dart';
 
 class HomeDashboardScreen extends ConsumerStatefulWidget {
   const HomeDashboardScreen({super.key});
@@ -573,7 +574,7 @@ class _HomeDashboardScreenState extends ConsumerState<HomeDashboardScreen> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Scaffold.of(context).openDrawer();
+            dashboardScaffoldKey.currentState?.openDrawer();
           },
           icon: const Icon(LucideIcons.menu),
         ),

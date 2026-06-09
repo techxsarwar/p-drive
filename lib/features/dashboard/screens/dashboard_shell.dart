@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,11 @@ import 'package:go_router/go_router.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/upload_bottom_sheet.dart';
 import '../../../core/providers/google_auth_provider.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
+
+/// Global key that exposes the DashboardShell's ScaffoldState so that
+/// child screens (which have their own inner Scaffold) can open the Drawer.
+final GlobalKey<ScaffoldState> dashboardScaffoldKey = GlobalKey<ScaffoldState>();
 
 class DashboardShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -16,6 +22,13 @@ class DashboardShell extends ConsumerStatefulWidget {
 }
 
 class _DashboardShellState extends ConsumerState<DashboardShell> {
+  String _formatBytes(int bytes, int decimals) {
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
+  }
+
   int _getSelectedIndex(String location) {
     if (location.startsWith('/dashboard/files')) return 1;
     if (location.startsWith('/dashboard/shared')) return 2;
@@ -97,8 +110,23 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     }
 
     final authState = ref.watch(googleAuthProvider);
+    final onboardingState = ref.watch(onboardingProvider);
+
+    final displayName = authState.isAuthenticated 
+        ? (authState.displayName ?? 'Google User') 
+        : (onboardingState.username.isNotEmpty ? onboardingState.username : 'Guest Explorer');
+    final userEmail = authState.isAuthenticated 
+        ? (authState.email ?? 'Connected') 
+        : 'Connected Mode (Local)';
+
+    final int usedBytes = storageState.allFiles.fold(0, (sum, f) => sum + ((f['size_bytes'] as num?)?.toInt() ?? 0));
+    const int totalBytes = 100 * 1024 * 1024 * 1024; // 100 GB
+    final double percentUsed = min(1.0, usedBytes / totalBytes);
+    final String usedStr = _formatBytes(usedBytes, 1);
+    final String freeStr = _formatBytes(totalBytes - usedBytes, 1);
 
     return Scaffold(
+      key: dashboardScaffoldKey,
       drawer: Drawer(
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
@@ -114,15 +142,28 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
-                          child: Text(
-                            (authState.displayName ?? 'Guest').substring(0, 1).toUpperCase(),
-                            style: TextStyle(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.primary.withOpacity(0.7),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              displayName.substring(0, 1).toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -132,7 +173,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                authState.displayName ?? 'Guest Explorer',
+                                displayName,
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.onSurface,
@@ -141,7 +182,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                authState.email ?? 'Connected Mode (Local)',
+                                userEmail,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurface.withOpacity(0.5),
                                 ),
@@ -154,24 +195,61 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    // Quick stats
+                    // Storage usage bar
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: theme.inputDecorationTheme.fillColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
                       ),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(LucideIcons.hard_drive, size: 16, color: theme.colorScheme.primary),
-                          const SizedBox(width: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(LucideIcons.hard_drive, size: 14, color: theme.colorScheme.primary),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Storage',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '$usedStr / 100 GB',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: percentUsed,
+                              minHeight: 6,
+                              backgroundColor: theme.dividerColor,
+                              color: percentUsed > 0.8
+                                  ? Colors.orange
+                                  : theme.colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
                           Text(
-                            'Used: 32.4 GB / 100 GB',
+                            '$freeStr free',
                             style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
+                              fontSize: 11,
+                              color: theme.colorScheme.onSurface.withOpacity(0.5),
                             ),
                           ),
                         ],
@@ -227,27 +305,42 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                         _onItemTapped(3, context);
                       },
                     ),
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    const SizedBox(height: 8),
+                    _buildDrawerItem(
+                      theme: theme,
+                      icon: LucideIcons.cloud_upload,
+                      label: 'Upload Files',
+                      isSelected: false,
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showUploadBottomSheet(context);
+                      },
+                    ),
                   ],
                 ),
               ),
               
-              // Footer settings quick switches
+              // Footer — version only, no internal tech settings
               const Divider(height: 1),
               Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Chunking Pipeline',
-                      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                      'P-Drive',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
-                    Switch.adaptive(
-                      value: storageState.isChunkingEnabled,
-                      activeColor: theme.colorScheme.primary,
-                      onChanged: (val) {
-                        ref.read(telegramStorageProvider.notifier).toggleChunking(val);
-                      },
+                    Text(
+                      'v1.0.0',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      ),
                     ),
                   ],
                 ),
@@ -295,9 +388,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              (storageState.transferStatus != null && storageState.transferStatus!.isNotEmpty)
-                                  ? storageState.transferStatus!
-                                  : '$message...',
+                              '$message...',
                               style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),

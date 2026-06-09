@@ -340,7 +340,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
 
           state = state.copyWith(
             uploadProgress: chunkIndex / totalChunks,
-            transferStatus: 'Uploading Part ${chunkIndex + 1} of $totalChunks...',
+            transferStatus: 'Uploading file...',
           );
 
           if (isMockMode) {
@@ -349,7 +349,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
               final chunkProgress = (chunkIndex + (i / 5.0)) / totalChunks;
               state = state.copyWith(
                 uploadProgress: chunkProgress,
-                transferStatus: 'Uploading Part ${chunkIndex + 1} of $totalChunks (${(i * 20).toStringAsFixed(0)}%)...',
+                transferStatus: 'Uploading file...',
               );
             }
             chunksMeta.add({
@@ -372,7 +372,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
                   final chunkProgress = (chunkIndex + (sent / total)) / totalChunks;
                   state = state.copyWith(
                     uploadProgress: chunkProgress,
-                    transferStatus: 'Uploading Part ${chunkIndex + 1} of $totalChunks (${(sent / total * 100).toStringAsFixed(0)}%)...',
+                    transferStatus: 'Uploading file...',
                   );
                 }
               },
@@ -540,7 +540,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
 
           state = state.copyWith(
             downloadProgress: chunkIndex / totalChunks,
-            transferStatus: 'Downloading Part ${chunkIndex + 1} of $totalChunks...',
+            transferStatus: 'Downloading file...',
           );
 
           if (isMockMode) {
@@ -549,7 +549,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
               final chunkProgress = (chunkIndex + (i / 5.0)) / totalChunks;
               state = state.copyWith(
                 downloadProgress: chunkProgress,
-                transferStatus: 'Downloading Part ${chunkIndex + 1} of $totalChunks (${(i * 20).toStringAsFixed(0)}%)...',
+                transferStatus: 'Downloading file...',
               );
             }
           } else {
@@ -572,7 +572,7 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
                   final chunkProgress = (chunkIndex + (received / total)) / totalChunks;
                   state = state.copyWith(
                     downloadProgress: chunkProgress,
-                    transferStatus: 'Downloading Part ${chunkIndex + 1} of $totalChunks (${(received / total * 100).toStringAsFixed(0)}%)...',
+                    transferStatus: 'Downloading file...',
                   );
                 }
               },

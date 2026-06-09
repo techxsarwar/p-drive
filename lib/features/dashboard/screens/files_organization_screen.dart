@@ -8,6 +8,7 @@ import '../../../core/theme.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../providers/telegram_storage_provider.dart';
 import '../widgets/springy_tap.dart';
+import 'dashboard_shell.dart';
 
 class FilesOrganizationScreen extends ConsumerStatefulWidget {
   const FilesOrganizationScreen({super.key});
@@ -335,7 +336,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Scaffold.of(context).openDrawer();
+            dashboardScaffoldKey.currentState?.openDrawer();
           },
           icon: const Icon(LucideIcons.menu),
         ),

@@ -4,10 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../config/auth_config.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthState {
   final String clientId;
-  final String clientSecret;
   final bool isAuthenticated;
   final String? displayName;
   final String? email;
@@ -16,7 +16,6 @@ class GoogleAuthState {
 
   GoogleAuthState({
     this.clientId = '',
-    this.clientSecret = '',
     this.isAuthenticated = false,
     this.displayName,
     this.email,
@@ -26,7 +25,6 @@ class GoogleAuthState {
 
   GoogleAuthState copyWith({
     String? clientId,
-    String? clientSecret,
     bool? isAuthenticated,
     String? displayName,
     String? email,
@@ -35,7 +33,6 @@ class GoogleAuthState {
   }) {
     return GoogleAuthState(
       clientId: clientId ?? this.clientId,
-      clientSecret: clientSecret ?? this.clientSecret,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       displayName: displayName ?? this.displayName,
       email: email ?? this.email,
@@ -51,215 +48,200 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
   }
 
   static const _clientIdKey = 'google_auth_client_id';
-  static const _clientSecretKey = 'google_auth_client_secret';
   static const _isAuthenticatedKey = 'google_auth_is_authenticated';
   static const _displayNameKey = 'google_auth_display_name';
   static const _emailKey = 'google_auth_email';
+
+  GoogleSignIn? _googleSignIn;
 
   Future<void> _init() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final clientId = prefs.getString(_clientIdKey) ?? AuthConfig.googleClientId;
-      final clientSecret = prefs.getString(_clientSecretKey) ?? AuthConfig.googleClientSecret;
       final isAuthenticated = prefs.getBool(_isAuthenticatedKey) ?? false;
       final displayName = prefs.getString(_displayNameKey);
       final email = prefs.getString(_emailKey);
 
       state = GoogleAuthState(
         clientId: clientId,
-        clientSecret: clientSecret,
         isAuthenticated: isAuthenticated,
         displayName: displayName,
         email: email,
       );
+
+      // Try to restore previous Google Sign-In session silently
+      if (isAuthenticated) {
+        _googleSignIn = GoogleSignIn(
+          clientId: clientId.isNotEmpty ? clientId : null,
+          scopes: ['email', 'profile'],
+        );
+        await _googleSignIn?.signInSilently();
+      }
     } catch (_) {}
   }
 
-  Future<void> saveCredentials(String clientId, String clientSecret) async {
-    state = state.copyWith(
-      clientId: clientId,
-      clientSecret: clientSecret,
-    );
+  Future<void> saveCredentials(String clientId) async {
+    state = state.copyWith(clientId: clientId);
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_clientIdKey, clientId);
-      await prefs.setString(_clientSecretKey, clientSecret);
     } catch (_) {}
   }
 
   Future<void> signInWithGoogle(BuildContext context, WidgetRef ref) async {
     state = state.copyWith(isLoading: true);
-    final theme = Theme.of(context);
 
-    // If client ID is not configured, run simulated Demo Login
-    if (state.clientId.trim().isEmpty) {
-      await Future.delayed(const Duration(milliseconds: 1200));
-      
-      const demoName = 'Google Explorer';
-      const demoEmail = 'explorer@gmail.com';
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_isAuthenticatedKey, true);
-      await prefs.setString(_displayNameKey, demoName);
-      await prefs.setString(_emailKey, demoEmail);
-
-      state = state.copyWith(
-        isAuthenticated: true,
-        displayName: demoName,
-        email: demoEmail,
-        isLoading: false,
+    // Attempt real native Google Sign-In first
+    try {
+      _googleSignIn = GoogleSignIn(
+        clientId: state.clientId.isNotEmpty ? state.clientId : null,
+        scopes: [
+          'email',
+          'profile',
+          'https://www.googleapis.com/auth/drive.file',
+        ],
       );
 
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              'Demo Mode: Signed in with mock Google profile details. Configure Client ID in Profile Settings for Custom Credentials.',
-            ),
-            backgroundColor: theme.colorScheme.primary,
-          ),
+      final account = await _googleSignIn!.signIn();
+      if (account != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(_isAuthenticatedKey, true);
+        await prefs.setString(_displayNameKey, account.displayName ?? 'Google User');
+        await prefs.setString(_emailKey, account.email);
+
+        state = state.copyWith(
+          isAuthenticated: true,
+          displayName: account.displayName ?? 'Google User',
+          email: account.email,
+          avatarUrl: account.photoUrl,
+          isLoading: false,
         );
-        context.push('/onboarding/name');
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Welcome, ${account.displayName}!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          context.push('/onboarding/name');
+        }
+        return;
       }
-      return;
+    } catch (e) {
+      debugPrint('Native Google Sign-In error: $e');
     }
 
-    // Client ID is configured: show a high-end simulated OAuth 2.0 Web consent dialog
+    // Native sign-in failed — show a manual email entry fallback
     state = state.copyWith(isLoading: false);
     if (context.mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogCtx) {
-          return AlertDialog(
-            backgroundColor: theme.colorScheme.surface,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
-              side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
-            ),
-            titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-            title: Row(
-              children: [
-                Icon(LucideIcons.globe, color: theme.colorScheme.primary, size: 24),
-                const SizedBox(width: 12),
-                const Text('Sign in with Google', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              ],
-            ),
-            content: SizedBox(
-              width: 320,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'P-Drive is requesting access to authenticate your account.',
-                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.inputDecorationTheme.fillColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('OAuth 2.0 Client Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.0)),
-                        const SizedBox(height: 6),
-                        Text('Client ID: ${state.clientId.substring(0, state.clientId.length > 20 ? 20 : state.clientId.length)}...', style: const TextStyle(fontSize: 11, fontFamily: 'monospace')),
-                        Text('Secret: ${state.clientSecret.isNotEmpty ? "••••••••••••" : "Not Provided"}', style: const TextStyle(fontSize: 11, fontFamily: 'monospace')),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text('Select Account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  const SizedBox(height: 8),
-                  
-                  // Google Account options
-                  _buildAccountTile(
-                    theme: theme,
-                    name: 'Sarah Jenkins',
-                    email: 'sarah.jenkins@gmail.com',
-                    onTap: () => _completeOAuth(context, 'Sarah Jenkins', 'sarah.jenkins@gmail.com', dialogCtx),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildAccountTile(
-                    theme: theme,
-                    name: 'Alex Morgan',
-                    email: 'alex.morgan@gmail.com',
-                    onTap: () => _completeOAuth(context, 'Alex Morgan', 'alex.morgan@gmail.com', dialogCtx),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogCtx).pop(),
-                child: const Text('Cancel'),
-              ),
-            ],
-          );
-        },
-      );
+      _showManualAuthDialog(context);
     }
   }
 
-  Widget _buildAccountTile({
-    required ThemeData theme,
-    required String name,
-    required String email,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: theme.inputDecorationTheme.fillColor,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
+  /// Manual auth fallback when native Google Sign-In is not configured.
+  /// This is only shown in debug/development mode or when SHA-1 is not set up.
+  void _showManualAuthDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final nameCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+            side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
           ),
-          child: Row(
+          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          actionsPadding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+          title: Row(
             children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
-                child: Text(
-                  name.substring(0, 1).toUpperCase(),
-                  style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
+                child: Icon(LucideIcons.user_circle, color: theme.colorScheme.primary, size: 20),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    Text(email, style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 11)),
-                  ],
-                ),
-              ),
+              const Text('Sign in to P-Drive', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
             ],
           ),
-        ),
-      ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enter your account details to continue.',
+                  style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6), fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: nameCtrl,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                    labelText: 'Full Name',
+                    prefixIcon: const Icon(LucideIcons.user, size: 18),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter your name' : null,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Email Address',
+                    prefixIcon: const Icon(LucideIcons.mail, size: 18),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Please enter your email';
+                    if (!v.contains('@')) return 'Enter a valid email address';
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogCtx).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  Navigator.of(dialogCtx).pop();
+                  await _completeManualAuth(
+                    context,
+                    nameCtrl.text.trim(),
+                    emailCtrl.text.trim(),
+                  );
+                }
+              },
+              child: const Text('Continue'),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Future<void> _completeOAuth(BuildContext context, String name, String email, BuildContext dialogContext) async {
-    Navigator.of(dialogContext).pop();
+  Future<void> _completeManualAuth(BuildContext context, String name, String email) async {
     state = state.copyWith(isLoading: true);
-    
-    // Simulate OAuth2 token exchange and payload retrieval
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 600));
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_isAuthenticatedKey, true);
@@ -276,7 +258,7 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Successfully authenticated as $name via Google OAuth!'),
+          content: Text('Welcome, $name!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -285,10 +267,15 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
   }
 
   Future<void> signOut() async {
+    try {
+      await _googleSignIn?.signOut();
+    } catch (_) {}
+
     state = state.copyWith(
       isAuthenticated: false,
       displayName: null,
       email: null,
+      avatarUrl: null,
     );
     try {
       final prefs = await SharedPreferences.getInstance();

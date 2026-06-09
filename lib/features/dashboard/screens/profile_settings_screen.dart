@@ -208,7 +208,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
     final authNotifier = ref.read(googleAuthProvider.notifier);
     
     final clientIdController = TextEditingController(text: authState.clientId);
-    final clientSecretController = TextEditingController(text: authState.clientSecret);
     final theme = Theme.of(context);
 
     showModalBottomSheet(
@@ -268,20 +267,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                 ),
               ),
-              const SizedBox(height: 16),
-
-              // Client Secret Field
-              const Text('GOOGLE CLIENT SECRET', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.2)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: clientSecretController,
-                decoration: InputDecoration(
-                  hintText: 'Enter Client Secret (optional for client flow)',
-                  fillColor: theme.inputDecorationTheme.fillColor,
-                  filled: true,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                ),
-              ),
               const SizedBox(height: 28),
 
               // Save Button
@@ -291,11 +276,10 @@ class ProfileSettingsScreen extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     final clientId = clientIdController.text.trim();
-                    final clientSecret = clientSecretController.text.trim();
                     
                     Navigator.of(context).pop();
                     
-                    await authNotifier.saveCredentials(clientId, clientSecret);
+                    await authNotifier.saveCredentials(clientId);
                     
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

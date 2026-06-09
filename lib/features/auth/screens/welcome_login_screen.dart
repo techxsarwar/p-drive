@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../../core/providers/google_auth_provider.dart';
 
@@ -64,28 +63,50 @@ class WelcomeLoginScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    // Logo Box
+                    
+                    // Branded P-Drive Logo
                     Container(
                       width: 96,
                       height: 96,
                       decoration: BoxDecoration(
-                        color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                         borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary,
+                            theme.colorScheme.primary.withOpacity(0.75),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.brightness == Brightness.dark
-                                ? Colors.transparent
-                                : Colors.black.withOpacity(0.04),
+                            color: theme.colorScheme.primary.withOpacity(0.4),
                             blurRadius: 24,
                             offset: const Offset(0, 8),
                           ),
                         ],
                       ),
-                      child: Icon(
-                        LucideIcons.cloud,
-                        size: 44,
-                        color: theme.colorScheme.primary,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Subtle cloud icon behind the P
+                          Icon(
+                            LucideIcons.cloud,
+                            size: 54,
+                            color: Colors.white.withOpacity(0.15),
+                          ),
+                          // Large "P" branding letter
+                          const Text(
+                            'P',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 46,
+                              height: 1,
+                              letterSpacing: -2,
+                            ),
+                          ),
+                        ],
                       ),
                     ).animate().fade(duration: 800.ms).scale(delay: 100.ms, curve: Curves.easeOutBack),
                     const SizedBox(height: 24),
@@ -105,7 +126,7 @@ class WelcomeLoginScreen extends ConsumerWidget {
                     
                     const SizedBox(height: 56),
 
-                    // Action buttons
+                    // Google Sign-In button
                     SizedBox(
                       width: double.infinity,
                       height: 56,
