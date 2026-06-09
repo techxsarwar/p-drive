@@ -266,18 +266,6 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
             : const Color(0xFF006B2D);
       }
 
-      return SpringyTap(
-        onTap: () => context.push('/file-details', extra: name),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
-            boxShadow: theme.brightness == Brightness.light
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.01),
       // Telegram-style delete: shrink → opacity 0 → height collapses
       return _DeletingItem(
         id: name,
@@ -295,6 +283,15 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
+                boxShadow: theme.brightness == Brightness.light
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.01),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
               ),
               child: Row(
                 children: [

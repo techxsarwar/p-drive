@@ -212,6 +212,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 trailing: isSelected ? Icon(LucideIcons.check, color: theme.colorScheme.primary) : null,
+                ),
               );
             }).toList(),
           ],
