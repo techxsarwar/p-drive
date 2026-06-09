@@ -86,6 +86,9 @@ jobs:
           if 'ForegroundTaskService' not in content:
               content = content.replace('</application>', service_block + '\n    </application>', 1)
 
+          # ── Rename App Label ──────────────────────────────────────────────
+          content = content.replace('android:label=\"pdrive\"', 'android:label=\"P-Drive\"')
+
           with open(path, 'w') as f:
               f.write(content)
           print('AndroidManifest patched successfully')
@@ -124,9 +127,8 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Generate App Name and Icons
+      - name: Generate App Icons
         run: |
-          flutter pub run flutter_launcher_name:main
           flutter pub run flutter_launcher_icons:main
 
       - name: Build APK (Debug and Release)
