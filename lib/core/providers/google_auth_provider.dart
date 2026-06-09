@@ -170,7 +170,7 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
                   color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(LucideIcons.user_circle, color: theme.colorScheme.primary, size: 20),
+                child: Icon(LucideIcons.user, color: theme.colorScheme.primary, size: 20),
               ),
               const SizedBox(width: 12),
               const Text('Sign in to P-Drive', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
