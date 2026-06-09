@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter/services.dart';
+import '../../../core/providers/google_auth_provider.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
 import '../../../core/widgets/telegram_theme_switcher.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/widgets/top_toast.dart';

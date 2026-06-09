@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'providers/google_auth_provider.dart';
 
 // Screens
 import '../features/auth/screens/welcome_login_screen.dart';
@@ -109,10 +112,6 @@ class SharedTabPlaceholder extends StatelessWidget {
     );
   }
 }
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'providers/google_auth_provider.dart';
 
 // ─── Shared Preferences Provider ────────────────────────────────────────────
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {

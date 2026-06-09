@@ -143,7 +143,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
                 itemBuilder: (context, index) {
                   if (index == 9) {
                     return IconButton(
-                      icon: Icon(LucideIcons.fingerprint, color: theme.colorScheme.primary),
+                      icon: Icon(Icons.fingerprint, color: theme.colorScheme.primary),
                       onPressed: _checkBiometrics,
                     );
                   } else if (index == 11) {

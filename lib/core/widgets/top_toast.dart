@@ -33,7 +33,7 @@ class TopToast {
               child: Row(
                 children: [
                   Icon(
-                    isError ? LucideIcons.alert_circle : LucideIcons.info,
+                    isError ? Icons.error_outline : LucideIcons.info,
                     color: isError ? Colors.white : theme.colorScheme.onPrimaryContainer,
                     size: 20,
                   ),
@@ -50,7 +50,13 @@ class TopToast {
                 ],
               ),
             ),
-          ).animate(onPlay: (c) => c.forward().then(delay: 3.seconds).reverse())
+          ).animate(onPlay: (c) {
+            c.forward().then((_) {
+              Future.delayed(const Duration(seconds: 3), () {
+                if (entry.mounted) c.reverse();
+              });
+            });
+          })
            .slideY(begin: -1.0, end: 0, duration: 400.ms, curve: Curves.easeOutBack)
            .fade(duration: 300.ms),
         );
