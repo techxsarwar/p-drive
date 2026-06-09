@@ -80,35 +80,10 @@ jobs:
           print(f'Modifying {root_path}')
           if root_path.endswith('.kts'):
               with open(root_path, 'a') as f:
-                  f.write('''
-subprojects {
-    afterEvaluate {
-        val android = extensions.findByType(com.android.build.gradle.BaseExtension::class.java)
-        android?.apply {
-            compileSdkVersion(36)
-            defaultConfig {
-                targetSdk = 36
-            }
-        }
-    }
-}
-''')
+                  f.write('\nsubprojects {\n    afterEvaluate {\n        val android = extensions.findByType(com.android.build.gradle.BaseExtension::class.java)\n        android?.apply {\n            compileSdkVersion(36)\n            defaultConfig {\n                targetSdk = 36\n            }\n        }\n    }\n}\n')
           else:
               with open(root_path, 'a') as f:
-                  f.write('''
-subprojects {
-    afterEvaluate { project ->
-        if (project.hasProperty('android')) {
-            project.android {
-                compileSdkVersion 36
-                defaultConfig {
-                    targetSdk 36
-                }
-            }
-        }
-    }
-}
-''')
+                  f.write('\nsubprojects {\n    afterEvaluate { project ->\n        if (project.hasProperty(\'android\')) {\n            project.android {\n                compileSdkVersion 36\n                defaultConfig {\n                    targetSdk 36\n                }\n            }\n        }\n    }\n}\n')
           print('Successfully configured subprojects SDK version overrides')
           "
 
