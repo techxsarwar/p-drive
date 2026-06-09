@@ -50,9 +50,9 @@ jobs:
           path = 'android/app/src/main/AndroidManifest.xml'
           with open(path, 'r') as f:
               content = f.read()
-          # Inject internet permission right after the opening manifest tag
+          # Inject internet permission right before the application tag
           if 'android.permission.INTERNET' not in content:
-              content = content.replace('<manifest ', '<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <uses-permission android:name=\"android.permission.INTERNET\"/>\n')
+              content = content.replace('<application', '<uses-permission android:name=\"android.permission.INTERNET\"/>\n    <application')
           with open(path, 'w') as f:
               f.write(content)
           "
