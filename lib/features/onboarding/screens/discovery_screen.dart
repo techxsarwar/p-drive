@@ -27,83 +27,92 @@ class DiscoveryScreen extends ConsumerWidget {
 
       return GestureDetector(
         onTap: () => onboardingNotifier.setDiscoverySource(id),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? theme.colorScheme.primary.withOpacity(0.05)
-                : Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+        child: AnimatedScale(
+          scale: isSelected ? 1.03 : 1.0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutBack,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? theme.colorScheme.primary.withOpacity(0.08)
+                  : (theme.cardTheme.color ?? theme.colorScheme.surfaceVariant),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isSelected ? theme.colorScheme.primary : (theme.dividerColor.withOpacity(0.5)),
+                width: 2,
               ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      icon,
-                      color: isSelected ? Colors.white : theme.colorScheme.primary,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: theme.textTheme.labelSmall?.color?.withOpacity(0.6),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              if (isSelected)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Icon(
-                    Icons.check_circle,
-                    color: theme.colorScheme.primary,
-                    size: 24,
-                  ).animate().scale(duration: 200.ms, curve: Curves.easeOutBack),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.brightness == Brightness.dark
+                      ? Colors.transparent
+                      : Colors.black.withOpacity(0.03),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
                 ),
-            ],
+              ],
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        color: isSelected
+                            ? (theme.brightness == Brightness.dark ? Colors.black : Colors.white)
+                            : theme.colorScheme.primary,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: theme.textTheme.labelSmall?.color?.withOpacity(0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                if (isSelected)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Icon(
+                      Icons.check_circle,
+                      color: theme.colorScheme.primary,
+                      size: 24,
+                    ).animate().scale(duration: 200.ms, curve: Curves.easeOutBack),
+                  ),
+              ],
+            ),
           ),
         ),
       );
@@ -157,14 +166,14 @@ class DiscoveryScreen extends ConsumerWidget {
               Text(
                 "How did you hear about P-Drive?",
                 style: theme.textTheme.headlineLarge,
-              ).animate().fade(duration: 400.ms).slideX(begin: -0.1, end: 0),
+              ).animate().fade(duration: 500.ms).slideX(begin: -0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
               const SizedBox(height: 8),
               Text(
                 "We're curious to know what brought you to our tranquil workspace.",
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
                 ),
-              ).animate().fade(delay: 100.ms).slideX(begin: -0.1, end: 0),
+              ).animate().fade(delay: 100.ms).slideX(begin: -0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
               const SizedBox(height: 32),
 
               // Bento Options Grid
@@ -226,7 +235,7 @@ class DiscoveryScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 40),
                     ],
-                  ).animate().fade(delay: 200.ms).slideY(begin: 0.1, end: 0),
+                  ).animate().fade(delay: 200.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                 ),
               ),
 

@@ -429,6 +429,68 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
     return null;
   }
 
+  // Rename a file in the local catalog and sync it
+  Future<void> renameFile(String oldName, String newName, [String? fileId]) async {
+    final updatedFiles = state.allFiles.map((f) {
+      final matchesName = f['name'] == oldName;
+      final matchesId = fileId == null || f['file_id'] == fileId;
+      if (matchesName && matchesId) {
+        return Map<String, dynamic>.from(f)..['name'] = newName;
+      }
+      return f;
+    }).toList();
+    
+    state = state.copyWith(allFiles: updatedFiles);
+
+    if (state.botToken.isNotEmpty && state.chatId.isNotEmpty) {
+      await _syncCatalogToTelegram();
+    }
+  }
+
+  // Move a file to another folder in the local catalog and sync it
+  Future<void> moveFile(String filename, String targetFolderPath, [String? fileId]) async {
+    String actualFolder = targetFolderPath;
+    String? actualId = fileId;
+    if (fileId != null && !targetFolderPath.startsWith('/')) {
+      actualFolder = fileId;
+      actualId = targetFolderPath;
+    }
+
+    final updatedFiles = state.allFiles.map((f) {
+      final matchesName = f['name'] == filename;
+      final matchesId = actualId == null || f['file_id'] == actualId;
+      if (matchesName && matchesId) {
+        return Map<String, dynamic>.from(f)..['path'] = actualFolder;
+      }
+      return f;
+    }).toList();
+
+    state = state.copyWith(allFiles: updatedFiles);
+
+    if (state.botToken.isNotEmpty && state.chatId.isNotEmpty) {
+      await _syncCatalogToTelegram();
+    }
+  }
+
+  // Add a scanned file entry locally and sync it
+  Future<void> addScannedFile(String filename, int sizeBytes) async {
+    final mockFile = {
+      'name': filename,
+      'path': state.currentPath,
+      'size_bytes': sizeBytes,
+      'uploaded_at': DateTime.now().toIso8601String(),
+      'file_id': 'scanned_${DateTime.now().millisecondsSinceEpoch}',
+    };
+
+    state = state.copyWith(
+      allFiles: List<Map<String, dynamic>>.from(state.allFiles)..add(mockFile),
+    );
+
+    if (state.botToken.isNotEmpty && state.chatId.isNotEmpty) {
+      await _syncCatalogToTelegram();
+    }
+  }
+
   // Delete file document entry in local catalog and update on Telegram
   Future<void> deleteFile(String filename, String fileId) async {
     final updatedFiles = List<Map<String, dynamic>>.from(state.allFiles)

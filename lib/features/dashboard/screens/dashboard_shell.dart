@@ -113,8 +113,8 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
               right: 16,
               child: Material(
                 elevation: 4,
-                color: Colors.white,
-                shadowColor: Colors.black.withOpacity(0.1),
+                color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
+                shadowColor: theme.brightness == Brightness.light ? Colors.black.withOpacity(0.1) : Colors.transparent,
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -154,7 +154,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                         child: LinearProgressIndicator(
                           value: progress,
                           minHeight: 4,
-                          backgroundColor: const Color(0xFFE5E7EB),
+                          backgroundColor: theme.dividerColor,
                           color: theme.colorScheme.primary,
                         ),
                       ),
@@ -172,7 +172,7 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
               child: FloatingActionButton(
                 onPressed: () => _showUploadBottomSheet(context),
                 backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: theme.colorScheme.onPrimary,
                 elevation: 6,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -199,17 +199,19 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
                     color: theme.colorScheme.surface.withOpacity(0.9),
                     border: Border(
                       top: BorderSide(
-                        color: Colors.black.withOpacity(0.05),
+                        color: theme.dividerColor.withOpacity(0.5),
                         width: 1,
                       ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 20,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
+                    boxShadow: theme.brightness == Brightness.light
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 20,
+                              offset: const Offset(0, -4),
+                            ),
+                          ]
+                        : null,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../providers/telegram_storage_provider.dart';
+import '../widgets/springy_tap.dart';
 
 class FilesOrganizationScreen extends ConsumerStatefulWidget {
   const FilesOrganizationScreen({super.key});
@@ -28,14 +29,16 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
   void _showNewFolderDialog() {
     final controller = TextEditingController();
     final storageNotifier = ref.read(telegramStorageProvider.notifier);
+    final theme = Theme.of(context);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.cardColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
         ),
         title: const Text(
           'New Folder',
@@ -46,7 +49,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
           autofocus: true,
           decoration: InputDecoration(
             hintText: 'Folder name',
-            fillColor: const Color(0xFFF1F1EF),
+            fillColor: theme.inputDecorationTheme.fillColor,
             filled: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
@@ -73,7 +76,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -105,28 +108,34 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
 
     Widget buildTabButton(String name) {
       final isActive = _activeTab == name;
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            _activeTab = name;
-          });
-        },
-        child: Container(
-          margin: const EdgeInsets.only(right: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: isActive ? theme.colorScheme.primary : Colors.transparent,
+      return Container(
+        margin: const EdgeInsets.only(right: 8),
+        child: Material(
+          color: isActive ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                _activeTab = name;
+              });
+            },
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isActive ? theme.colorScheme.primary : const Color(0xFFE5E7EB),
-              width: 1,
-            ),
-          ),
-          child: Text(
-            name,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isActive ? Colors.white : theme.colorScheme.onSurface,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isActive ? theme.colorScheme.primary : theme.dividerColor,
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                name,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isActive ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+                ),
+              ),
             ),
           ),
         ),
@@ -141,21 +150,23 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
       final filesInFolder = storageState.allFiles.where((f) => f['path'].toString().startsWith(fullPath)).toList();
       final totalSizeBytes = filesInFolder.fold<int>(0, (sum, f) => sum + (f['size_bytes'] as num).toInt());
 
-      return GestureDetector(
+      return SpringyTap(
         onTap: () => storageNotifier.changeDirectory(fullPath),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 15,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+            boxShadow: theme.brightness == Brightness.light
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,39 +230,54 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
       final String dateStr = file['uploaded_at'].toString().split('T').first;
 
       IconData fileIcon = LucideIcons.archive;
-      Color iconBgColor = const Color(0xFFF1F1EF);
-      Color iconColor = const Color(0xFF6B7280);
+      Color iconBgColor = theme.brightness == Brightness.dark
+          ? const Color(0xFF1E293B)
+          : const Color(0xFFF1F1EF);
+      Color iconColor = theme.brightness == Brightness.dark
+          ? const Color(0xFF94A3B8)
+          : const Color(0xFF6B7280);
 
       if (name.toLowerCase().endsWith('.pdf')) {
         fileIcon = LucideIcons.file_text;
-        iconBgColor = const Color(0xFFFFDAD6);
-        iconColor = const Color(0xFFBA1A1A);
+        iconBgColor = theme.brightness == Brightness.dark
+            ? const Color(0xFF7F1D1D).withOpacity(0.4)
+            : const Color(0xFFFFDAD6);
+        iconColor = theme.brightness == Brightness.dark
+            ? const Color(0xFFF87171)
+            : const Color(0xFFBA1A1A);
       } else if (name.toLowerCase().endsWith('.png') || name.toLowerCase().endsWith('.jpg') || name.toLowerCase().endsWith('.jpeg')) {
         fileIcon = LucideIcons.image;
-        iconBgColor = const Color(0xFFE9EDFF);
+        iconBgColor = theme.brightness == Brightness.dark
+            ? theme.colorScheme.primary.withOpacity(0.2)
+            : const Color(0xFFE9EDFF);
         iconColor = theme.colorScheme.primary;
       } else if (name.toLowerCase().endsWith('.docx') || name.toLowerCase().endsWith('.doc')) {
         fileIcon = LucideIcons.file_spreadsheet;
-        iconBgColor = const Color(0xFFE8F5E9);
-        iconColor = const Color(0xFF006B2D);
+        iconBgColor = theme.brightness == Brightness.dark
+            ? const Color(0xFF064E3B).withOpacity(0.4)
+            : const Color(0xFFE8F5E9);
+        iconColor = theme.brightness == Brightness.dark
+            ? const Color(0xFF34D399)
+            : const Color(0xFF006B2D);
       }
 
-      return GestureDetector(
+      return SpringyTap(
         onTap: () => context.push('/file-details', extra: name),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.4)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.01),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
+            boxShadow: theme.brightness == Brightness.light
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.01),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             children: [
@@ -352,13 +378,15 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
             // Search Bar Row
             Container(
               decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.01),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: theme.brightness == Brightness.light
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.01),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : null,
               ),
               child: TextField(
                 decoration: InputDecoration(
@@ -368,7 +396,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                     onPressed: () {},
                     icon: const Icon(LucideIcons.sliders_horizontal, size: 18),
                   ),
-                  fillColor: const Color(0xFFF1F1EF),
+                  fillColor: theme.inputDecorationTheme.fillColor,
                   filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -403,7 +431,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                     onPressed: () => storageNotifier.navigateUp(),
                     icon: const Icon(LucideIcons.chevron_left, size: 20),
                     style: IconButton.styleFrom(
-                      backgroundColor: const Color(0xFFF1F1EF),
+                      backgroundColor: theme.inputDecorationTheme.fillColor,
                       padding: const EdgeInsets.all(8),
                     ),
                   ),
@@ -446,15 +474,14 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                     return buildFolderGridCard(folders[index]);
                   } else {
                     // Dashed card for New Folder
-                    return GestureDetector(
+                    return SpringyTap(
                       onTap: _showNewFolderDialog,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: const Color(0xFFC5C5D8),
-                            width: 2,
+                            color: theme.dividerColor,
+                            width: 1.5,
                             style: BorderStyle.solid,
                           ),
                         ),
@@ -464,8 +491,8 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                             Container(
                               width: 40,
                               height: 40,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFF1F1EF),
+                              decoration: BoxDecoration(
+                                color: theme.inputDecorationTheme.fillColor,
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -488,7 +515,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                     );
                   }
                 },
-              ).animate().fade(duration: 350.ms)
+              ).animate().fade(duration: 350.ms).slideY(begin: 0.08, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1))
             else if (_activeTab == 'Files')
               files.isEmpty
                   ? Container(
@@ -496,9 +523,9 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                       width: double.infinity,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
+                        border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
                       ),
                       child: Text(
                         'No files in this folder.',
@@ -507,7 +534,7 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                     )
                   : Column(
                       children: files.map((f) => buildFileRowItem(f)).toList(),
-                    ).animate().fade(duration: 350.ms)
+                    ).animate().fade(duration: 350.ms).slideY(begin: 0.08, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1))
             else
               // Shared/Starred placeholder
               Container(
@@ -515,15 +542,15 @@ class _FilesOrganizationScreenState extends ConsumerState<FilesOrganizationScree
                 width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
                 ),
                 child: Text(
                   'No items shared or starred in this workspace.',
                   style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.4)),
                 ),
-              ),
+              ).animate().fade(duration: 350.ms).slideY(begin: 0.08, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
             const SizedBox(height: 24),
           ],
         ),

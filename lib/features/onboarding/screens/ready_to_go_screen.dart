@@ -63,15 +63,15 @@ class ReadyToGoScreen extends ConsumerWidget {
                             size: 120,
                             color: theme.colorScheme.primary.withOpacity(0.3),
                           ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                            .scale(duration: 3.seconds, begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1))
-                            .rotate(duration: 6.seconds, begin: 0, end: 0.1),
+                            .scale(duration: 3.seconds, begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), curve: Curves.easeInOutSine)
+                            .rotate(duration: 6.seconds, begin: 0, end: 0.1, curve: Curves.easeInOutSine),
                           
                           Icon(
                             LucideIcons.cloud,
                             size: 80,
                             color: theme.colorScheme.primary,
                           ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                            .moveY(duration: 2.seconds, begin: -10, end: 10),
+                            .moveY(duration: 2.seconds, begin: -10, end: 10, curve: Curves.easeInOutSine),
                         ],
                       ),
                     ),
@@ -84,15 +84,15 @@ class ReadyToGoScreen extends ConsumerWidget {
                     "Your personal drive is ready.",
                     style: theme.textTheme.headlineLarge,
                     textAlign: TextAlign.center,
-                  ).animate().fade(delay: 200.ms).slideY(begin: 0.1, end: 0),
+                  ).animate().fade(delay: 200.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                   const SizedBox(height: 12),
                   Text(
                     "A quiet, organized space for your most important work. All systems are set up and waiting for you.",
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.textTheme.bodyLarge?.color?.withOpacity(0.6),
+                      color: theme.textTheme.bodyLarge?.color?.withOpacity(0.5),
                     ),
                     textAlign: TextAlign.center,
-                  ).animate().fade(delay: 350.ms).slideY(begin: 0.1, end: 0),
+                  ).animate().fade(delay: 350.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
 
                   const Spacer(),
 
@@ -107,7 +107,7 @@ class ReadyToGoScreen extends ConsumerWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -126,7 +126,7 @@ class ReadyToGoScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                  ).animate().fade(delay: 500.ms),
+                  ).animate().fade(delay: 500.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                 ],
               ),
             ),

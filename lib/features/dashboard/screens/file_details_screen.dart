@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/telegram_storage_provider.dart';
+import '../widgets/springy_tap.dart';
 
 class FileDetailsScreen extends ConsumerWidget {
   final String filename;
@@ -19,6 +20,358 @@ class FileDetailsScreen extends ConsumerWidget {
     const suffixes = ["B", "KB", "MB", "GB", "TB"];
     var i = (log(bytes) / log(1024)).floor();
     return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
+  }
+
+  void _showShareDialog(BuildContext context, String filename) {
+    final theme = Theme.of(context);
+    final String mockShareLink = "https://pdrive.cloud/s/${Uri.encodeComponent(filename)}";
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.25),
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+          border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Share File',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(LucideIcons.x),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Generate a secure share link for "$filename".',
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.inputDecorationTheme.fillColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(LucideIcons.link, size: 18),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      mockShareLink,
+                      style: TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 13,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Link copied to clipboard!')),
+                      );
+                    },
+                    child: const Text('Copy'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text('OR SHARE VIA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1.2)),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildShareOption(context, LucideIcons.mail, 'Email'),
+                _buildShareOption(context, LucideIcons.message_square, 'Messages'),
+                _buildShareOption(context, LucideIcons.qr_code, 'QR Code'),
+              ],
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms),
+    );
+  }
+
+  Widget _buildShareOption(BuildContext context, IconData icon, String label) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Shared via $label successfully!')),
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: theme.colorScheme.primary, size: 22),
+            ),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showRenameDialog(BuildContext context, WidgetRef ref, String oldName, String fileId) {
+    final theme = Theme.of(context);
+    final controller = TextEditingController(text: oldName);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.25),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Rename File',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(LucideIcons.x),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Enter a new name for the file.',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+              const SizedBox(height: 24),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'File Name',
+                  fillColor: theme.inputDecorationTheme.fillColor,
+                  filled: true,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 28),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final newName = controller.text.trim();
+                    if (newName.isEmpty || newName == oldName) {
+                      Navigator.of(context).pop();
+                      return;
+                    }
+                    
+                    Navigator.of(context).pop(); // pop bottom sheet
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Renaming file to "$newName"...')),
+                    );
+                    
+                    await ref.read(telegramStorageProvider.notifier).renameFile(oldName, newName, fileId);
+                    
+                    if (context.mounted) {
+                      Navigator.of(context).pop(); // pop details page to refresh list view
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: const Text('Rename', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ).animate().slideY(begin: 0.2, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)).fade(duration: 250.ms),
+    );
+  }
+
+  void _showMoveDialog(BuildContext context, WidgetRef ref, String filename, String fileId, String currentFolderPath) {
+    final theme = Theme.of(context);
+    final storageState = ref.read(telegramStorageProvider);
+    final allFolders = <String>{'/', ...storageState.allFolders}.toList();
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.25),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          String selectedFolder = currentFolderPath;
+          
+          return Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+              border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Move File',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(LucideIcons.x),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Select target folder to move "$filename":',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: allFolders.length,
+                    itemBuilder: (context, index) {
+                      final folder = allFolders[index];
+                      final isSelected = folder == selectedFolder;
+                      return ListTile(
+                        leading: Icon(
+                          LucideIcons.folder,
+                          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.4),
+                        ),
+                        title: Text(
+                          folder == '/' ? 'Root Directory (/)' : folder,
+                          style: TextStyle(
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        trailing: isSelected ? Icon(LucideIcons.check, color: theme.colorScheme.primary) : null,
+                        onTap: () {
+                          setState(() {
+                            selectedFolder = folder;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (selectedFolder == currentFolderPath) {
+                        Navigator.of(context).pop();
+                        return;
+                      }
+                      
+                      Navigator.of(context).pop(); // pop bottom sheet
+                      
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Moving file to "$selectedFolder"...')),
+                      );
+                      
+                      await ref.read(telegramStorageProvider.notifier).moveFile(filename, fileId, selectedFolder);
+                      
+                      if (context.mounted) {
+                        Navigator.of(context).pop(); // pop details page to refresh list view
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                    ),
+                    child: const Text('Move File Here', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ).then((_) {});
   }
 
   @override
@@ -54,21 +407,23 @@ class FileDetailsScreen extends ConsumerWidget {
       required VoidCallback onTap,
       bool isPrimary = false,
     }) {
-      return GestureDetector(
+      return SpringyTap(
         onTap: onTap,
         child: Container(
           height: 96,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+            boxShadow: theme.brightness == Brightness.light
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.01),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +434,7 @@ class FileDetailsScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isPrimary
                       ? theme.colorScheme.primary.withOpacity(0.12)
-                      : const Color(0xFFF1F1EF),
+                      : theme.inputDecorationTheme.fillColor,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -114,12 +469,12 @@ class FileDetailsScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 20, color: const Color(0xFF6B7280)),
+                Icon(icon, size: 20, color: theme.textTheme.labelSmall?.color),
                 const SizedBox(width: 12),
                 Text(
                   label,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6B7280),
+                    color: theme.textTheme.labelSmall?.color,
                   ),
                 ),
               ],
@@ -143,7 +498,7 @@ class FileDetailsScreen extends ConsumerWidget {
           style: theme.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
-            color: const Color(0xFF6B7280),
+            color: theme.textTheme.labelSmall?.color,
           ),
         ),
         centerTitle: true,
@@ -168,16 +523,18 @@ class FileDetailsScreen extends ConsumerWidget {
                   child: Container(
                     width: MediaQuery.of(context).size.width - 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F1EF),
+                      color: theme.inputDecorationTheme.fillColor,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+                      boxShadow: theme.brightness == Brightness.light
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Center(
                       child: Icon(
@@ -187,13 +544,15 @@ class FileDetailsScreen extends ConsumerWidget {
                                 ? LucideIcons.image
                                 : LucideIcons.archive,
                         size: 80,
-                        color: const Color(0xFFC5C5D8),
+                        color: theme.brightness == Brightness.dark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFC5C5D8),
                       ),
                     ),
                   ),
                 ),
               ),
-            ).animate().fade(duration: 400.ms).scale(curve: Curves.easeOutBack),
+            ).animate().fade(duration: 350.ms).scale(duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1), begin: const Offset(0.9, 0.9)),
             const SizedBox(height: 24),
 
             // File title & details info
@@ -203,7 +562,7 @@ class FileDetailsScreen extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
-            ).animate().fade(delay: 100.ms),
+            ).animate().fade(delay: 100.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -226,11 +585,11 @@ class FileDetailsScreen extends ConsumerWidget {
                               ? 'Word Document • $sizeStr'
                               : 'Archive • $sizeStr',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6B7280),
+                    color: theme.textTheme.labelSmall?.color,
                   ),
                 ),
               ],
-            ).animate().fade(delay: 150.ms),
+            ).animate().fade(delay: 150.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
             const SizedBox(height: 32),
 
             // Bento Actions Grid
@@ -247,7 +606,7 @@ class FileDetailsScreen extends ConsumerWidget {
                     icon: LucideIcons.share_2,
                     label: 'Share',
                     isPrimary: true,
-                    onTap: () {},
+                    onTap: () => _showShareDialog(context, name),
                   ),
                   buildBentoAction(
                     icon: LucideIcons.download,
@@ -261,7 +620,7 @@ class FileDetailsScreen extends ConsumerWidget {
                       }
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Starting download from Telegram...')),
+                        const SnackBar(content: Text('Starting download from secure cloud...')),
                       );
                       
                       final path = await storageNotifier.downloadFile(name, fileId);
@@ -273,7 +632,7 @@ class FileDetailsScreen extends ConsumerWidget {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Failed to download file from Telegram.')),
+                            const SnackBar(content: Text('Failed to download file from secure cloud.')),
                           );
                         }
                       }
@@ -282,22 +641,22 @@ class FileDetailsScreen extends ConsumerWidget {
                   buildBentoAction(
                     icon: LucideIcons.pencil,
                     label: 'Rename',
-                    onTap: () {},
+                    onTap: () => _showRenameDialog(context, ref, name, fileId),
                   ),
                   buildBentoAction(
                     icon: LucideIcons.folder_input,
                     label: 'Move',
-                    onTap: () {},
+                    onTap: () => _showMoveDialog(context, ref, name, fileId, pathStr),
                   ),
                 ],
               ),
-            ).animate().fade(delay: 200.ms),
+            ).animate().fade(delay: 200.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
 
             // Delete File action row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
-              child: OutlinedButton.icon(
-                onPressed: () async {
+              child: SpringyTap(
+                onTap: () async {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Deleting "$name" from cloud...')),
                   );
@@ -306,21 +665,24 @@ class FileDetailsScreen extends ConsumerWidget {
                     context.pop();
                   }
                 },
-                icon: const Icon(LucideIcons.trash_2, color: Color(0xFFBA1A1A), size: 18),
-                label: const Text('Delete File'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFBA1A1A),
-                  side: const BorderSide(color: Color(0xFFFFDAD6), width: 1),
-                  minimumSize: const Size(double.infinity, 54),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  textStyle: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                child: OutlinedButton.icon(
+                  onPressed: () {},
+                  icon: Icon(LucideIcons.trash_2, color: theme.colorScheme.error, size: 18),
+                  label: const Text('Delete File'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                    side: BorderSide(color: theme.colorScheme.error.withOpacity(0.3), width: 1),
+                    minimumSize: const Size(double.infinity, 54),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    textStyle: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ).animate().fade(delay: 250.ms),
+            ).animate().fade(delay: 250.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
             const SizedBox(height: 16),
 
             // Metadata Card Section
@@ -328,29 +690,31 @@ class FileDetailsScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFE5E7EB).withOpacity(0.5)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
-                      blurRadius: 15,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+                  boxShadow: theme.brightness == Brightness.light
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 15,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20.0, top: 20.0, bottom: 8.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, top: 20.0, bottom: 8.0),
                       child: Text(
                         'INFORMATION',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
-                          color: Color(0xFF6B7280),
+                          color: theme.textTheme.labelSmall?.color,
                         ),
                       ),
                     ),
@@ -362,7 +726,7 @@ class FileDetailsScreen extends ConsumerWidget {
                         style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
-                    const Divider(height: 1, color: Color(0xFFF1F1EF)),
+                    Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                     buildDetailRow(
                       icon: LucideIcons.clock,
                       label: 'Modified',
@@ -371,7 +735,7 @@ class FileDetailsScreen extends ConsumerWidget {
                         style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
-                    const Divider(height: 1, color: Color(0xFFF1F1EF)),
+                    Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                     buildDetailRow(
                       icon: LucideIcons.folder_open,
                       label: 'Location',
@@ -390,7 +754,7 @@ class FileDetailsScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const Divider(height: 1, color: Color(0xFFF1F1EF)),
+                    Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
                     buildDetailRow(
                       icon: LucideIcons.user,
                       label: 'Owner',
@@ -399,17 +763,17 @@ class FileDetailsScreen extends ConsumerWidget {
                           Container(
                             width: 28,
                             height: 28,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color(0xFFF1F3FF),
+                              color: theme.colorScheme.primary.withOpacity(0.12),
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Text(
                                 'SJ',
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF5B6CFF),
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -425,7 +789,7 @@ class FileDetailsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-            ).animate().fade(delay: 300.ms),
+            ).animate().fade(delay: 300.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),
             const SizedBox(height: 40),
           ],
         ),

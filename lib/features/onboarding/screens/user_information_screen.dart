@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import '../../../core/providers/google_auth_provider.dart';
 import '../providers/onboarding_provider.dart';
 
 class UserInformationScreen extends ConsumerStatefulWidget {
@@ -16,6 +17,17 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final googleAuth = ref.read(googleAuthProvider);
+      if (googleAuth.isAuthenticated && googleAuth.displayName != null) {
+        _nameController.text = googleAuth.displayName!;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -101,12 +113,14 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                           width: 200,
                           height: 200,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: theme.cardTheme.color ?? theme.colorScheme.surfaceVariant,
                             borderRadius: BorderRadius.circular(24),
-                            border: Border.all(color: Colors.black.withOpacity(0.04)),
+                            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: theme.brightness == Brightness.dark
+                                    ? Colors.transparent
+                                    : Colors.black.withOpacity(0.02),
                                 blurRadius: 20,
                                 offset: const Offset(0, 4),
                               ),
@@ -143,15 +157,15 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                           "Let's get started",
                           style: theme.textTheme.headlineLarge,
                           textAlign: TextAlign.center,
-                        ).animate().fade(delay: 100.ms).slideY(begin: 0.1, end: 0),
+                        ).animate().fade(delay: 100.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                         const SizedBox(height: 8),
                         Text(
                           "What should we call you in your workspace?",
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
                           ),
                           textAlign: TextAlign.center,
-                        ).animate().fade(delay: 200.ms).slideY(begin: 0.1, end: 0),
+                        ).animate().fade(delay: 200.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                         const SizedBox(height: 32),
 
                         // Name input field
@@ -159,7 +173,9 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
+                                color: theme.brightness == Brightness.dark
+                                    ? Colors.transparent
+                                    : Colors.black.withOpacity(0.01),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -173,7 +189,7 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                             ),
                             decoration: InputDecoration(
                               hintText: 'Your full name',
-                              fillColor: const Color(0xFFF1F1EF),
+                              fillColor: theme.inputDecorationTheme.fillColor ?? theme.colorScheme.surfaceVariant,
                               filled: true,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(24),
@@ -197,12 +213,12 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter your name';
+                                  return 'Please enter your name';
                               }
                               return null;
                             },
                           ),
-                        ).animate().fade(delay: 300.ms).slideY(begin: 0.1, end: 0),
+                        ).animate().fade(delay: 300.ms).slideY(begin: 0.05, end: 0, curve: const Cubic(0.16, 1, 0.3, 1)),
                       ],
                     ),
                   ),
