@@ -1,0 +1,365 @@
+Data Retention Policy
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Purpose
+
+This Data Retention Policy explains how P-Drive stores, retains, deletes, and manages user information, files, account records, logs, and related data.
+
+The purpose of this policy is to promote transparency regarding how long information may remain within P-Drive systems.
+
+2. About P-Drive
+
+P-Drive is operated by:
+
+Parallelogram Foundation
+
+An independent software development initiative founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Contact Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+3. General Principles
+
+P-Drive aims to:
+
+Minimize unnecessary data retention
+
+Protect user privacy
+
+Maintain service reliability
+
+Comply with legal obligations
+
+Improve security practices
+
+Data is generally retained only for as long as reasonably necessary.
+
+4. Categories of Data
+
+P-Drive may process and retain the following categories of information:
+
+Account Information
+
+Examples:
+
+Name
+
+Username
+
+Email address
+
+Profile image
+
+Authentication details
+
+Account preferences
+
+User Content
+
+Examples:
+
+Uploaded files
+
+Folder information
+
+File metadata
+
+Storage information
+
+Operational Data
+
+Examples:
+
+Login records
+
+Session information
+
+Device information
+
+Error logs
+
+Security logs
+
+Billing Information
+
+Examples:
+
+Subscription status
+
+Purchase history
+
+Transaction identifiers
+
+5. User Files
+
+Uploaded files may remain stored until:
+
+The user deletes the file
+
+The account is deleted
+
+Storage limitations require action
+
+Legal obligations require removal
+
+Technical issues require corrective action
+
+P-Drive does not guarantee indefinite retention of uploaded content.
+
+Users should maintain independent backups of important files.
+
+6. Deleted Files
+
+When a user deletes a file:
+
+The file may not be immediately removed from all systems.
+
+Deletion may involve:
+
+Primary storage removal
+
+Backup removal
+
+Replication cleanup
+
+Cache expiration
+
+Deletion processing times may vary.
+
+Certain residual copies may temporarily remain within backup systems for operational purposes.
+
+7. Account Information Retention
+
+Account information may be retained while:
+
+The account remains active
+
+The user continues using services
+
+Security obligations require retention
+
+Legal obligations require retention
+
+Retention periods may vary depending on operational requirements.
+
+8. Account Deletion
+
+Users may request account deletion.
+
+Following deletion requests:
+
+Account access may be disabled
+
+Personal information may be scheduled for removal
+
+Associated content may be scheduled for deletion
+
+Certain records may be retained where reasonably necessary for:
+
+Legal compliance
+
+Security investigations
+
+Fraud prevention
+
+Dispute resolution
+
+9. Metadata Retention
+
+P-Drive may retain limited metadata including:
+
+File sizes
+
+Upload timestamps
+
+Download timestamps
+
+Storage usage records
+
+Operational statistics
+
+Metadata may be retained longer than file contents when required for legitimate operational purposes.
+
+10. Security Logs
+
+Security-related logs may be retained to:
+
+Detect abuse
+
+Investigate incidents
+
+Improve platform security
+
+Protect users
+
+Maintain service integrity
+
+Retention periods may vary depending on security requirements.
+
+11. Diagnostic and Error Logs
+
+Diagnostic information may be retained for:
+
+Troubleshooting
+
+Performance analysis
+
+Reliability improvements
+
+Bug resolution
+
+Such information may be periodically removed or anonymized.
+
+12. Subscription and Billing Records
+
+Billing records may be retained as reasonably necessary for:
+
+Accounting purposes
+
+Financial audits
+
+Tax compliance
+
+Dispute resolution
+
+Fraud prevention
+
+Retention periods may depend on applicable legal requirements.
+
+13. Backup Systems
+
+P-Drive may maintain backup systems designed to:
+
+Improve reliability
+
+Recover from failures
+
+Protect against accidental loss
+
+Data contained within backup systems may remain available for limited periods following deletion from primary systems.
+
+Backup removal may occur according to operational schedules.
+
+14. Legal Retention Requirements
+
+Certain information may be retained longer when required by:
+
+Applicable law
+
+Court orders
+
+Regulatory obligations
+
+Lawful governmental requests
+
+Such retention may continue beyond ordinary deletion schedules.
+
+15. Data Anonymization
+
+Where appropriate, P-Drive may:
+
+Anonymize information
+
+Aggregate information
+
+Remove identifying elements
+
+Anonymized data may be retained for research, analytics, security, or operational purposes.
+
+16. User Responsibility
+
+Users are responsible for:
+
+Maintaining backups
+
+Downloading important files before deletion
+
+Verifying account information
+
+Managing stored content
+
+P-Drive is not responsible for losses resulting from user-initiated deletion actions.
+
+17. Data Destruction Practices
+
+When data is scheduled for removal, P-Drive may utilize reasonable technical measures intended to:
+
+Remove active records
+
+Eliminate unnecessary copies
+
+Reduce residual retention
+
+Protect deleted information from unauthorized access
+
+Complete removal across all systems may not occur instantly.
+
+18. Retention Limitations
+
+Because of:
+
+Distributed systems
+
+Replication mechanisms
+
+Backup processes
+
+Technical constraints
+
+certain information may temporarily persist beyond deletion requests.
+
+P-Drive seeks to minimize such retention where reasonably possible.
+
+19. Policy Changes
+
+P-Drive may update this Data Retention Policy periodically.
+
+Updated versions may be published through:
+
+The application
+
+Official websites
+
+Related services
+
+Continued use of P-Drive constitutes acceptance of updated versions.
+
+20. Contact Information
+
+P-Drive
+
+Operated by:
+
+Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+21. Final Statement
+
+P-Drive is committed to responsible data handling practices and privacy-conscious retention policies.
+
+While we strive to minimize retention wherever reasonably possible, certain operational, legal, security, and technical requirements may require information to be retained for limited periods beyond user actions.
+
+Users should always maintain independent backups of important information and should not rely solely upon any single storage provider for long-term preservation of critical data.

@@ -1,0 +1,397 @@
+Terms of Service
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Acceptance of Terms
+
+Welcome to P-Drive.
+
+These Terms of Service (“Terms”) govern your use of the P-Drive platform, applications, websites, services, and related technologies.
+
+By accessing or using P-Drive, you agree to be bound by these Terms.
+
+If you do not agree to these Terms, you must not use P-Drive.
+
+2. Service Operator
+
+P-Drive is operated by:
+
+Parallelogram Foundation
+
+An independent software development initiative founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Support Contact:
+
+parallelogram.devs@gmail.com
+
+Country of Operation:
+
+India
+
+3. Eligibility
+
+You must be at least thirteen (13) years of age to use P-Drive.
+
+If local laws require a higher age threshold, you must satisfy those requirements.
+
+By using P-Drive, you represent that you meet the applicable age requirements.
+
+4. User Accounts
+
+You are responsible for:
+
+Maintaining account security
+
+Protecting passwords
+
+Protecting recovery credentials
+
+Maintaining accurate account information
+
+All activities occurring through your account
+
+You agree not to:
+
+Share accounts
+
+Sell accounts
+
+Transfer accounts without authorization
+
+Circumvent account restrictions
+
+5. Description of Service
+
+P-Drive provides:
+
+Cloud storage services
+
+File synchronization
+
+File management
+
+File organization
+
+Secure storage technologies
+
+Subscription-based storage plans
+
+Features may change over time.
+
+P-Drive may modify, suspend, or discontinue features at its discretion.
+
+6. Ownership of Content
+
+You retain ownership of files and content uploaded to P-Drive.
+
+P-Drive does not claim ownership of your uploaded content.
+
+You grant P-Drive only the limited rights necessary to:
+
+Store content
+
+Process content
+
+Transfer content
+
+Deliver requested services
+
+7. User Responsibilities
+
+You are solely responsible for:
+
+Uploaded content
+
+Shared content
+
+Backup practices
+
+Compliance with applicable laws
+
+P-Drive does not verify or monitor all uploaded content.
+
+8. Prohibited Activities
+
+You agree not to use P-Drive for:
+
+Illegal activities
+
+Fraud
+
+Identity theft
+
+Malware distribution
+
+Phishing
+
+Unauthorized access attempts
+
+Intellectual property infringement
+
+Spam operations
+
+Service abuse
+
+Automated attacks
+
+You may not:
+
+Reverse engineer the service
+
+Disrupt infrastructure
+
+Circumvent security mechanisms
+
+Abuse APIs or network resources
+
+9. Privacy and Encryption
+
+P-Drive is designed with privacy-focused principles.
+
+Where encryption is enabled:
+
+Files may be encrypted before storage.
+
+File contents may not be accessible during normal operation.
+
+However:
+
+P-Drive does not guarantee absolute privacy, absolute confidentiality, or immunity from all security risks.
+
+Users remain responsible for protecting credentials and encryption keys.
+
+10. Storage Limits
+
+Storage allocations depend on the user’s selected plan.
+
+P-Drive may:
+
+Adjust storage plans
+
+Modify plan limits
+
+Introduce new plans
+
+Retire existing plans
+
+Reasonable notice may be provided when possible.
+
+11. Subscription Services
+
+Certain features may require a paid subscription.
+
+Subscriptions may include:
+
+Monthly plans
+
+Annual plans
+
+Promotional plans
+
+Premium features
+
+Subscription details are displayed at the time of purchase.
+
+12. Payments
+
+Users agree to pay applicable fees associated with selected services.
+
+Prices may change in the future.
+
+Taxes, fees, and applicable charges may apply depending on jurisdiction.
+
+Failure to pay may result in:
+
+Service restrictions
+
+Account limitations
+
+Suspension of premium features
+
+13. Refunds
+
+Refund eligibility is governed by the P-Drive Refund Policy.
+
+Certain purchases may be non-refundable where permitted by law.
+
+14. Account Suspension
+
+P-Drive may suspend or restrict accounts for:
+
+Security concerns
+
+Fraud prevention
+
+Abuse prevention
+
+Legal compliance
+
+Violations of these Terms
+
+Suspension decisions may be temporary or permanent.
+
+15. Account Termination
+
+Users may discontinue use of P-Drive at any time.
+
+P-Drive reserves the right to terminate accounts that:
+
+Violate these Terms
+
+Endanger infrastructure
+
+Create legal risks
+
+Abuse platform resources
+
+16. Data Loss Disclaimer
+
+While P-Drive aims to provide reliable storage services, users acknowledge that:
+
+Technical failures may occur.
+
+Infrastructure failures may occur.
+
+Third-party provider failures may occur.
+
+Data corruption may occur.
+
+Users are responsible for maintaining independent backups of important data.
+
+P-Drive does not guarantee permanent preservation of uploaded content.
+
+17. Service Availability
+
+P-Drive is provided on an “as available” basis.
+
+We do not guarantee:
+
+Continuous uptime
+
+Uninterrupted access
+
+Error-free operation
+
+Permanent feature availability
+
+Maintenance periods and service interruptions may occur.
+
+18. Intellectual Property
+
+All P-Drive software, branding, trademarks, designs, logos, interfaces, and related materials remain the property of P-Drive or its licensors.
+
+Users may not copy, reproduce, distribute, or commercially exploit P-Drive intellectual property without authorization.
+
+19. Third-Party Services
+
+P-Drive may rely on third-party providers for:
+
+Authentication
+
+Storage
+
+Infrastructure
+
+Security
+
+Analytics
+
+Availability of P-Drive may depend on such providers.
+
+P-Drive is not responsible for interruptions caused by third-party services.
+
+20. Limitation of Liability
+
+To the maximum extent permitted by law:
+
+P-Drive, Parallelogram Foundation, Sarwar Altaf Dar, Burhan Hamid Dar, employees, contributors, contractors, and affiliates shall not be liable for:
+
+Data loss
+
+Business interruption
+
+Lost profits
+
+Indirect damages
+
+Consequential damages
+
+Service outages
+
+Third-party actions
+
+Use of P-Drive is at your own risk.
+
+21. Indemnification
+
+You agree to indemnify and hold harmless:
+
+P-Drive
+
+Parallelogram Foundation
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+from claims, liabilities, damages, costs, and expenses arising from:
+
+Your content
+
+Your actions
+
+Violations of these Terms
+
+Violations of applicable laws
+
+22. Changes to Terms
+
+P-Drive may modify these Terms periodically.
+
+Updated versions may be posted through:
+
+The application
+
+Official websites
+
+Related services
+
+Continued use after updates constitutes acceptance of revised Terms.
+
+23. Governing Law
+
+These Terms shall be governed by the laws of India.
+
+Any disputes arising under these Terms shall be subject to applicable courts and legal authorities within India.
+
+24. Severability
+
+If any provision of these Terms is found invalid or unenforceable, the remaining provisions shall remain in effect.
+
+25. Contact Information
+
+P-Drive
+
+Operated by Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+26. Entire Agreement
+
+These Terms, together with the Privacy Policy and other applicable policies, constitute the entire agreement between the user and P-Drive regarding use of the service.

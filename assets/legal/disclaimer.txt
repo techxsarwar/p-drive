@@ -1,0 +1,367 @@
+Disclaimer
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Introduction
+
+This Disclaimer governs the use of P-Drive and all related applications, services, websites, software, infrastructure, and technologies operated by P-Drive.
+
+By using P-Drive, you acknowledge and agree to the terms contained in this Disclaimer.
+
+If you do not agree with this Disclaimer, you should discontinue use of the service.
+
+2. About P-Drive
+
+P-Drive is operated by:
+
+Parallelogram Foundation
+
+An independent software development initiative founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Contact Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+3. Service Provided “As Is”
+
+P-Drive is provided on an:
+
+“As Is”
+
+“As Available”
+
+basis.
+
+No guarantees are made regarding:
+
+Continuous availability
+
+Error-free operation
+
+Uninterrupted access
+
+Compatibility with all devices
+
+Future feature availability
+
+Use of P-Drive is entirely at the user’s own risk.
+
+4. No Guarantee of Data Preservation
+
+Although P-Drive strives to provide reliable storage services, we do not guarantee:
+
+Permanent file availability
+
+Permanent storage
+
+Recovery of deleted files
+
+Recovery after corruption
+
+Recovery after service failures
+
+Users are solely responsible for maintaining independent backups of important information.
+
+P-Drive should not be considered the sole storage location for critical or irreplaceable data.
+
+5. Security Disclaimer
+
+P-Drive employs reasonable security measures designed to protect users and information.
+
+However, no system can guarantee:
+
+Absolute security
+
+Complete protection from cyberattacks
+
+Complete protection from unauthorized access
+
+Protection from every possible vulnerability
+
+Users acknowledge that cybersecurity risks exist on all digital platforms.
+
+6. Privacy Disclaimer
+
+P-Drive is designed with privacy-focused principles and may utilize encryption technologies.
+
+However:
+
+P-Drive does not guarantee:
+
+Absolute privacy
+
+Absolute anonymity
+
+Absolute confidentiality
+
+Immunity from lawful disclosure requirements
+
+Users should understand that no online service can guarantee complete privacy under all circumstances.
+
+7. Encryption Disclaimer
+
+Where encryption features are provided:
+
+Users are responsible for safeguarding passwords and recovery credentials.
+
+Users are responsible for protecting encryption-related information.
+
+Loss of encryption credentials may result in permanent loss of access to files.
+
+P-Drive may be unable to recover encrypted content where recovery information is unavailable.
+
+8. Third-Party Services
+
+P-Drive may rely upon third-party providers for:
+
+Storage infrastructure
+
+Authentication services
+
+Networking services
+
+Payment processing
+
+Analytics
+
+Security services
+
+Availability, reliability, and performance of P-Drive may depend in part upon such providers.
+
+P-Drive is not responsible for interruptions, failures, or issues caused by third-party services.
+
+9. User Content Disclaimer
+
+Users are solely responsible for:
+
+Uploaded files
+
+Shared content
+
+Stored content
+
+Distributed content
+
+P-Drive does not endorse, verify, approve, or guarantee the accuracy, legality, quality, or reliability of user-generated content.
+
+10. Legal Compliance
+
+Users are responsible for ensuring that their use of P-Drive complies with:
+
+Local laws
+
+National laws
+
+International laws
+
+Regulatory requirements
+
+P-Drive does not provide legal advice.
+
+Users should seek independent legal guidance where necessary.
+
+11. Technical Limitations
+
+Users acknowledge that technical limitations may result in:
+
+Temporary outages
+
+Delayed uploads
+
+Delayed downloads
+
+Storage limitations
+
+Synchronization issues
+
+Data transfer interruptions
+
+Such events may occur despite reasonable efforts to maintain service reliability.
+
+12. No Professional Advice
+
+Information provided through P-Drive is not intended to constitute:
+
+Legal advice
+
+Financial advice
+
+Tax advice
+
+Medical advice
+
+Professional consulting services
+
+Users should consult qualified professionals regarding specific matters.
+
+13. Limitation of Liability
+
+To the maximum extent permitted by law:
+
+P-Drive, Parallelogram Foundation, Sarwar Altaf Dar, Burhan Hamid Dar, contributors, contractors, affiliates, and service providers shall not be liable for:
+
+Data loss
+
+Service interruptions
+
+Business losses
+
+Lost profits
+
+Lost opportunities
+
+Indirect damages
+
+Incidental damages
+
+Consequential damages
+
+arising from use of, inability to use, or reliance upon P-Drive.
+
+14. No Warranty
+
+P-Drive expressly disclaims all warranties, whether express or implied, including but not limited to:
+
+Merchantability
+
+Fitness for a particular purpose
+
+Non-infringement
+
+Availability
+
+Reliability
+
+Security
+
+No guarantee is provided that the service will meet every user’s requirements.
+
+15. Beta Features
+
+Certain features may be designated as:
+
+Experimental
+
+Preview
+
+Early Access
+
+Beta
+
+Such features may contain:
+
+Bugs
+
+Performance limitations
+
+Incomplete functionality
+
+Use of beta features is at the user’s own risk.
+
+16. Service Modifications
+
+P-Drive reserves the right to:
+
+Modify features
+
+Remove features
+
+Introduce new services
+
+Change storage plans
+
+Change subscription plans
+
+Update infrastructure
+
+with or without prior notice where permitted by law.
+
+17. Force Majeure
+
+P-Drive shall not be responsible for failures or delays caused by events beyond reasonable control, including:
+
+Natural disasters
+
+Internet outages
+
+Infrastructure failures
+
+Government actions
+
+Armed conflicts
+
+Power failures
+
+Cybersecurity incidents
+
+Third-party service disruptions
+
+18. External Links and Resources
+
+P-Drive may provide access to third-party websites, resources, or services.
+
+P-Drive does not control and is not responsible for:
+
+Content
+
+Availability
+
+Security
+
+Privacy practices
+
+of external resources.
+
+Users access such resources at their own risk.
+
+19. Updates to this Disclaimer
+
+This Disclaimer may be updated periodically.
+
+Updated versions may be published through:
+
+The P-Drive application
+
+Official websites
+
+Related services
+
+Continued use of P-Drive after updates constitutes acceptance of revised versions.
+
+20. Contact Information
+
+P-Drive
+
+Operated by:
+
+Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+21. Final Statement
+
+P-Drive is committed to building a privacy-focused, reliable, and user-friendly storage platform.
+
+However, all technology carries inherent risks.
+
+Users should exercise reasonable caution, maintain independent backups, protect account credentials, and understand that no online service can guarantee perfect security, permanent availability, or complete protection against every possible threat.

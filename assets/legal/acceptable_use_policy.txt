@@ -1,0 +1,351 @@
+Acceptable Use Policy
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Purpose
+
+This Acceptable Use Policy (“AUP”) governs the use of P-Drive and establishes rules intended to protect users, infrastructure, and the integrity of the platform.
+
+By using P-Drive, you agree to comply with this Policy.
+
+This Policy supplements the P-Drive Terms of Service and Privacy Policy.
+
+2. About P-Drive
+
+P-Drive is operated by:
+
+Parallelogram Foundation
+
+An independent software development initiative founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Contact:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+3. User Responsibility
+
+Users are solely responsible for:
+
+Content uploaded
+
+Content shared
+
+Content distributed
+
+Account activity
+
+Compliance with applicable laws
+
+P-Drive does not assume ownership of user content.
+
+4. Permitted Use
+
+You may use P-Drive for lawful purposes including:
+
+Personal storage
+
+Backup storage
+
+Educational content
+
+Work-related files
+
+Personal documents
+
+Creative projects
+
+Collaboration
+
+Legal file sharing
+
+Provided such use complies with this Policy.
+
+5. Prohibited Activities
+
+Users may not use P-Drive to:
+
+Illegal Activities
+
+Violate applicable laws
+
+Facilitate criminal conduct
+
+Promote unlawful activities
+
+Circumvent legal restrictions
+
+Fraud and Deception
+
+Identity theft
+
+Financial fraud
+
+Impersonation
+
+Forgery
+
+Scam operations
+
+Security Abuse
+
+Malware distribution
+
+Viruses
+
+Worms
+
+Ransomware
+
+Spyware
+
+Unauthorized access attempts
+
+Credential theft
+
+Network Abuse
+
+DDoS attacks
+
+Botnet operations
+
+Traffic flooding
+
+Service disruption
+
+Intellectual Property Violations
+
+Copyright infringement
+
+Trademark infringement
+
+Unauthorized distribution of protected content
+
+Harmful Conduct
+
+Harassment
+
+Threats
+
+Extortion
+
+Stalking
+
+Abuse
+
+6. Prohibited Content
+
+Users may not upload, store, distribute, or share content that:
+
+Violates Law
+
+Illegal materials
+
+Criminal evidence intended for unlawful use
+
+Content prohibited by applicable law
+
+Contains Malicious Software
+
+Malware
+
+Exploits
+
+Viruses
+
+Trojan software
+
+Harmful code
+
+Promotes Harm
+
+Terrorism
+
+Violent extremism
+
+Criminal organizations
+
+Human trafficking
+
+Violates Rights
+
+Copyrighted content without authorization
+
+Confidential information without permission
+
+Personal information disclosed unlawfully
+
+7. Privacy-Oriented Design
+
+P-Drive is designed to support user privacy and encrypted storage.
+
+However:
+
+Privacy protections do not exempt users from compliance with applicable laws.
+
+Users remain responsible for the content they upload.
+
+8. Automated Usage
+
+Users may not:
+
+Abuse APIs
+
+Excessively automate uploads
+
+Circumvent quotas
+
+Generate artificial traffic
+
+Attempt to overload infrastructure
+
+Reasonable automation may be permitted where authorized.
+
+9. Fair Usage
+
+P-Drive resources are shared among users.
+
+Users may not:
+
+Abuse storage systems
+
+Exploit technical loopholes
+
+Circumvent subscription limitations
+
+Consume resources in a manner that negatively impacts other users
+
+P-Drive reserves the right to apply reasonable usage controls.
+
+10. Account Security
+
+Users must:
+
+Maintain password security
+
+Protect authentication credentials
+
+Report unauthorized access promptly
+
+Maintain accurate account information
+
+Users may not:
+
+Share credentials
+
+Sell accounts
+
+Transfer accounts without authorization
+
+11. Reporting Violations
+
+Users may report suspected violations by contacting:
+
+parallelogram.devs@gmail.com
+
+Reports should include:
+
+Description of the issue
+
+Relevant details
+
+Supporting evidence when available
+
+12. Investigation Rights
+
+P-Drive reserves the right to investigate potential violations where reasonably necessary to:
+
+Protect infrastructure
+
+Protect users
+
+Maintain platform integrity
+
+Comply with legal obligations
+
+Investigations may include:
+
+Account review
+
+Activity review
+
+Metadata analysis
+
+Security assessments
+
+P-Drive does not guarantee proactive monitoring of all user content.
+
+13. Enforcement
+
+Violations may result in:
+
+Warnings
+
+Feature restrictions
+
+Temporary suspension
+
+Permanent suspension
+
+Account termination
+
+Legal action where appropriate
+
+Enforcement decisions may be made at P-Drive’s reasonable discretion.
+
+14. No Guarantee of Monitoring
+
+P-Drive does not guarantee continuous monitoring of all content, activity, or communications.
+
+Users remain solely responsible for their conduct and uploaded content.
+
+15. Changes to this Policy
+
+P-Drive may update this Acceptable Use Policy periodically.
+
+Updated versions may be published through:
+
+The application
+
+Official websites
+
+Related services
+
+Continued use of P-Drive constitutes acceptance of revised versions.
+
+16. Contact Information
+
+P-Drive
+
+Operated by:
+
+Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+17. Final Statement
+
+P-Drive aims to provide a secure, privacy-focused, and reliable storage platform.
+
+Users are expected to act responsibly, respect applicable laws, respect the rights of others, and use the service in good faith.
+
+Failure to do so may result in enforcement actions as described in this Policy.

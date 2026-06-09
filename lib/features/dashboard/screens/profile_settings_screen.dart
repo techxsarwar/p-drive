@@ -902,6 +902,13 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
                     subtitle: 'Push & Email',
                     onTap: () => _showNotificationsDialog(context, ref),
                   ),
+                  Divider(height: 1, color: theme.dividerColor.withOpacity(0.5)),
+                  buildSettingItem(
+                    icon: LucideIcons.file_text,
+                    title: 'Legal & Policies',
+                    subtitle: 'Terms, Privacy, and Use Policies',
+                    onTap: () => context.push('/legal'),
+                  ),
                 ],
               ),
             ).animate().fade(delay: 200.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),

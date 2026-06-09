@@ -1,0 +1,317 @@
+Refund & Subscription Policy
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Introduction
+
+This Refund & Subscription Policy governs all purchases, subscriptions, premium services, storage plans, and paid features offered through P-Drive.
+
+By purchasing a subscription or paid service, you agree to this Policy.
+
+2. About P-Drive
+
+P-Drive is operated by:
+
+Parallelogram Foundation
+
+An independent software development initiative founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Contact Email:
+
+parallelogram.devs@gmail.com
+
+Country of Operation:
+
+India
+
+3. Subscription Services
+
+P-Drive may offer:
+
+Monthly subscriptions
+
+Annual subscriptions
+
+Premium storage plans
+
+Promotional plans
+
+Additional storage purchases
+
+Future premium features
+
+Available plans and pricing may change over time.
+
+4. Billing
+
+When purchasing a subscription:
+
+Charges are billed according to the selected plan.
+
+Prices are displayed before purchase.
+
+Applicable taxes may be added where required by law.
+
+Users are responsible for ensuring payment information remains valid.
+
+5. Automatic Renewals
+
+Where supported:
+
+Subscriptions may automatically renew at the end of each billing cycle unless cancelled before renewal.
+
+Users may manage subscription settings through the platform used for purchase.
+
+Failure to cancel before renewal may result in the next billing cycle being charged.
+
+6. Free Trials
+
+P-Drive may offer:
+
+Free trials
+
+Promotional access
+
+Temporary premium features
+
+Unless otherwise stated:
+
+Paid subscriptions begin automatically after the trial period ends.
+
+Users remain responsible for managing trial cancellations.
+
+7. General Refund Policy
+
+Due to the nature of digital services and cloud storage, refunds are generally limited.
+
+Storage resources, infrastructure costs, and service provisioning may begin immediately after purchase.
+
+Refund requests are reviewed individually.
+
+8. Eligible Refund Situations
+
+Refund requests may be considered when:
+
+Duplicate payments occurred.
+
+Billing errors occurred.
+
+Technical issues prevented activation of purchased services.
+
+Users were charged incorrectly.
+
+Purchases were processed due to verified platform errors.
+
+Approval is not guaranteed.
+
+9. Non-Refundable Situations
+
+Refunds will generally not be provided for:
+
+Change of mind.
+
+Lack of usage.
+
+Failure to cancel before renewal.
+
+User error during purchase.
+
+Storage already consumed.
+
+Account suspension caused by policy violations.
+
+Violations of Terms of Service.
+
+Loss of files resulting from user actions.
+
+Dissatisfaction based solely on preference.
+
+10. Subscription Cancellation
+
+Users may cancel subscriptions at any time.
+
+Cancellation prevents future renewal charges.
+
+Cancellation does not automatically generate a refund for current billing periods.
+
+Unless otherwise required by law:
+
+Access to premium features may continue until the end of the active billing cycle.
+
+11. Chargebacks
+
+Users are encouraged to contact P-Drive before initiating chargebacks.
+
+Fraudulent or abusive chargebacks may result in:
+
+Account restrictions
+
+Service suspension
+
+Termination of access
+
+P-Drive reserves the right to dispute invalid chargeback claims.
+
+12. Payment Providers
+
+Payments may be processed through third-party providers.
+
+These providers maintain independent policies regarding:
+
+Payments
+
+Refunds
+
+Disputes
+
+Billing
+
+Users may also be subject to the policies of the payment provider used during purchase.
+
+13. Storage and Refunds
+
+Storage capacity may be allocated immediately after purchase.
+
+Because storage resources may be provisioned instantly:
+
+Refund eligibility may be reduced once service delivery begins.
+
+14. Failed Payments
+
+If a payment fails:
+
+P-Drive may:
+
+Retry billing
+
+Restrict premium features
+
+Downgrade account access
+
+Suspend premium services
+
+until payment issues are resolved.
+
+15. Promotional Plans
+
+Promotional offers, discounts, coupons, and special plans may be subject to additional conditions.
+
+Certain promotional purchases may be designated as non-refundable.
+
+Specific promotional terms will be displayed when applicable.
+
+16. Account Termination and Refunds
+
+If an account is terminated due to violations of:
+
+Terms of Service
+
+Acceptable Use Policy
+
+Applicable law
+
+users may lose access to paid services.
+
+Refunds are generally not provided in such circumstances.
+
+17. Processing Time
+
+If a refund is approved:
+
+Processing times depend on:
+
+Payment provider
+
+Banking institution
+
+Payment method
+
+Refund completion may take several business days.
+
+P-Drive cannot guarantee specific banking timelines.
+
+18. Requesting a Refund
+
+To request a refund, contact:
+
+parallelogram.devs@gmail.com
+
+Include:
+
+Registered email address
+
+Transaction details
+
+Purchase date
+
+Reason for request
+
+Supporting information if available
+
+Incomplete requests may delay review.
+
+19. Policy Updates
+
+P-Drive may update this Refund Policy periodically.
+
+Changes become effective when published through:
+
+The application
+
+Official websites
+
+Related services
+
+Continued use of paid services constitutes acceptance of updated policies.
+
+20. Limitation of Liability
+
+To the maximum extent permitted by law:
+
+P-Drive, Parallelogram Foundation, Sarwar Altaf Dar, Burhan Hamid Dar, contributors, contractors, and affiliates shall not be liable for:
+
+Indirect losses
+
+Lost profits
+
+Business interruption
+
+Consequential damages
+
+Data loss
+
+Missed renewal notices
+
+related to subscription services.
+
+21. Contact Information
+
+P-Drive
+
+Operated by:
+
+Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+22. Final Statement
+
+P-Drive strives to provide fair, transparent, and reliable subscription services.
+
+While we aim to resolve legitimate billing issues promptly, users are expected to review plan details carefully before making purchases and to manage subscriptions responsibly.

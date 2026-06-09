@@ -1,0 +1,295 @@
+Privacy Policy
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Introduction
+
+Welcome to P-Drive.
+
+P-Drive is operated by Parallelogram Foundation, an independent software development initiative founded by Sarwar Altaf Dar and Burhan Hamid Dar.
+
+This Privacy Policy explains how P-Drive collects, uses, stores, protects, and processes information when you use our services.
+
+By using P-Drive, you agree to the practices described in this Privacy Policy.
+
+2. About P-Drive
+
+P-Drive is a cloud storage and file management platform designed to help users securely store, organize, synchronize, and access digital content.
+
+P-Drive is built with privacy and security as core principles.
+
+3. Minimum Age Requirement
+
+You must be at least 13 years old to use P-Drive.
+
+If you are under the age required by applicable law in your jurisdiction, you must have permission from a parent or legal guardian.
+
+4. Information We Collect
+
+Account Information
+
+When creating an account, we may collect:
+
+Name
+
+Username
+
+Email address
+
+Profile image
+
+Authentication information
+
+Account preferences
+
+Device Information
+
+We may collect:
+
+Device model
+
+Operating system version
+
+Application version
+
+Language preferences
+
+Crash diagnostics
+
+Performance metrics
+
+Usage Information
+
+We may collect:
+
+Login activity
+
+Feature usage statistics
+
+Storage usage
+
+Upload and download activity
+
+Session information
+
+5. Files and Content
+
+P-Drive allows users to upload files and content.
+
+Encryption
+
+P-Drive is designed so that files may be encrypted before storage.
+
+Where encryption is enabled:
+
+File contents are encrypted prior to storage.
+
+P-Drive personnel are not intended to access file contents during normal operation.
+
+File contents may not be readable without the appropriate decryption credentials.
+
+Metadata
+
+While file contents may be encrypted, certain metadata may still be processed, including:
+
+File names
+
+File sizes
+
+Upload timestamps
+
+Download timestamps
+
+Storage usage statistics
+
+6. How We Use Information
+
+We use collected information to:
+
+Provide the P-Drive service
+
+Authenticate users
+
+Maintain account security
+
+Improve application performance
+
+Prevent abuse and fraud
+
+Respond to support requests
+
+Develop new features
+
+Comply with legal obligations
+
+7. Storage Infrastructure
+
+P-Drive may utilize a combination of storage providers, cloud services, third-party infrastructure, and internally managed systems.
+
+As a result:
+
+Data may be stored on multiple systems.
+
+Data processing may occur through third-party service providers.
+
+Reasonable safeguards are implemented to protect user information.
+
+8. Information Sharing
+
+P-Drive does not sell personal information.
+
+Information may be shared only when necessary:
+
+Service Providers
+
+Third-party providers assisting with:
+
+Authentication
+
+Storage
+
+Infrastructure
+
+Analytics
+
+Security
+
+Legal Requirements
+
+Information may be disclosed if required by:
+
+Court orders
+
+Government requests
+
+Applicable law
+
+Protection of legal rights
+
+9. Security
+
+P-Drive implements reasonable administrative, technical, and organizational measures designed to protect information.
+
+Examples include:
+
+Encryption technologies
+
+Secure authentication
+
+Access controls
+
+Monitoring systems
+
+Security reviews
+
+However:
+
+No method of transmission or storage is completely secure.
+
+P-Drive cannot guarantee absolute security.
+
+10. User Responsibilities
+
+Users are responsible for:
+
+Maintaining password security
+
+Protecting recovery credentials
+
+Protecting encryption credentials
+
+Keeping devices secure
+
+Monitoring account activity
+
+Loss of encryption credentials may result in permanent loss of access to files.
+
+11. Data Retention
+
+P-Drive retains information only as long as reasonably necessary for:
+
+Service operation
+
+Legal compliance
+
+Security purposes
+
+Account maintenance
+
+Retention periods may vary depending on the type of information.
+
+12. Account Deletion
+
+Users may request deletion of their account.
+
+Upon deletion:
+
+Account information may be removed.
+
+Associated content may be removed.
+
+Certain records may be retained where required by law, security obligations, or legitimate operational needs.
+
+Deletion may not be immediate.
+
+13. International Data Transfers
+
+Information may be processed and stored in locations outside your country of residence.
+
+By using P-Drive, you acknowledge that information may be transferred and processed in different jurisdictions.
+
+14. Third-Party Services
+
+P-Drive may integrate with third-party services.
+
+These services maintain their own privacy policies.
+
+P-Drive is not responsible for the privacy practices of third-party services.
+
+Users should review the policies of those providers separately.
+
+15. Children’s Privacy
+
+P-Drive is not directed toward children under 13 years of age.
+
+If we become aware that information has been collected from a child in violation of applicable laws, reasonable steps may be taken to remove such information.
+
+16. Changes to This Policy
+
+P-Drive may update this Privacy Policy from time to time.
+
+Updated versions will be posted within the application, website, or related services.
+
+Continued use of P-Drive following updates constitutes acceptance of the revised policy.
+
+17. Contact Information
+
+For questions regarding this Privacy Policy:
+
+P-DriveOperated by Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email: parallelogram.devs@gmail.com
+
+Country: India
+
+18. Disclaimer
+
+P-Drive is provided on an “as available” and “as is” basis.
+
+While P-Drive is designed with privacy and security considerations, no service can guarantee:
+
+Absolute privacy
+
+Absolute security
+
+Uninterrupted availability
+
+Permanent accessibility of stored content
+
+Users should maintain their own backups of important information.

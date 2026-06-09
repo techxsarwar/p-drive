@@ -14,6 +14,7 @@ import '../features/dashboard/screens/home_dashboard_screen.dart';
 import '../features/dashboard/screens/files_organization_screen.dart';
 import '../features/dashboard/screens/file_details_screen.dart';
 import '../features/dashboard/screens/profile_settings_screen.dart';
+import '../features/dashboard/screens/legal_documents_screen.dart';
 
 // ─── Telegram-style page transition (slide left, current fades-slides left 8%) ─
 
@@ -185,6 +186,14 @@ final GoRouter appRouter = GoRouter(
           child: FileDetailsScreen(filename: extraString),
         );
       },
+    ),
+    GoRoute(
+      path: '/legal',
+      pageBuilder: (context, state) => _telegramPage(
+        context: context,
+        state: state,
+        child: const LegalDocumentsScreen(),
+      ),
     ),
   ],
 );

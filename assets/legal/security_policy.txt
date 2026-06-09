@@ -1,0 +1,353 @@
+Security Policy
+
+Effective Date: [Insert Date]Last Updated: [Insert Date]
+
+1. Purpose
+
+This Security Policy explains the security principles, practices, and responsibilities associated with the use of P-Drive.
+
+P-Drive is committed to protecting user accounts, stored information, infrastructure, and services through reasonable technical and organizational security measures.
+
+2. About P-Drive
+
+P-Drive is operated by:
+
+Parallelogram Foundation
+
+An independent software development initiative founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Contact Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+3. Security Philosophy
+
+P-Drive is designed around the following principles:
+
+Privacy by design
+
+Security by design
+
+Least privilege access
+
+Data minimization
+
+Secure authentication
+
+Encryption-focused storage
+
+Continuous improvement
+
+Security is considered an ongoing process rather than a guarantee.
+
+4. Encryption
+
+P-Drive may utilize encryption technologies to protect information.
+
+Where available:
+
+File Encryption
+
+Files may be encrypted before storage.
+
+This design helps reduce unauthorized access to file contents.
+
+Data Transmission
+
+Information may be transmitted using encrypted communication protocols.
+
+Credential Protection
+
+Authentication credentials may be protected using industry-standard security practices.
+
+5. Account Security
+
+Users are responsible for:
+
+Maintaining strong passwords
+
+Protecting recovery credentials
+
+Maintaining device security
+
+Protecting authentication methods
+
+Monitoring account activity
+
+Users should avoid:
+
+Sharing passwords
+
+Reusing passwords across services
+
+Storing credentials insecurely
+
+6. Infrastructure Security
+
+P-Drive may implement security controls including:
+
+Access restrictions
+
+Infrastructure monitoring
+
+Logging systems
+
+Authentication controls
+
+Network protections
+
+Security reviews
+
+Specific technical implementations may change over time.
+
+7. Access Control
+
+Access to operational systems is limited based on legitimate business and technical requirements.
+
+P-Drive seeks to apply the principle of least privilege whenever reasonably possible.
+
+Administrative access may be restricted to authorized personnel only.
+
+8. Security Monitoring
+
+P-Drive may monitor systems for:
+
+Service health
+
+Abuse detection
+
+Security threats
+
+Operational performance
+
+Infrastructure stability
+
+Monitoring may include logs, metadata, and operational diagnostics.
+
+9. User Responsibilities
+
+Users are expected to:
+
+Keep software updated
+
+Use secure passwords
+
+Enable available security features
+
+Protect account credentials
+
+Report suspicious activity
+
+Failure to follow reasonable security practices may increase the risk of unauthorized access.
+
+10. Incident Response
+
+In the event of a security incident, P-Drive may:
+
+Investigate the incident
+
+Contain affected systems
+
+Implement corrective measures
+
+Restore services
+
+Notify affected users when appropriate
+
+Response actions may vary depending on the nature and severity of the incident.
+
+11. Security Limitations
+
+No security system can provide absolute protection.
+
+Users acknowledge that risks may include:
+
+Software vulnerabilities
+
+Infrastructure failures
+
+Third-party service disruptions
+
+Human error
+
+Cybersecurity threats
+
+Unauthorized access attempts
+
+P-Drive does not guarantee immunity from all security incidents.
+
+12. Third-Party Providers
+
+P-Drive may rely on third-party providers for:
+
+Storage infrastructure
+
+Authentication services
+
+Networking services
+
+Security tools
+
+Cloud services
+
+Security of certain components may therefore depend partially on those providers.
+
+Users may also be subject to the security practices of such providers.
+
+13. Vulnerability Reporting
+
+P-Drive welcomes responsible disclosure of security vulnerabilities.
+
+Researchers and users who discover a potential vulnerability should report it responsibly.
+
+Reports may be sent to:
+
+parallelogram.devs@gmail.com
+
+Please include:
+
+Description of the issue
+
+Reproduction steps
+
+Supporting information
+
+Potential impact
+
+14. Responsible Disclosure
+
+Individuals reporting vulnerabilities are expected to:
+
+Act in good faith
+
+Avoid harming users
+
+Avoid accessing unauthorized data
+
+Avoid disrupting services
+
+Allow reasonable time for remediation
+
+P-Drive may investigate reported issues before taking action.
+
+15. Account Recovery
+
+Users are responsible for maintaining recovery methods associated with their accounts.
+
+Loss of:
+
+Passwords
+
+Recovery information
+
+Encryption credentials
+
+may result in loss of access to stored content.
+
+P-Drive may be unable to recover encrypted files in certain circumstances.
+
+16. Backup Responsibility
+
+Although P-Drive may implement storage redundancy and reliability measures, users remain responsible for maintaining independent backups of important data.
+
+Users should not rely exclusively on a single storage provider for irreplaceable information.
+
+17. Availability and Security
+
+Security measures may occasionally require:
+
+Maintenance windows
+
+Service interruptions
+
+Feature restrictions
+
+Temporary access limitations
+
+Such actions may be taken to preserve platform security and reliability.
+
+18. Security Updates
+
+P-Drive may periodically update:
+
+Security controls
+
+Authentication methods
+
+Encryption technologies
+
+Infrastructure protections
+
+without prior notice when necessary to protect users or services.
+
+19. Limitation of Liability
+
+To the maximum extent permitted by law:
+
+P-Drive, Parallelogram Foundation, Sarwar Altaf Dar, Burhan Hamid Dar, contributors, contractors, and affiliates shall not be liable for damages resulting from:
+
+Security incidents
+
+Data loss
+
+Unauthorized access
+
+Third-party attacks
+
+Service disruptions
+
+Infrastructure failures
+
+Use of the service remains at the user’s own risk.
+
+20. Policy Updates
+
+This Security Policy may be updated periodically.
+
+Updated versions may be published through:
+
+The P-Drive application
+
+Official websites
+
+Related services
+
+Continued use of P-Drive constitutes acceptance of revised versions.
+
+21. Contact Information
+
+P-Drive
+
+Operated by:
+
+Parallelogram Foundation
+
+Founded by:
+
+Sarwar Altaf Dar
+
+Burhan Hamid Dar
+
+Email:
+
+parallelogram.devs@gmail.com
+
+Country:
+
+India
+
+22. Final Statement
+
+P-Drive is committed to maintaining a privacy-focused and security-conscious platform.
+
+While we continuously work to improve security, users should understand that no technology, service, or infrastructure can guarantee complete protection against every possible threat.
+
+Security is a shared responsibility between P-Drive and its users.
