@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +9,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../core/services/telegram_service.dart';
 import '../../../core/services/transfer_foreground_service.dart';
 import '../../../core/providers/supabase_auth_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TelegramStorageState {
   final String botToken;
@@ -88,9 +89,34 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
     state = state.copyWith(isLoading: true);
     _prefs = await SharedPreferences.getInstance();
     
-    final savedToken = _prefs?.getString('tg_bot_token') ?? dotenv.env['TELEGRAM_BOT_TOKEN'] ?? '';
-    final savedChatId = _prefs?.getString('tg_chat_id') ?? dotenv.env['TELEGRAM_CHAT_ID'] ?? '';
+    String savedToken = _prefs?.getString('tg_bot_token') ?? dotenv.env['TELEGRAM_BOT_TOKEN'] ?? '';
+    String savedChatId = _prefs?.getString('tg_chat_id') ?? dotenv.env['TELEGRAM_CHAT_ID'] ?? '';
     final savedChunking = _prefs?.getBool('tg_is_chunking_enabled') ?? false;
+
+    // Fetch from Supabase if authenticated
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        final data = await Supabase.instance.client
+            .from('user_profiles')
+            .select('telegram_bot_token, telegram_chat_id')
+            .eq('id', session.user.id)
+            .maybeSingle();
+            
+        if (data != null) {
+          if (data['telegram_bot_token'] != null && data['telegram_bot_token'].toString().isNotEmpty) {
+            savedToken = data['telegram_bot_token'];
+            await _prefs?.setString('tg_bot_token', savedToken);
+          }
+          if (data['telegram_chat_id'] != null && data['telegram_chat_id'].toString().isNotEmpty) {
+            savedChatId = data['telegram_chat_id'];
+            await _prefs?.setString('tg_chat_id', savedChatId);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Failed to sync Telegram config from Supabase: $e');
+    }
     
     state = state.copyWith(
       botToken: savedToken,
@@ -156,12 +182,31 @@ class TelegramStorageNotifier extends StateNotifier<TelegramStorageState> {
   // Update credentials
   Future<void> updateCredentials(String token, String chatId) async {
     state = state.copyWith(isLoading: true);
-    await _prefs?.setString('tg_bot_token', token);
-    await _prefs?.setString('tg_chat_id', chatId);
-    
+    if (_prefs != null) {
+      await _prefs!.setString('tg_bot_token', token);
+      await _prefs!.setString('tg_chat_id', chatId);
+      if (state.isChunkingEnabled != null) {
+        await _prefs!.setBool('tg_is_chunking_enabled', state.isChunkingEnabled);
+      }
+    }
+
+    // Sync to Supabase
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        await Supabase.instance.client.from('user_profiles').update({
+          'telegram_bot_token': token,
+          'telegram_chat_id': chatId,
+        }).eq('id', session.user.id);
+      }
+    } catch (e) {
+      debugPrint('Failed to push Telegram config to Supabase: $e');
+    }
+
     state = state.copyWith(
       botToken: token,
       chatId: chatId,
+      isLoading: false,
     );
 
     if (token.isNotEmpty && chatId.isNotEmpty) {

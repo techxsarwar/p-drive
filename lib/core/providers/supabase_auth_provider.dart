@@ -50,6 +50,7 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
         email: session.user.email,
         displayName: session.user.userMetadata?['full_name'] ?? session.user.email?.split('@').first,
       );
+      _upsertProfile(session.user);
     }
 
     // Listen to auth changes
@@ -61,6 +62,7 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
           email: session.user.email,
           displayName: session.user.userMetadata?['full_name'] ?? session.user.email?.split('@').first,
         );
+        _upsertProfile(session.user);
       } else {
         state = state.copyWith(
           isAuthenticated: false,
@@ -116,6 +118,20 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true);
     await _supabase.auth.signOut();
     state = state.copyWith(isLoading: false, isAuthenticated: false);
+  }
+
+  Future<void> _upsertProfile(User user) async {
+    try {
+      final updates = {
+        'id': user.id,
+        'email': user.email,
+        'full_name': user.userMetadata?['full_name'] ?? user.email?.split('@').first,
+      };
+      // Upsert: if row exists, it updates provided fields. Omitted fields (like telegram configs) are untouched.
+      await _supabase.from('user_profiles').upsert(updates);
+    } catch (e) {
+      debugPrint('Supabase profile upsert error: $e');
+    }
   }
 }
 
