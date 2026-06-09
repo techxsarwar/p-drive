@@ -126,7 +126,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: isInitiallyAuthenticated ? '/dashboard/home' : '/',
     redirect: (context, state) {
-      final authState = ref.watch(googleAuthProvider);
+      final authState = ref.read(googleAuthProvider);
       final isAuth = authState.isAuthenticated;
       
       final isSplash = state.matchedLocation == '/';

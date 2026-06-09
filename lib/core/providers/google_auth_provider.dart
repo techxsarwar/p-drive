@@ -152,8 +152,8 @@ class GoogleAuthNotifier extends StateNotifier<GoogleAuthState> {
       barrierDismissible: false,
       builder: (dialogCtx) {
         return AlertDialog(
-          backgroundColor: theme.colorScheme.surface,
-          surfaceTintColor: Colors.transparent,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
             side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
