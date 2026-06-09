@@ -155,10 +155,10 @@ class WelcomeLoginScreen extends ConsumerWidget {
                             : () => ref.read(googleAuthProvider.notifier).signInWithGoogle(context, ref),
                         icon: authState.isLoading
                             ? const SizedBox.shrink()
-                            : Icon(
-                                LucideIcons.globe,
-                                color: theme.colorScheme.onPrimary,
-                                size: 24,
+                            : Image.asset(
+                                'assets/icon/google_logo.png',
+                                width: 24,
+                                height: 24,
                               ),
                         label: authState.isLoading
                             ? const SizedBox(
@@ -171,16 +171,21 @@ class WelcomeLoginScreen extends ConsumerWidget {
                               )
                             : const Text(
                                 'Continue with Google',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 16, 
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
                               ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: Colors.black.withOpacity(0.1)),
                           ),
-                          elevation: 8,
-                          shadowColor: theme.colorScheme.primary.withOpacity(0.5),
+                          elevation: 2,
+                          shadowColor: Colors.black.withOpacity(0.3),
                         ),
                       ),
                     ).animate().fade(delay: 800.ms, duration: 600.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic)
