@@ -37,7 +37,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
           ),
         );
         if (didAuthenticate && mounted) {
-          context.go('/dashboard');
+          context.go('/dashboard/home');
         }
       }
     } on PlatformException catch (e) {
@@ -68,7 +68,7 @@ class _AppLockScreenState extends State<AppLockScreen> {
 
   void _verifyPin() {
     if (_pin == _correctPin) {
-      context.go('/dashboard');
+      context.go('/dashboard/home');
     } else {
       HapticFeedback.vibrate();
       setState(() {
