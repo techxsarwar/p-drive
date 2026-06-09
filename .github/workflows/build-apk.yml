@@ -61,18 +61,55 @@ jobs:
         run: |
           python3 -c "
           import os
-          path = 'android/app/build.gradle.kts' if os.path.exists('android/app/build.gradle.kts') else 'android/app/build.gradle'
-          print(f'Modifying {path}')
-          with open(path, 'r') as f:
+          
+          # 1. Force SDK versions on the main app
+          app_path = 'android/app/build.gradle.kts' if os.path.exists('android/app/build.gradle.kts') else 'android/app/build.gradle'
+          print(f'Modifying {app_path}')
+          with open(app_path, 'r') as f:
               content = f.read()
-          # Override compileSdk and targetSdk to 36
           content = content.replace('compileSdk = flutter.compileSdkVersion', 'compileSdk = 36')
           content = content.replace('compileSdkVersion flutter.compileSdkVersion', 'compileSdkVersion 36')
           content = content.replace('targetSdk = flutter.targetSdkVersion', 'targetSdk = 36')
           content = content.replace('targetSdkVersion flutter.targetSdkVersion', 'targetSdkVersion 36')
-          with open(path, 'w') as f:
+          with open(app_path, 'w') as f:
               f.write(content)
-          print('Successfully forced compileSdk and targetSdk to 36')
+          print('Successfully forced compileSdk and targetSdk to 36 on app')
+
+          # 2. Force SDK versions on all subprojects/plugins (to resolve file_picker aar metadata issue)
+          root_path = 'android/build.gradle.kts' if os.path.exists('android/build.gradle.kts') else 'android/build.gradle'
+          print(f'Modifying {root_path}')
+          if root_path.endswith('.kts'):
+              with open(root_path, 'a') as f:
+                  f.write('''
+subprojects {
+    afterEvaluate {
+        val android = extensions.findByType(com.android.build.gradle.BaseExtension::class.java)
+        android?.apply {
+            compileSdkVersion(36)
+            defaultConfig {
+                targetSdk = 36
+            }
+        }
+    }
+}
+''')
+          else:
+              with open(root_path, 'a') as f:
+                  f.write('''
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                compileSdkVersion 36
+                defaultConfig {
+                    targetSdk 36
+                }
+            }
+        }
+    }
+}
+''')
+          print('Successfully configured subprojects SDK version overrides')
           "
 
       - name: Install Dependencies
