@@ -6,10 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/google_auth_provider.dart';
 
-// Screens
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/signup_screen.dart';
-import '../features/auth/screens/forgot_password_screen.dart';
 import '../features/onboarding/screens/user_information_screen.dart';
 import '../features/onboarding/screens/storage_preference_screen.dart';
 import '../features/onboarding/screens/discovery_screen.dart';
@@ -156,13 +154,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       path: '/signup',
       pageBuilder: (context, state) => _telegramPage(
         context: context, state: state, child: const SignupScreen()),
-    ),
-    
-    // Forgot Password screen
-    GoRoute(
-      path: '/forgot-password',
-      pageBuilder: (context, state) => _telegramPage(
-        context: context, state: state, child: const ForgotPasswordScreen()),
     ),
 
     // Onboarding screens — all with Telegram transitions
