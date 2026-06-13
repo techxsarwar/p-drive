@@ -1,4 +1,4 @@
-﻿import 'dart:math';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -439,11 +439,17 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final authState = ref.watch(authProvider);
     final onboardingState = ref.watch(onboardingProvider);
     final storageState = ref.watch(telegramStorageProvider);
     final storageNotifier = ref.read(telegramStorageProvider.notifier);
 
-    final userName = onboardingState.username.isNotEmpty ? onboardingState.username : 'Alex Morgan';
+    final userName = authState.isAuthenticated
+        ? (authState.displayName ?? (onboardingState.username.isNotEmpty ? onboardingState.username : 'Alex Morgan'))
+        : (onboardingState.username.isNotEmpty ? onboardingState.username : 'Alex Morgan');
+    final userEmail = authState.isAuthenticated
+        ? (authState.email ?? 'alex@pdrive.com')
+        : 'alex@pdrive.com';
     final hasBackend = storageState.botToken.isNotEmpty && storageState.chatId.isNotEmpty;
 
     // Quota calculations (using 100 GB as base total quota)
@@ -584,7 +590,7 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'alex@pdrive.com',
+                    userEmail,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.textTheme.labelSmall?.color,
                     ),
@@ -784,23 +790,26 @@ void _showNotificationsDialog(BuildContext context, WidgetRef ref) {
                   context.go('/');
                 }
               },
-              child: SizedBox(
+              child: Container(
                 width: double.infinity,
                 height: 56,
-                child: OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: Icon(LucideIcons.log_out, color: theme.colorScheme.error, size: 18),
-                  label: const Text('Logout'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: theme.colorScheme.error,
-                    side: BorderSide(color: theme.colorScheme.error, width: 1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: theme.colorScheme.error, width: 1),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(LucideIcons.log_out, color: theme.colorScheme.error, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Logout',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.error,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    textStyle: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ).animate().fade(delay: 250.ms, duration: 350.ms).slideY(begin: 0.1, end: 0, duration: 350.ms, curve: const Cubic(0.34, 1.56, 0.64, 1)),

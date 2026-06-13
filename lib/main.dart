@@ -5,6 +5,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
 import 'core/providers/theme_provider.dart';
+import 'core/providers/shared_preferences_provider.dart';
 import 'core/services/transfer_foreground_service.dart';
 import 'core/widgets/telegram_theme_switcher.dart';
 import 'package:permission_handler/permission_handler.dart';

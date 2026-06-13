@@ -5,6 +5,8 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/supabase_auth_provider.dart';
+import 'providers/shared_preferences_provider.dart';
+import '../features/onboarding/providers/onboarding_provider.dart';
 
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/signup_screen.dart';
@@ -113,31 +115,52 @@ class SharedTabPlaceholder extends StatelessWidget {
 }
 
 // ─── Shared Preferences Provider ────────────────────────────────────────────
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('Initialize this in main.dart');
-});
+// Note: sharedPreferencesProvider is now imported from shared_preferences_provider.dart
+
+class RouterRefreshListenable extends ChangeNotifier {
+  RouterRefreshListenable(Ref ref) {
+    ref.listen(authProvider, (_, __) => notifyListeners());
+    ref.listen(onboardingProvider, (_, __) => notifyListeners());
+  }
+}
 
 // ─── App Router Provider ────────────────────────────────────────────────────
 
 final routerProvider = Provider<GoRouter>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   final isInitiallyAuthenticated = prefs.getBool('google_auth_is_authenticated') ?? false;
+  final listenable = RouterRefreshListenable(ref);
 
   return GoRouter(
     initialLocation: isInitiallyAuthenticated ? '/dashboard/home' : '/',
+    refreshListenable: listenable,
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       final isAuth = authState.isAuthenticated;
       
+      final onboardingState = ref.read(onboardingProvider);
+      final hasCompletedOnboarding = onboardingState.completedOnboarding;
+      
       final isSplash = state.matchedLocation == '/';
+      final isSignUp = state.matchedLocation == '/signup';
+      final isLegal = state.matchedLocation == '/legal';
       final isOnboarding = state.matchedLocation.startsWith('/onboarding');
       
-      if (isAuth && (isSplash || isOnboarding)) {
-        return '/dashboard/home';
-      }
-      
-      if (!isAuth && !isSplash && !isOnboarding) {
-        return '/';
+      if (isAuth) {
+        if (!hasCompletedOnboarding) {
+          if (!isOnboarding) {
+            return '/onboarding/name';
+          }
+        } else {
+          if (isSplash || isSignUp || isOnboarding) {
+            return '/dashboard/home';
+          }
+        }
+      } else {
+        // Not authenticated
+        if (!isSplash && !isSignUp && !isLegal) {
+          return '/';
+        }
       }
       return null;
     },

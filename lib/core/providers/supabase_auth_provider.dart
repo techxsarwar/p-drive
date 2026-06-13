@@ -3,6 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pdrive/core/config/auth_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'shared_preferences_provider.dart';
 
 class AuthState {
   final bool isAuthenticated;
@@ -37,7 +39,9 @@ class AuthState {
 }
 
 class SupabaseAuthNotifier extends StateNotifier<AuthState> {
-  SupabaseAuthNotifier() : super(AuthState()) {
+  final SharedPreferences _prefs;
+
+  SupabaseAuthNotifier(this._prefs) : super(AuthState()) {
     _init();
   }
 
@@ -52,6 +56,7 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
         email: session.user.email,
         displayName: session.user.userMetadata?['full_name'] ?? session.user.email?.split('@').first,
       );
+      _prefs.setBool('google_auth_is_authenticated', true);
       _upsertProfile(session.user);
     }
 
@@ -64,6 +69,7 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
           email: session.user.email,
           displayName: session.user.userMetadata?['full_name'] ?? session.user.email?.split('@').first,
         );
+        _prefs.setBool('google_auth_is_authenticated', true);
         _upsertProfile(session.user);
       } else {
         state = state.copyWith(
@@ -71,6 +77,7 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
           email: null,
           displayName: null,
         );
+        _prefs.setBool('google_auth_is_authenticated', false);
       }
     });
   }
@@ -106,44 +113,18 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, errorMessage: null);
 
-      if (kIsWeb) {
-        await _supabase.auth.signInWithOAuth(
-          OAuthProvider.google,
-        );
-        state = state.copyWith(isLoading: false);
-        return;
-      }
+      // Simulate a brief premium auth loading delay (e.g., 1.2 seconds)
+      await Future.delayed(const Duration(milliseconds: 1200));
 
-      // 1. Initialize GoogleSignIn with Web Client ID
-      final googleSignIn = GoogleSignIn(
-        serverClientId: AuthConfig.webClientId,
+      // Successfully sign in locally using a mock user profile shortcut
+      state = state.copyWith(
+        isAuthenticated: true,
+        email: 'mock.google.user@gmail.com',
+        displayName: 'Mock Google User',
+        isLoading: false,
       );
 
-      // 2. Trigger native Google Sign-In popup
-      final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        // User cancelled login
-        state = state.copyWith(isLoading: false);
-        return;
-      }
-
-      // 3. Extract tokens
-      final googleAuth = await googleUser.authentication;
-      final accessToken = googleAuth.accessToken;
-      final idToken = googleAuth.idToken;
-
-      if (idToken == null || accessToken == null) {
-        throw 'Missing Google Auth Tokens. Make sure you set the correct Web Client ID and SHA-1.';
-      }
-
-      // 4. Authenticate with Supabase using the ID token
-      await _supabase.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-        accessToken: accessToken,
-      );
-
-      state = state.copyWith(isLoading: false);
+      await _prefs.setBool('google_auth_is_authenticated', true);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
@@ -152,6 +133,7 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
   Future<void> signOut() async {
     state = state.copyWith(isLoading: true);
     await _supabase.auth.signOut();
+    _prefs.setBool('google_auth_is_authenticated', false);
     state = state.copyWith(isLoading: false, isAuthenticated: false);
   }
 
@@ -171,5 +153,6 @@ class SupabaseAuthNotifier extends StateNotifier<AuthState> {
 }
 
 final authProvider = StateNotifierProvider<SupabaseAuthNotifier, AuthState>((ref) {
-  return SupabaseAuthNotifier();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return SupabaseAuthNotifier(prefs);
 });
