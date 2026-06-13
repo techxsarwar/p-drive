@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/providers/supabase_auth_provider.dart';
 import '../widgets/auth_header_graphics.dart';
+import '../widgets/transformable_login_button.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -19,6 +20,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   bool _obscurePassword = true;
+  bool _isSignUpSuccess = false;
 
   @override
   void dispose() {
@@ -44,8 +46,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       if (authState.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authState.errorMessage!), backgroundColor: Colors.red));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account created! Please sign in.'), backgroundColor: Colors.green));
-        context.pop(); // Go back to login screen
+        setState(() {
+          _isSignUpSuccess = true;
+        });
+        // Wait for checkmark morph animation to complete
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account created! Please sign in.'), backgroundColor: Colors.green));
+          context.pop(); // Go back to login screen
+        }
       }
     }
   }
@@ -146,31 +155,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             const SizedBox(height: 32),
                             
                             // Sign Up Button
-                            ElevatedButton(
-                              onPressed: authState.isLoading ? null : _handleSignUp,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.secondary, // Soft Teal
-                                padding: const EdgeInsets.symmetric(vertical: 18),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: authState.isLoading 
-                                ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Create Account',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Icon(LucideIcons.arrow_right, size: 20, color: Colors.white),
-                                    ],
-                                  ),
+                            TransformableLoginButton(
+                              buttonText: 'Create Account',
+                              state: authState.isLoading
+                                  ? TransformableButtonState.loading
+                                  : (_isSignUpSuccess
+                                      ? TransformableButtonState.success
+                                      : TransformableButtonState.idle),
+                              onPressed: _handleSignUp,
                             ).animate().fade(delay: 400.ms).slideY(begin: 0.1),
                             
                             const SizedBox(height: 24),

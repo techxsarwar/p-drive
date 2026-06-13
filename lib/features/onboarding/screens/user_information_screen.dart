@@ -45,11 +45,10 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
       Future.delayed(const Duration(milliseconds: 800), () {
         if (mounted) {
           ref.read(onboardingProvider.notifier).setUsername(_nameController.text.trim());
-          ref.read(onboardingProvider.notifier).completeOnboarding();
           setState(() {
             _isLoading = false;
           });
-          context.go('/dashboard/home');
+          context.push('/onboarding/storage');
         }
       });
     }
@@ -66,7 +65,41 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
           child: Column(
             children: [
               const SizedBox(height: 16),
-              const SizedBox(height: 16),
+              // Segmented Onboarding Progress Bar (1/3 active)
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
 
               Expanded(
                 child: SingleChildScrollView(

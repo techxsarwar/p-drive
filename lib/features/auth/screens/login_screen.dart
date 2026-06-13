@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/providers/supabase_auth_provider.dart';
 import '../widgets/auth_header_graphics.dart';
+import '../widgets/transformable_login_button.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -42,7 +43,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (authState.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authState.errorMessage!), backgroundColor: Colors.red));
       } else if (authState.isAuthenticated) {
-        context.go('/dashboard');
+        // Wait for checkmark morph animation to complete
+        await Future.delayed(const Duration(milliseconds: 800));
+        if (mounted) {
+          context.go('/dashboard/home');
+        }
       }
     }
   }
@@ -182,31 +187,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             const SizedBox(height: 24),
                             
                             // Sign In Button
-                            ElevatedButton(
-                              onPressed: authState.isLoading ? null : _handleSignIn,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.secondary, // Soft Teal
-                                padding: const EdgeInsets.symmetric(vertical: 18),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: authState.isLoading 
-                                ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Sign In',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Icon(LucideIcons.arrow_right, size: 20, color: Colors.white),
-                                    ],
-                                  ),
+                            TransformableLoginButton(
+                              buttonText: 'Sign In',
+                              state: authState.isLoading
+                                  ? TransformableButtonState.loading
+                                  : (authState.isAuthenticated
+                                      ? TransformableButtonState.success
+                                      : TransformableButtonState.idle),
+                              onPressed: _handleSignIn,
                             ).animate().fade(delay: 500.ms).slideY(begin: 0.1),
                             
                             const SizedBox(height: 24),

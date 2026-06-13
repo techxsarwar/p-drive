@@ -162,6 +162,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       pageBuilder: (context, state) => _telegramPage(
         context: context, state: state, child: const UserInformationScreen()),
     ),
+    GoRoute(
+      path: '/onboarding/storage',
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const StoragePreferenceScreen()),
+    ),
+    GoRoute(
+      path: '/onboarding/discovery',
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const DiscoveryScreen()),
+    ),
+    GoRoute(
+      path: '/onboarding/ready',
+      pageBuilder: (context, state) => _telegramPage(
+        context: context, state: state, child: const ReadyToGoScreen()),
+    ),
 
     // Shell route — no transition between tabs (feels instant like Telegram)
     ShellRoute(
